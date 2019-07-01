@@ -32,15 +32,15 @@
 	"static_gateway"			: "192.168.20.1",
 	"static_router"				: "st_router",
 	"static_port"				: "st_port",
-	"static_secgroup"			: "b2635785-94e2-4c7e-af89-f9ec296a203d",
+	"static_secgroup"			: "c11a0ebb-22bb-4658-9804-c20d0053412a",
 	"key_name"					: "ceph-key",
-	"key_file_path"				: "/home/osp_admin/NFV/nfv-auto/ceph-key.pem",
+	"key_file_path"				: "/home/osp_admin/NFV_window/nfv-auto/ceph-key.pem",
 	"nginx_repo_path"			: "/home/osp_admin/NFV/nfv-auto/nginx.repo",
 	"public_network"			: "public",
 	"iperf3_package_name" 		: "iperf3-3.1.7-2.el7.x86_64.rpm",
 	"iperf_package_path"		: "/home/osp_admin/NFV/nfv-auto/iperf3-3.1.7-2.el7.x86_64.rpm",
 	"static_image_path"			: "/home/osp_admin/CentOS-7-x86_64-GenericCloud-1503.qcow2",
 	"static_image_format"		: "qcow2",
-	"overcloud_rc_file_path"	: "/home/osp_admin/r146rc",
+	"overcloud_rc_file_path"	: "/home/osp_admin/mr-14grc",
 	"static_volume"				: "volume"
 }

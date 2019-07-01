@@ -119,82 +119,111 @@ def ceph_vm_setup(router_name,
     #                                                     gateway_ip, flavor_name, image_name,
     #                                                     secgroup_name, assign_floating_ip):
     i = 1
-    while i < server_count:
-        server_name = "%s_%s" %(server_name, i)
-        volume_name = "%s_vol_1" %server_name
-        try:
-            ip_list  = creation_object.create_1_instances_on_same_compute_same_network(logger, conn_create,
-                                                                                       server_name, network_name,
-                                                            subnet_name,
-                                                            router_name, port_name, zone, cidr,
-                                                            gateway_ip, flavor_name, image_name,
-                                                            secgroup_name, assign_floating_ip)
-            logger.info("output %s" % ip_list)#Nid,Rid,Sid,Pip,Fip
-            # pdb.set_trace()
-            ###########Creating and Attaching Volume to VM#############################
-            os.system("openstack volume create --size 40 %s" % volume_name)
-            creation_object.os_attach_volume(logger, conn_create, server_name, volume_name)
-            time.sleep(15)
+    j = 2
+    nova0_list=[]
+    nova1_list=[]
+    nova2_list=[]
+    # volume_name = "%s_vol_1" %server_name
+    try:
+        while j < 3:
+            while i < server_count:
+                servr_name = "%s_%s_nova_%s" % (server_name, i, j)
+                if j==0:
+                    zone = "nova0"
 
-            ###### Installing FIO in VM ##########
-            count = 1
-            logger.info("VM IP %s" % ip_list[4])
-            # ssh_obj.execute_command_show_output(logger, "sudo scp -rp -i dvr-key.pem nginx.repo centos@%s:./" %ip_list[i])
-            ssh_obj.ssh_to(logger, ip_list[4], "centos", key_file_name=data["key_file_path"])
-            ssh_obj.execute_command_show_output(logger, "cat /etc/sysconfig/network-scripts/ifcfg-eth0")
-            ssh_obj.execute_command_show_output(logger, "sudo sed -i '/USERCTL=no/ a DNS1=8.8.8.8' /etc/sysconfig/network-scripts/ifcfg-eth0")
-            ssh_obj.execute_command_show_output(logger, "cat /etc/sysconfig/network-scripts/ifcfg-eth0")
-            ssh_obj.execute_command_show_output(logger, "sudo systemctl restart network")
-            ssh_obj.execute_command_show_output(logger, "ping -c 5 google.com")
-            ssh_obj.execute_command_show_output(logger, "ls")
-            ssh_obj.execute_command_show_output(logger, "sudo yum install fio -y")
-            res = ssh_obj.execute_command_show_output(logger, "sudo fio -v")
-            count = count + 1
-            ssh_obj.ssh_close()
-            # pdb.set_trace()
-            logger.info(count)
-            vm_p_ip = ip_list[3]
-            vm_f_ip = ip_list[4]
-            if res != None:
-                logger.info("FIO installed on %s Successful" %server_name)
-            else:
-                logger.info("FIO installed on %s Failed" % server_name)
-            time.sleep(10)
-            # pdb.set_trace()
+                if j==1:
+                    zone = "nova1"
 
-            if delete_all:
-                delete_object.delete_1_instance_and_router_with_1_network(logger, conn_delete,
-                                                                       server_name,
-                                                                       network_name,
-                                                                       router_name, port_name)
+                if j==2:
+                    zone = "nova2"
+                ip_list  = creation_object.create_1_instances_on_same_compute_same_network(logger, conn_create,
+                                                                                           servr_name, network_name,
+                                                                subnet_name,
+                                                                router_name, port_name, zone, cidr,
+                                                                gateway_ip, flavor_name, image_name,
+                                                                secgroup_name, assign_floating_ip)
+                logger.info("output %s" % ip_list)#Nid,Rid,Sid,Pip,Fip
+
+                ###########Creating and Attaching Volume to VM#############################
+                # os.system("openstack volume create --size 40 %s" % volume_name)
+                # creation_object.os_attach_volume(logger, conn_create, server_name, volume_name)
+                time.sleep(50)
+
+                ###### Installing FIO in VM ##########
+                count = 1
+                logger.info("VM IP %s" % ip_list[4])
+                if j==0:
+                    nova0_list.append(ip_list[4])
+
+                if j==1:
+                    nova1_list.append(ip_list[4])
+
+                if j==2:
+                    nova2_list.append(ip_list[4])
+                # pdb.set_trace()
+                # ssh_obj.execute_command_show_output(logger, "sudo scp -rp -i dvr-key.pem nginx.repo centos@%s:./" %ip_list[i])
+                # ssh_obj.ssh_to(logger, ip_list[4], username=data["static_image"], key_file_name=data["key_file_path"])
+                # ssh_obj.execute_command_show_output(logger, "ls")
+                # ssh_obj.execute_command_show_output(logger, "ifconfig")
+                # ssh_obj.execute_command_show_output(logger, "cat /etc/sysconfig/network-scripts/ifcfg-eth0")
+                # ssh_obj.execute_command_show_output(logger, "sudo sed -i '/USERCTL=no/ a DNS1=8.8.8.8' /etc/sysconfig/network-scripts/ifcfg-eth0")
+                # ssh_obj.execute_command_show_output(logger, "cat /etc/sysconfig/network-scripts/ifcfg-eth0")
+                # ssh_obj.execute_command_show_output(logger, "sudo systemctl restart network")
+                # ssh_obj.execute_command_show_output(logger, "ping -c 5 google.com")
+                # ssh_obj.execute_command_show_output(logger, "ls")
+                # ssh_obj.execute_command_show_output(logger, "sudo yum install fio -y")
+                # res = ssh_obj.execute_command_show_output(logger, "sudo fio -v")
+                # count = count + 1
+                # ssh_obj.ssh_close()
+                # # pdb.set_trace()
+                # logger.info(count)
+                # vm_p_ip = ip_list[3]
+                # vm_f_ip = ip_list[4]
+                # if res != None:
+                #     logger.info("FIO installed on %s Successful" %server_name)
+                # else:
+                #     logger.info("FIO installed on %s Failed" % server_name)
+                # time.sleep(10)
+                # pdb.set_trace()
+                logger.info("VM CREATED SUCCESSFULLY")
+                if delete_all:
+                    delete_object.delete_1_instance_and_router_with_1_network(logger, conn_delete,
+                                                                           server_name,
+                                                                           network_name,
+                                                                           router_name, port_name)
+
+                i = i + 1
+                logger.info("%s" % nova0_list)
+                logger.info("%s" % nova1_list)
+                logger.info("%s" % nova2_list)
+            j = j + 1
+        return ip_list
+    except:
+            logger.info ("Unable to execute test case 1")
+            logger.info ("\nError: " + str(sys.exc_info()[0]))
+            logger.info ("Cause: " + str(sys.exc_info()[1]))
+            logger.info ("Line No: %s \n" % (sys.exc_info()[2].tb_lineno))
+            delete_object.delete_1_instance_and_router_with_1_network(logger, conn_delete,
+                                                                   server_name,
+                                                                   network_name,
+                                                                   router_name, port_name)
 
 
-            return ip_list
-        except:
-                logger.info ("Unable to execute test case 1")
-                logger.info ("\nError: " + str(sys.exc_info()[0]))
-                logger.info ("Cause: " + str(sys.exc_info()[1]))
-                logger.info ("Line No: %s \n" % (sys.exc_info()[2].tb_lineno))
-                delete_object.delete_1_instance_and_router_with_1_network(logger, conn_delete,
-                                                                       server_name,
-                                                                       network_name,
-                                                                       router_name, port_name)
-        i = i + 1
 
 server_name = "ceph_vm"
-server_count = 8
-network_name = "ceph-network"
-subnet_name = "ceph-subnet"
-router_name = "ceph-router"
-port_name = "ceph-port"
+server_count = 14
+network_name = "storage-net"
+subnet_name = "storage-subnet"
+router_name = "storage-router"
+port_name = "storage-port"
 zone0 = "nova0"
 zone1 = "nova1"
 zone2 = "nova2"
 cidr = "192.168.70.0/24"
 gateway_ip = "192.168.70.1"
-flavor_name = "m1_medium"
-image_name = "centos"
-secgroup_name = "5ffacd02-d1a0-4682-abf3-b427f0c61831"
+flavor_name = "m1.medium"
+image_name = "ceph_med_vm_snap"
+secgroup_name = "c11a0ebb-22bb-4658-9804-c20d0053412a"
 assign_floating_ip = True
 
 
