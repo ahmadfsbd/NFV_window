@@ -121,6 +121,7 @@ def ceph_vm_setup(router_name,
     i = 1
     while i < server_count:
         server_name = "%s_%s" %(server_name, i)
+        volume_name = "%s_vol_1" %server_name
         try:
             ip_list  = creation_object.create_1_instances_on_same_compute_same_network(logger, conn_create,
                                                                                        server_name, network_name,
@@ -130,6 +131,10 @@ def ceph_vm_setup(router_name,
                                                             secgroup_name, assign_floating_ip)
             logger.info("output %s" % ip_list)#Nid,Rid,Sid,Pip,Fip
             # pdb.set_trace()
+            ###########Creating and Attaching Volume to VM#############################
+            os.system("openstack volume create --size 40 %s" % volume_name)
+            creation_object.os_attach_volume(logger, conn_create, server_name, volume_name)
+            time.sleep(15)
 
             ###### Installing FIO in VM ##########
             count = 1
@@ -156,6 +161,7 @@ def ceph_vm_setup(router_name,
                 logger.info("FIO installed on %s Failed" % server_name)
             time.sleep(10)
             # pdb.set_trace()
+
             if delete_all:
                 delete_object.delete_1_instance_and_router_with_1_network(logger, conn_delete,
                                                                        server_name,
