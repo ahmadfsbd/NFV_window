@@ -162,19 +162,19 @@ def ceph_vm_setup(router_name,
                     nova2_list.append(ip_list[4])
                 # pdb.set_trace()
                 # ssh_obj.execute_command_show_output(logger, "sudo scp -rp -i dvr-key.pem nginx.repo centos@%s:./" %ip_list[i])
-                # ssh_obj.ssh_to(logger, ip_list[4], username=data["static_image"], key_file_name=data["key_file_path"])
-                # ssh_obj.execute_command_show_output(logger, "ls")
-                # ssh_obj.execute_command_show_output(logger, "ifconfig")
-                # ssh_obj.execute_command_show_output(logger, "cat /etc/sysconfig/network-scripts/ifcfg-eth0")
-                # ssh_obj.execute_command_show_output(logger, "sudo sed -i '/USERCTL=no/ a DNS1=8.8.8.8' /etc/sysconfig/network-scripts/ifcfg-eth0")
-                # ssh_obj.execute_command_show_output(logger, "cat /etc/sysconfig/network-scripts/ifcfg-eth0")
-                # ssh_obj.execute_command_show_output(logger, "sudo systemctl restart network")
-                # ssh_obj.execute_command_show_output(logger, "ping -c 5 google.com")
-                # ssh_obj.execute_command_show_output(logger, "ls")
-                # ssh_obj.execute_command_show_output(logger, "sudo yum install fio -y")
-                # res = ssh_obj.execute_command_show_output(logger, "sudo fio -v")
+                ssh_obj.ssh_to(logger, ip_list[4], username=data["static_image"], key_file_name=data["key_file_path"])
+                ssh_obj.execute_command_show_output(logger, "ls")
+                ssh_obj.execute_command_show_output(logger, "ifconfig")
+                ssh_obj.execute_command_show_output(logger, "cat /etc/sysconfig/network-scripts/ifcfg-eth0")
+                ssh_obj.execute_command_show_output(logger, "sudo sed -i '/USERCTL=no/ a DNS1=8.8.8.8' /etc/sysconfig/network-scripts/ifcfg-eth0")
+                ssh_obj.execute_command_show_output(logger, "cat /etc/sysconfig/network-scripts/ifcfg-eth0")
+                ssh_obj.execute_command_show_output(logger, "sudo systemctl restart network")
+                ssh_obj.execute_command_show_output(logger, "ping -c 5 google.com")
+                ssh_obj.execute_command_show_output(logger, "ls")
+                ssh_obj.execute_command_show_output(logger, "sudo yum install fio -y")
+                res = ssh_obj.execute_command_show_output(logger, "sudo fio -v")
                 # count = count + 1
-                # ssh_obj.ssh_close()
+                ssh_obj.ssh_close()
                 # # pdb.set_trace()
                 # logger.info(count)
                 # vm_p_ip = ip_list[3]
@@ -197,7 +197,7 @@ def ceph_vm_setup(router_name,
                 logger.info("%s" % nova1_list)
                 logger.info("%s" % nova2_list)
             j = j + 1
-        return ip_list
+
     except:
             logger.info ("Unable to execute test case 1")
             logger.info ("\nError: " + str(sys.exc_info()[0]))
@@ -208,10 +208,10 @@ def ceph_vm_setup(router_name,
                                                                    network_name,
                                                                    router_name, port_name)
 
-
+    return nova2_list
 
 server_name = "ceph_vm"
-server_count = 14
+server_count = 3
 network_name = "storage-net"
 subnet_name = "storage-subnet"
 router_name = "storage-router"
@@ -222,7 +222,7 @@ zone2 = "nova2"
 cidr = "192.168.70.0/24"
 gateway_ip = "192.168.70.1"
 flavor_name = "m1.medium"
-image_name = "ceph_med_vm_snap"
+image_name = "centos"
 secgroup_name = "c11a0ebb-22bb-4658-9804-c20d0053412a"
 assign_floating_ip = True
 
