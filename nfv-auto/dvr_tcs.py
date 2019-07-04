@@ -1412,9 +1412,9 @@ router_name = "test_router"
 port_name = "test_port"
 port1_name = "test_port1"
 port2_name = "test_port2"
-zone = "sriov-zone"
-zone1 = "sriov-zone"
-zone2 = "sriov-zone"
+zone = "nova0"
+zone1 = "nova1"
+zone2 = "nova2"
 cidr = "192.168.70.0/24"
 gateway_ip = "192.168.70.1"
 cidr1 = "192.168.30.0/24"
@@ -1426,14 +1426,14 @@ image_name = "centos"
 secgroup_name = "last"
 assign_floating_ip = False
 #test_case_30()
-# dvr_deployement_test_case_11(controller_ip,username,router_name,
-#                                                         network1_name,network2_name,
-#                                                         subnet1_name,subnet2_name,
-#                                                         port1_name,port2_name,
-#                                                         server1_name,server2_name,
-#                                                         image_name,flavor_name,secgroup_name,
-#                                                         zone1,zone2, cidr1,gateway_ip1,
-#                                                         cidr2, gateway_ip2)
+dvr_deployement_test_case_11(controller_ip,username,router_name,
+                                                        network1_name,network2_name,
+                                                        subnet1_name,subnet2_name,
+                                                        port1_name,port2_name,
+                                                        server1_name,server2_name,
+                                                        image_name,flavor_name,secgroup_name,
+                                                        zone1,zone2, cidr1,gateway_ip1,
+                                                        cidr2, gateway_ip2)
 
 # dvr_deployement_test_case_16(username,network_name,cidr,gateway_ip,subnet_name,router_name,port_name,server_name,image_name,flavor_name,secgroup_name,zone)
 # dvr_deployement_test_case_29(username, server1_name, server2_name, network_name, subnet_name,

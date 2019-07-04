@@ -1,4 +1,5 @@
 from vm_creation import Os_Creation_Modules, data
+from delete_os import Os_Deletion_Modules
 import os
 import logging
 from logging.handlers import TimedRotatingFileHandler
@@ -53,8 +54,12 @@ conn=obj.os_connection_creation()
 # obj.os_flavor_ovsdpdk_creation(logger, conn, data["ovsdpdk_flavor"], 1024, 2, 40)
 # os.system("openstack keypair list")
 # obj.os_router_creation(logger, conn, data["static_router"], data["static_port"], data["static_network"])
-# obj.os_server_creation(logger, conn, "st_vm2", "sanity_flavor", "centos", data["network_name"], "6fbb92f5-28bf-40f6-a659-931b2bcae959", "nova1")
+obj.os_server_creation(logger, conn, "centos", "m1.medium", "centos", "storage-net", "c11a0ebb-22bb-4658-9804-c20d0053412a", "nova1", "ceph-key", 1, 3)
 # obj.os_keypair_creation_with_key_file(logger, conn, data["key_name"], data["key_file_path"])
+
+delete_object = Os_Deletion_Modules()
+conn_delete = delete_object.os_connection_creation()
+
 
 #================Creating Aggregate and Zones=====================#
 #================Key Pair Creation========================#
@@ -91,3 +96,41 @@ conn=obj.os_connection_creation()
 # for i in list:
 #     obj.os_aggregate_creation_and_add_host(logger, conn, "nova%s"%c, availablity_zone="nova%s"%c, host_name=i)
 #     c += 1
+
+
+
+#================checking 2 compute nodes========================#
+# delete_object.delete_2_instances_and_router_with_2_networks(logger, conn_delete,
+#                                                             "test_1", "test_2",
+#                                                             "net1", "net2",
+#                                                             "router",
+#                                                             "port1", "port2")
+# obj.create_2_instances_on_dif_compute_dif_network(logger, conn, "test_1", "test_2",
+#                                                                                 "net1", "net2",
+#                                                                                 "subnet1", "subnet2",
+#                                                                                 "router",
+#                                                                                 "port1","port2",
+#                                                                                 "nova1", "nova2",
+#                                                                                 "192.168.10.0/24","192.168.10.1",
+#                                                                                 "192.168.20.0/24","192.168.20.1",
+#                                                                                 "m1.medium", "centos",
+#                                                                                 "c11a0ebb-22bb-4658-9804-c20d0053412a",
+#                                                                                 assign_floating_ip=False)
+
+# time.sleep(120)
+
+# delete_object.delete_2_instances_and_router_with_2_networks(logger, conn_delete,
+#                                                             "test_1", "test_2",
+#                                                             "net1", "net2",
+#                                                             "router",
+#                                                             "port1", "port2")
+
+obj.os_create_instance_snapshot(logger, conn, "centos_snap", "centos-1", wait=True)
+#
+#
+os.system("openstack image list")
+
+obj.os_server_creation(logger, conn, "centos_snap_vm", "m1.medium", "centos_snap", "storage-net", "c11a0ebb-22bb-4658-9804-c20d0053412a", "nova2", "ceph-key", 1, 3)
+
+delete_object.os_delete_server(logger, conn_delete, "centos", 1, 3)
+delete_object.os_delete_server(logger, conn_delete, "centos_snap_vm", 1, 3)

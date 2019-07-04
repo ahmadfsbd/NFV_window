@@ -329,16 +329,31 @@ class Os_Deletion_Modules():
         return del_router
 
     ### Deleting Server with name ###
-    def os_delete_server(self, logger, conn, server_name):
+    def os_delete_server(self, logger, conn, server_name, min_count=1, max_count=1):
         global server
-        logger.info ("Deleting Server: %s.." % server_name)
-        server = conn.delete_server(name_or_id= server_name, wait=False, timeout=180, delete_ips=True, delete_ip_retry=1)
-        if server:
-            logger.info ("Server Deleted successfully")
+        count = 1
+        if max_count > 1 or min_count > 1:
+            while count <= max_count:
+                instance_name = "%s-%s" %(server_name,count)
+                logger.info ("Deleting Server: %s.." % instance_name)
+                server = conn.delete_server(name_or_id= instance_name, wait=False, timeout=180, delete_ips=True, delete_ip_retry=1)
+                if server:
+                    logger.info ("Server Deleted successfully")
+                else:
+                    logger.info ("Server deletion failed!")
+                count = count + 1
         else:
-            logger.info ("Server deletion failed!")
+            instance_name = "%s" % server_name
+            logger.info("Deleting Server: %s.." % instance_name)
+            server = conn.delete_server(name_or_id=instance_name, wait=False, timeout=180, delete_ips=True,
+                                        delete_ip_retry=1)
+            if server:
+                logger.info("Server Deleted successfully")
+            else:
+                logger.info("Server deletion failed!")
+
         f_ip_list = self.os_delete_detached_floating_ips(logger, conn)
-        return server
+        return f_ip_list
 
 
     def os_delete_vlanaware_server(self, logger, conn, server_name, parentport_name, subport_name, trunk_name,

@@ -356,7 +356,7 @@ class Os_Creation_Modules():
 
     # CREATING VOLUME SNAPSHOT
     def os_create_volume_snapshot(self, logger, conn, name, volume_name_to_be_attached, force=True, wait=True):
-        logger.info ("Creating Volume Snapshot: %s")
+        logger.info ("Creating Volume Snapshot: %s" %name)
         volume_id = conn.get_volume(name_or_id=volume_name_to_be_attached, filters=None).id
         volume_snap = conn.get_volume_snapshot(name)
         if volume_snap is None:
@@ -364,6 +364,17 @@ class Os_Creation_Modules():
         else:
             logger.info("Volume Snapshot already exists with the same name.")
         return volume_snap
+
+    # CREATING IMAGE SNAPSHOT (FOR INSTANCE)
+    def os_create_instance_snapshot(self, logger, conn, name, server_name, wait=True):
+        logger.info ("Creating Instance Snapshot: %s" %name)
+        server_id = conn.get_server(name_or_id=server_name, filters=None).id
+        instance_snap = conn.get_image(name)
+        if instance_snap is None:
+            instance_snap = conn.create_image_snapshot(name=name, server=server_id,wait=wait)
+        else:
+            logger.info("Instance Snapshot already exists with the same name.")
+        return instance_snap
 
 
     # ATTACH VOLUME
@@ -615,10 +626,11 @@ class Os_Creation_Modules():
 
     #print "MODULE# 7 SERVER CREATION"
     def os_server_creation(self, logger, conn, server_name, flavor_name, image_name, network_name, secgroup_name,
-                           availability_zone, key_name=data["key_name"]):
+                           availability_zone, key_name=data["key_name"], min_count=1, max_count=1):
         try:
             aval_z=availability_zone
             logger.info("Creating Server: %s" % server_name)
+            logger.info("Server Count: %s" % max_count)
             f_id=conn.get_flavor(
                             name_or_id=flavor_name
                             #filters=None,
@@ -636,17 +648,26 @@ class Os_Creation_Modules():
                                     secgroup_name,
                                     filters=None
                                     ).id
-            server=conn.create_server(
-                            name=server_name,
-                            image=i_id,
-                            flavor=f_id,
-                            network=n_id,
-                            security_groups=s_id,
-                            availability_zone=aval_z,
-                            key_name=key_name
-                        )
-            wait = conn.wait_for_server(conn.get_server(server_name), auto_ip=False)
-            server_munch = conn.get_server(name_or_id=server_name)#.private_v4
+
+            server = conn.create_server(
+                    name=server_name,
+                    image=i_id,
+                    flavor=f_id,
+                    network=n_id,
+                    security_groups=s_id,
+                    availability_zone=aval_z,
+                    key_name=key_name,
+                    min_count=min_count,
+                    max_count=max_count
+                )
+            if min_count > 1 or max_count > 1:
+                time.sleep(30)
+                logger.info("\nServer Created Successfully!")
+            else:
+                wait = conn.wait_for_server(conn.get_server(server_name), auto_ip=False)
+                logger.info("\nServer Created Successfully!")
+
+            server_munch = conn.get_server(name_or_id=server_name)  # .private_v4
             return server_munch
         except:
             logger.info("\nUnable to create server!")
