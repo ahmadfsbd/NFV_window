@@ -54,7 +54,7 @@ conn=obj.os_connection_creation()
 # obj.os_flavor_ovsdpdk_creation(logger, conn, data["ovsdpdk_flavor"], 1024, 2, 40)
 # os.system("openstack keypair list")
 # obj.os_router_creation(logger, conn, data["static_router"], data["static_port"], data["static_network"])
-obj.os_server_creation(logger, conn, "centos", "m1.medium", "centos", "storage-net", "c11a0ebb-22bb-4658-9804-c20d0053412a", "nova1", "ceph-key", 1, 3)
+# obj.os_server_creation(logger, conn, "centos", "m1.medium", "centos", "storage-net", "c11a0ebb-22bb-4658-9804-c20d0053412a", "nova1", "ceph-key", 1, 3)
 # obj.os_keypair_creation_with_key_file(logger, conn, data["key_name"], data["key_file_path"])
 
 delete_object = Os_Deletion_Modules()
@@ -125,12 +125,12 @@ conn_delete = delete_object.os_connection_creation()
 #                                                             "router",
 #                                                             "port1", "port2")
 
-obj.os_create_instance_snapshot(logger, conn, "centos_snap", "centos-1", wait=True)
+# obj.os_create_instance_snapshot(logger, conn, "centos_snap", "centos-1", wait=True)
 #
 #
-os.system("openstack image list")
+# os.system("openstack image list")
 
-obj.os_server_creation(logger, conn, "centos_snap_vm", "m1.medium", "centos_snap", "storage-net", "c11a0ebb-22bb-4658-9804-c20d0053412a", "nova2", "ceph-key", 1, 3)
+obj.os_server_creation(logger, conn, "centos_snap_vm", "ceph-flavor-2", "ceph_med_vm_snap", "storage-net", "c11a0ebb-22bb-4658-9804-c20d0053412a", "nova2", "ceph-key")
 
-delete_object.os_delete_server(logger, conn_delete, "centos", 1, 3)
-delete_object.os_delete_server(logger, conn_delete, "centos_snap_vm", 1, 3)
+# delete_object.os_delete_server(logger, conn_delete, "centos", 1, 3)
+# delete_object.os_delete_server(logger, conn_delete, "centos_snap_vm", 1, 3)
