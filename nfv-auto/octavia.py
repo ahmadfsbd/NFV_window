@@ -15,6 +15,7 @@ import logging
 from logging.handlers import TimedRotatingFileHandler
 import datetime
 
+f_ip=""
 feature_name = "OCTAVIA"
 
 monthdict = {"01": "JAN", "02": "FEB" ,"03": "MAR", "04": "APR", "05": "MAY", "06": "JUNE", "07": "JULY",
@@ -96,6 +97,8 @@ def octavia_deployement_test_case_1(router_name,
                                                         member1_name, member2_name,
                                                         delete_all=False
                                                         ):
+    global f_ip
+    logger.info("f_ip value %s" %f_ip)
     logger.info("==========================================================================================================")
     logger.info("====         OCTAVIA TEST CASE 1:      CREATE A LOADBALANCER and Verify it By sending HTTP TRAFFIC.  =====")
     logger.info("==========================================================================================================")
@@ -112,7 +115,7 @@ def octavia_deployement_test_case_1(router_name,
     #                                                            server1_name, server2_name,
     #                                                            network_name,
     #                                                            router_name, port_name)
-    #
+    # #
     # exit()
     try:
         ip_list  = creation_object.create_2_instances_on_same_compute_same_network(logger, conn_create, server1_name, server2_name, network_name,
@@ -148,54 +151,59 @@ def octavia_deployement_test_case_1(router_name,
             ssh_obj.execute_command_show_output(logger, "sudo systemctl status nginx")
             ssh_obj.execute_command_show_output(logger, "sudo systemctl enable nginx")
             ssh_obj.execute_command_show_output(logger, "sudo systemctl status nginx")
-
+            ###-------------------------------------==================-------------------------------------------------------%%%%%%%%%%%%%%%%%%%%%%
+            ###-------------------------------------For Installing Fio-------------------------------------------------------%%%%%%%%%%%%%%%%%%%%%%
+            ###-------------------------------------==================-------------------------------------------------------%%%%%%%%%%%%%%%%%%%%%%
+            ssh_obj.execute_command_show_output(logger, "sudo yum install fio -y")
+            ###-------------------------------------==================-------------------------------------------------------%%%%%%%%%%%%%%%%%%%%%%
+            ###-------------------------------------==================-------------------------------------------------------%%%%%%%%%%%%%%%%%%%%%%
             ssh_obj.execute_command_show_output(logger, "sudo cat /usr/share/nginx/html/index.html")
             ssh_obj.execute_command_show_output(logger,"sudo sed -i '14 s/nginx/nginx %s VM %s/' /usr/share/nginx/html/index.html" %(ip_list[i], count))
             ssh_obj.execute_command_show_output(logger, "sudo cat /usr/share/nginx/html/index.html")
             count = count + 1
             ssh_obj.ssh_close()
         # pdb.set_trace()
-        logger.info("Loadbalancer creating..")
-        os.system("openstack loadbalancer create --name %s --vip-subnet-id %s" % (lb_name,subnet_name))
-        time.sleep (120)
-        os.system("openstack loadbalancer show %s" % (lb_name))
-        logger.info("Listener creating..")
-        os.system("openstack loadbalancer listener create --name %s --protocol %s --protocol-port %s %s" % (listener_name, protocol, protocol_id, lb_name))
-        time.sleep(5)
-        logger.info("Pool creating..")
-        os.system("openstack loadbalancer pool create --name %s --lb-algorithm %s --listener %s --protocol %s" % (pool_name, algorithm, listener_name, protocol))
-        time.sleep(5)
-        logger.info("Member1 creating..")
-        os.system("openstack loadbalancer member create --name %s --subnet-id %s --address %s --protocol-port %s %s" % (member1_name, subnet_name, ip_list[1], protocol_id ,pool_name))
-        time.sleep(5)
-        logger.info("Member2 creating..")
-        os.system("openstack loadbalancer member create --name %s --subnet-id %s --address %s --protocol-port %s %s" % (member2_name, subnet_name, ip_list[3], protocol_id ,pool_name))
-        time.sleep(5)
-        os.system("openstack loadbalancer list")
-        os.system("openstack loadbalancer listener list")
-        os.system("openstack loadbalancer pool list")
-        os.system("openstack loadbalancer member list %s" % pool_name)
-
-
-        floating_ip = creation_object.os_floating_ip_creation(logger, conn_create)
-        f_ip=str(floating_ip['floating_ip_address'])
-        lb_command="openstack loadbalancer show %s" % lb_name
-        lb_data = ssh_obj.locally_execute_command(lb_command)
-        logger.info(lb_data)
-        out = str(lb_data.split("\n")[18].split("|")[2].strip())
-        vip_port_id = str(out)
-        ssh_obj.locally_execute_command("openstack floating ip set --port %s %s"%(vip_port_id, f_ip))
-        os.system("openstack loadbalancer list")
-        logger.info("Testing LB working.......")
-        # os.system("for i in {1..6} ; do curl -w \"\n\" %s ; done" %f_ip)
-        res = ssh_obj.locally_execute_command("for i in {1..6} ; do curl -w \"\n\" %s ; done" %f_ip)
-        logger.info(res)
-        vm1_ip = ip_list[0]
-        vm2_ip = ip_list[2]
-        if vm1_ip in res and vm2_ip in res:
-            logger.info("Test Successful")
-        else:
-            logger.info("Test Failed")
+        # logger.info("Loadbalancer creating..")
+        # os.system("openstack loadbalancer create --name %s --vip-subnet-id %s" % (lb_name,subnet_name))
+        # time.sleep (120)
+        # os.system("openstack loadbalancer show %s" % (lb_name))
+        # logger.info("Listener creating..")
+        # os.system("openstack loadbalancer listener create --name %s --protocol %s --protocol-port %s %s" % (listener_name, protocol, protocol_id, lb_name))
+        # time.sleep(5)
+        # logger.info("Pool creating..")
+        # os.system("openstack loadbalancer pool create --name %s --lb-algorithm %s --listener %s --protocol %s" % (pool_name, algorithm, listener_name, protocol))
+        # time.sleep(5)
+        # logger.info("Member1 creating..")
+        # os.system("openstack loadbalancer member create --name %s --subnet-id %s --address %s --protocol-port %s %s" % (member1_name, subnet_name, ip_list[1], protocol_id ,pool_name))
+        # time.sleep(5)
+        # logger.info("Member2 creating..")
+        # os.system("openstack loadbalancer member create --name %s --subnet-id %s --address %s --protocol-port %s %s" % (member2_name, subnet_name, ip_list[3], protocol_id ,pool_name))
+        # time.sleep(5)
+        # os.system("openstack loadbalancer list")
+        # os.system("openstack loadbalancer listener list")
+        # os.system("openstack loadbalancer pool list")
+        # os.system("openstack loadbalancer member list %s" % pool_name)
+        #
+        #
+        # floating_ip = creation_object.os_floating_ip_creation(logger, conn_create)
+        # f_ip=str(floating_ip['floating_ip_address'])
+        # lb_command="openstack loadbalancer show %s" % lb_name
+        # lb_data = ssh_obj.locally_execute_command(lb_command)
+        # logger.info(lb_data)
+        # out = str(lb_data.split("\n")[18].split("|")[2].strip())
+        # vip_port_id = str(out)
+        # ssh_obj.locally_execute_command("openstack floating ip set --port %s %s"%(vip_port_id, f_ip))
+        # os.system("openstack loadbalancer list")
+        # logger.info("Testing LB working.......")
+        # # os.system("for i in {1..6} ; do curl -w \"\n\" %s ; done" %f_ip)
+        # res = ssh_obj.locally_execute_command("for i in {1..6} ; do curl -w \"\n\" %s ; done" %f_ip)
+        # logger.info(res)
+        # vm1_ip = ip_list[0]
+        # vm2_ip = ip_list[2]
+        # if vm1_ip in res and vm2_ip in res:
+        #     logger.info("Test Successful")
+        # else:
+        #     logger.info("Test Failed")
         time.sleep(10)
         # pdb.set_trace()
         if delete_all:
@@ -250,29 +258,90 @@ def octavia_deployement_test_case_1(router_name,
                                                                        router_name, port_name)
 
 
+def octavia_deployement_test_case_2(
+                                        server2_name
+                                    ):
+    global f_ip
+    logger.info("f_ip value %s" %f_ip)
+    logger.info("==========================================================================================================")
+    logger.info("====         OCTAVIA TEST CASE 2:      DOWN 1 Member and See the Loadbalancer Output.  =====")
+    logger.info("==========================================================================================================")
+    try:
+        logger.info("Updating 1 Member status to pause..")
+        os.system("openstack server pause %s" % server2_name)
+        logger.info("Waiting to instance to pause....")
+        time.sleep(50)
+        logger.info("Testing LB working.......")
+        # os.system("for i in {1..6} ; do curl -w \"\n\" %s ; done" %f_ip)
+        res = ssh_obj.locally_execute_command("for i in {1..6} ; do curl -w \"\n\" %s ; done" % f_ip)
+        logger.info(res)
+        vm1_ip = ip_list[0]
+        vm2_ip = ip_list[2]
+        if vm1_ip in res and vm2_ip not in res:
+            logger.info("Test Successful")
+        else:
+            logger.info("Test Failed")
+        time.sleep(10)
+    except:
+        logger.info("Unable to execute test case 1")
+        logger.info("\nError: " + str(sys.exc_info()[0]))
+        logger.info("Cause: " + str(sys.exc_info()[1]))
+        logger.info("Line No: %s \n" % (sys.exc_info()[2].tb_lineno))
 
-server1_name = "octavia-vm1"
-server2_name = "octavia-vm2"
+
+def octavia_deployement_test_case_3(
+                                        server2_name
+                                    ):
+    global f_ip
+    logger.info("f_ip value %s" %f_ip)
+    logger.info("==========================================================================================================")
+    logger.info("====         OCTAVIA TEST CASE 3:      ADD 1 Member and See the Loadbalancer Output.  =====")
+    logger.info("==========================================================================================================")
+    try:
+        logger.info("Updating 1 Member status to resume..")
+        os.system("openstack server resume %s" % server2_name)
+        logger.info("Waiting to instance to UP....")
+        time.sleep(50)
+        logger.info("Testing LB working.......")
+        # os.system("for i in {1..6} ; do curl -w \"\n\" %s ; done" %f_ip)
+        res = ssh_obj.locally_execute_command("for i in {1..6} ; do curl -w \"\n\" %s ; done" % f_ip)
+        logger.info(res)
+        vm1_ip = ip_list[0]
+        vm2_ip = ip_list[2]
+        if vm1_ip in res and vm2_ip in res:
+            logger.info("Test Successful")
+        else:
+            logger.info("Test Failed")
+        time.sleep(10)
+    except:
+        logger.info("Unable to execute test case 1")
+        logger.info("\nError: " + str(sys.exc_info()[0]))
+        logger.info("Cause: " + str(sys.exc_info()[1]))
+        logger.info("Line No: %s \n" % (sys.exc_info()[2].tb_lineno))
+
+
+server1_name = "octavia_vm1_fio"
+server2_name = "octavia_vm2_fio"
 network_name = "octavia-network"
 subnet_name = "octavia-subnet"
 router_name = "octavia-router"
 port_name = "octavia-port"
-zone = "nova1"
+zone = "nova0"
 cidr = "192.168.70.0/24"
 gateway_ip = "192.168.70.1"
-flavor_name = "sanity_flavor"
-image_name = "centos"
-secgroup_name = "5ffacd02-d1a0-4682-abf3-b427f0c61831"
+flavor_name = "fio_flavor"
+image_name = "centos7signed"
+secgroup_name = "6be632f6-5ec6-4512-8a10-9fc550363f78"
 assign_floating_ip = True
 
-lb_name="lb1"
-listener_name="listener1"
+lb_name="lb1_http"
+listener_name="listener1_http"
 protocol="HTTP"
 protocol_id="80"
-pool_name="pool1"
+pool_name="pool1_http"
 algorithm="ROUND_ROBIN"
-member1_name="vm1_member"
-member2_name="vm2_member"
+member1_name="member1_http"
+member2_name="member2_http"
 
 octavia_deployement_test_case_1(router_name=router_name,
                                                         network_name=network_name,
@@ -283,5 +352,13 @@ octavia_deployement_test_case_1(router_name=router_name,
                                                         zone=zone, cidr=cidr,gateway_ip=gateway_ip,assign_floating_ip=assign_floating_ip,
                                                         lb_name=lb_name,listener_name=listener_name, protocol=protocol, protocol_id=protocol_id,
                                                         pool_name=pool_name, algorithm=algorithm, member1_name=member1_name, member2_name=member2_name,
-                                                        delete_all=True
+                                                        delete_all=False
                                                         )
+
+# octavia_deployement_test_case_2(
+#                                         server2_name
+#                                     )
+#
+# octavia_deployement_test_case_3(
+#                                         server2_name
+#                                     )
