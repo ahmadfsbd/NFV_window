@@ -81,11 +81,11 @@ conn_delete = delete_object.os_connection_creation()
 
 #==================R153===================#
 
-# list = ["r153-dell-compute-0.r153.nfv.lab", "r153-dell-compute-1.r153.nfv.lab", "r153-dell-compute-2.r153.nfv.lab"]
-# c = 0
-# for i in list:
-#     obj.os_aggregate_creation_and_add_host(logger, conn, "nova%s"%c, availablity_zone="nova%s"%c, host_name=i)
-#     c += 1
+list = ["r153-dell-compute-0.r153.nfv.lab", "r153-dell-compute-1.r153.nfv.lab", "r153-dell-compute-2.r153.nfv.lab"]
+c = 0
+for i in list:
+    obj.os_aggregate_creation_and_add_host(logger, conn, "nova%s"%c, availablity_zone="nova%s"%c, host_name=i)
+    c += 1
 
 
 #==================r154===================#

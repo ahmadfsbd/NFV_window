@@ -125,7 +125,6 @@ def octavia_deployement_test_case_1(router_name,
                                                         secgroup_name, assign_floating_ip)
         logger.info("output %s" % ip_list)#f1,p1,f2,p2
         # pdb.set_trace()
-
         ###### Installing nginx in VM ##########
         count = 1
         for i in range(0,3,2):
@@ -155,6 +154,7 @@ def octavia_deployement_test_case_1(router_name,
             ###-------------------------------------For Installing Fio-------------------------------------------------------%%%%%%%%%%%%%%%%%%%%%%
             ###-------------------------------------==================-------------------------------------------------------%%%%%%%%%%%%%%%%%%%%%%
             ssh_obj.execute_command_show_output(logger, "sudo yum install fio -y")
+            ssh_obj.execute_command_show_output(logger, "sudo fio -v")
             ###-------------------------------------==================-------------------------------------------------------%%%%%%%%%%%%%%%%%%%%%%
             ###-------------------------------------==================-------------------------------------------------------%%%%%%%%%%%%%%%%%%%%%%
             ssh_obj.execute_command_show_output(logger, "sudo cat /usr/share/nginx/html/index.html")
@@ -162,7 +162,7 @@ def octavia_deployement_test_case_1(router_name,
             ssh_obj.execute_command_show_output(logger, "sudo cat /usr/share/nginx/html/index.html")
             count = count + 1
             ssh_obj.ssh_close()
-        # pdb.set_trace()
+        # # pdb.set_trace()
         logger.info("Loadbalancer creating..")
         os.system("openstack loadbalancer create --name %s --vip-subnet-id %s" % (lb_name,subnet_name))
         time.sleep (120)
@@ -510,40 +510,47 @@ def octavia_deployement_test_case_3(                    lb_name, listener_name, 
 
 
 
-# server1_name = "octavia_vm1_http"
-# server2_name = "octavia_vm2_http"
-# network_name = "octavia-network-http"
-# subnet_name = "octavia-subnet-http"
-# router_name = "octavia-router"
-# port_name = "octavia-port-http"
-# zone = "nova0"
-# cidr = "192.168.70.0/24"
-# gateway_ip = "192.168.70.1"
-# flavor_name = "fio_flavor"
-# image_name = "centos7signed"
-# secgroup_name = "6be632f6-5ec6-4512-8a10-9fc550363f78"
-# assign_floating_ip = True
+server1_name = "octavia_vm1_http"
+server2_name = "octavia_vm2_http"
+network_name = "octavia-network-http"
+subnet_name = "octavia-subnet-http"
+router_name = "octavia-router"
+port_name = "octavia-port-http"
+zone = "nova0"
+cidr = "192.168.70.0/24"
+gateway_ip = "192.168.70.1"
+flavor_name = "fio_flavor"
+image_name = "centos"
+secgroup_name = "1e54f492-4db9-4467-b677-d7d0ca1de927"
+assign_floating_ip = True
 #
-# lb_name="lb1_http"
-# listener_name="listener1_http"
-# protocol="HTTP"
-# protocol_id="80"
-# pool_name="pool1_http"
-# algorithm="ROUND_ROBIN"
-# member1_name="member1_http"
-# member2_name="member2_http"
+lb_name="lb1_http"
+listener_name="listener1_http"
+protocol="HTTP"
+protocol_id="80"
+pool_name="pool1_http"
+algorithm="ROUND_ROBIN"
+member1_name="member1_http"
+member2_name="member2_http"
 #
-# octavia_deployement_test_case_1(router_name=router_name,
-#                                                         network_name=network_name,
-#                                                         subnet_name=subnet_name,
-#                                                         port_name=port_name,
-#                                                         server1_name=server1_name,server2_name=server2_name,
-#                                                         image_name=image_name,flavor_name=flavor_name,secgroup_name=secgroup_name,
-#                                                         zone=zone, cidr=cidr,gateway_ip=gateway_ip,assign_floating_ip=assign_floating_ip,
-#                                                         lb_name=lb_name,listener_name=listener_name, protocol=protocol, protocol_id=protocol_id,
-#                                                         pool_name=pool_name, algorithm=algorithm, member1_name=member1_name, member2_name=member2_name,
-#                                                         delete_all=False
-#                                                         )
+
+server1_name = "ceph-vm1"
+server2_name = "ceph-vm2"
+network_name = "ceph-net"
+subnet_name = "ceph-subnet"
+router_name = "ceph-router"
+port_name = "ceph-port-http"
+octavia_deployement_test_case_1(router_name=router_name,
+                                                        network_name=network_name,
+                                                        subnet_name=subnet_name,
+                                                        port_name=port_name,
+                                                        server1_name=server1_name,server2_name=server2_name,
+                                                        image_name=image_name,flavor_name=flavor_name,secgroup_name=secgroup_name,
+                                                        zone=zone, cidr=cidr,gateway_ip=gateway_ip,assign_floating_ip=assign_floating_ip,
+                                                        lb_name=lb_name,listener_name=listener_name, protocol=protocol, protocol_id=protocol_id,
+                                                        pool_name=pool_name, algorithm=algorithm, member1_name=member1_name, member2_name=member2_name,
+                                                        delete_all=False
+                                                        )
 # server1_name = "octavia_vm1_tcp"
 # server2_name = "octavia_vm2_ycp"
 # network_name = "octavia-network-tcp"
@@ -555,7 +562,7 @@ def octavia_deployement_test_case_3(                    lb_name, listener_name, 
 # gateway_ip = "192.168.80.1"
 # flavor_name = "fio_flavor"
 # image_name = "centos7signed"
-# secgroup_name = "6be632f6-5ec6-4512-8a10-9fc550363f78"
+# secgroup_name = "1e54f492-4db9-4467-b677-d7d0ca1de927"
 # assign_floating_ip = True
 #
 # lb_name="lb1_tcp"
@@ -587,3 +594,72 @@ def octavia_deployement_test_case_3(                    lb_name, listener_name, 
 # octavia_deployement_test_case_3(                    lb_name, listener_name, protocol, protocol_id, pool_name, algorithm,
 #                                                         delete_all=False
 #                                                         )
+################################################################################################################
+####################### NOT NEEDED==============================================================================
+################################################################################################################
+# def http_lb_session_persistence(lb_name,listener_name,protocol,protocol_id,pool_name,algorithm):
+#     logger.info ("Creating http Load Balancer....")
+#     os.system("openstack loadbalancer create --name %s --vip-subnet-id %s" %(lb_name,subnet_name))
+#     time.sleep(1200)
+#     logger.info("============================== Load Balancer ================================")
+#     os.system("openstack loadbalancer show %s" %(lb_name))
+#     logger.info ("Creating Listener....")
+#     os.system("openstack loadbalancer listener create --name %s --protocol HTTP --protocol-port 80 %s " %(listener_name,lb_name))
+#     logger.info ("Creating the Listener default pool....")
+#     os.system("openstack loadbalancer pool create --name %s --lb-algorithm %s --listener %s --protocol % --session-persistence type=APP_COOKIE,cookie_name=PHPSESSIONID " %(pool_name,algorithm,listener_name,protocol_id))
+################################################################################################################################################################################################################################
+################################################################################################################################################################################################################################
+########################################################
+# def qos_ruled_lb_test_case_15(qos_policy_name,qos_type,lb_name,public_subnet,listener_name,protocol,pool_name,algorithm,private_subnet,instance1_address,instance2_address):
+#     logger.info("Creating Policy...")
+#     os.system("openstack network qos policy create %s" %qos_policy_name)
+#     logger.info("Creating Rule...")
+#     os.system("openstack network qos rule create --type %s --max-kbps 1024 --max-burst-kbits 1024 %s" %(qos_type,qos_policy_name))
+#     logger.info("Creating Load Balancer...")
+#     os.system("openstack loadbalancer create --name %s --vip-subnet-id %s --vip-qos-policy-id %s" %(lb_name,public_subnet,qos_policy_name))
+#     time.sleep(120)
+#     logger.info ("Creating Listener....")
+#     os.system("openstack loadbalancer listener create --name %s --protocol %s --protocol-port 80 %s" %(listener_name,protocol,lb_name))
+#     logger.info ("Creating LB Pool....")
+#     os.system("openstack loadbalancer pool create --name %s --lb-algorithm %s --listener %s --protocol %s" %(pool_name,algorithm,listener_name,protocol))
+#     logger.info ("Adding Instances to Pool....")
+#     os.system("openstack loadbalancer member create --subnet-id %s --address %s --protocol-port 80 %s" %(private_subnet,instance1_address,pool_name))
+#     os.system("openstack loadbalancer member create --subnet-id %s --address %s --protocol-port 80 %s" %(private_subnet, instance2_address, pool_name))
+
+###############################################################################
+# def create_loadbalancer_L7_policy_test_case_16(listener_name,protocol,protocol_id,lb_name,redirect_url,l7policy_name,action_url):
+#     logger.info("Creating Listener....")
+#     os.system("openstack loadbalancer listener create --name %s --protocol %s --protocol-port %s %s" %(listener_name,protocol,protocol_id,lb_name))
+#     time.sleep(120)
+#     logger.info("Creating l7policy....")
+#     os.system("openstack loadbalancer l7policy create --action %s --redirect-url %s --name %s %s" %(action_url,redirect_url,l7policy_name,listener_name))
+#     logger.info("Creating l7rule....")
+#     os.system("openstack loadbalancer l7rule create --compare-type STARTS_WITH --type PATH --value / %s" %l7policy_name)
+############################################################################
+# def create_static_pool_with_previous_listener_and_create_L7_policy_test_17(algorithm,lb_name,pool_name,protocol,private_subnet,instance1_address,instance2_address,l7policy_name,listener_name,l7policy_name2,action_url):
+#     logger.info("Creating Pool....")
+#     os.system("openstack loadbalancer pool create --lb-algorithm %s --loadbalancer %s --name %s --protocol %s" %(algorithm,lb_name,pool_name,protocol))
+#     logger.info("Creating two members....")
+#     os.system("openstack loadbalancer member create --subnet-id %s --address %s --protocol-port %s %s" %(private_subnet, instance1_address,protocol_id, pool_name))
+#     os.system("openstack loadbalancer member create --subnet-id %s --address %s --protocol-port %s %s" %(private_subnet, instance2_address,protocol_id, pool_name))
+#     logger.info("Creating L7 Policy policy1 with action.....")
+#     os.system("openstack loadbalancer l7policy create --action %s --redirect-pool %s --name %s %s" %(action_url,pool_name,l7policy_name,listener_name))
+#     logger.info("Creating L7 Policy policy2 with action.....")
+####################################################################################################
+#
+# qos_policy_name="qos-policy-bandwidth"
+# qos_type="bandwidth_limit"
+# public_subnet="public-subnet"
+# private_subnet="private-subnet"
+# instance1_address="192.168.10.11"
+# instance2_address="192.168.10.12"
+# l7policy_name="policy1"
+# l7policy_name2="policy2"
+# redirect_url="https://www.example.com/"
+# action_url="google.com"
+
+
+
+
+###################################
+# qos_ruled_lb_test_case_15(qos_policy_name,qos_type,lb_name,public_subnet,listener_name,protocol,pool_name,algorithm,private_subnet,instance1_address,instance2_address)

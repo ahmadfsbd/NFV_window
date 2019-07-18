@@ -50,7 +50,15 @@
 
 #for i in {1..10};do openstack port list --server "ceph-nova0-vm-$i" | awk -F "|" '/-/ {print $2}' | xargs -I{} openstack floating ip create --port {} public; echo "attached and created ceph-nova0-vm-$i"; done
 #for i in {1..10};do openstack port list --server "ceph-nova1-vm-$i" | awk -F "|" '/-/ {print $2}' | xargs -I{} openstack floating ip create --port {} public; echo "attached and created ceph-nova0-vm-$i"; done
-for i in {7..10};do openstack port list --server "ceph-nova2-vm-$i" | awk -F "|" '/-/ {print $2}' | xargs -I{} openstack floating ip create --port {} public; echo "attached and created ceph-nova0-vm-$i"; done
+#for i in {7..10};do openstack port list --server "ceph-nova2-vm-$i" | awk -F "|" '/-/ {print $2}' | xargs -I{} openstack floating ip create --port {} public; echo "attached and created ceph-nova0-vm-$i"; done
 #########=========================================================================================######################
 #for i in {1..30}; do openstack server add floating ip "${net2_vm_list[$((i))]}" "${net2_floating_ip[$((i))]}" && echo "openstack server add floating ip "${net1_floating_ip[$((i))]}" "${net1_vm_list[$((i))]}""; done
 #########=========================================================================================######################
+
+
+openstack server create --image fio_image --flavor fio_flavor --network octavia-network --security-group 6be632f6-5ec6-4512-8a10-9fc550363f78 --key-name barbican_keypair --availability-zone nova0  ceph-nova0-vm-3
+openstack server create --image fio_image --flavor fio_flavor --network octavia-network --security-group 6be632f6-5ec6-4512-8a10-9fc550363f78 --key-name barbican_keypair --availability-zone nova0  ceph-nova0-vm-7
+openstack server create --image fio_image --flavor fio_flavor --network octavia-network --security-group 6be632f6-5ec6-4512-8a10-9fc550363f78 --key-name barbican_keypair --availability-zone nova0  ceph-nova0-vm-10
+openstack server create --image fio_image --flavor fio_flavor --network octavia-network --security-group 6be632f6-5ec6-4512-8a10-9fc550363f78 --key-name barbican_keypair --availability-zone nova1  ceph-nova1-vm-3
+openstack server create --image fio_image --flavor fio_flavor --network octavia-network --security-group 6be632f6-5ec6-4512-8a10-9fc550363f78 --key-name barbican_keypair --availability-zone nova1  ceph-nova1-vm-5
+openstack server create --image fio_image --flavor fio_flavor --network octavia-network --security-group 6be632f6-5ec6-4512-8a10-9fc550363f78 --key-name barbican_keypair --availability-zone nova2  ceph-nova2-vm-4
