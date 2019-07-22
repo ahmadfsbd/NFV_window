@@ -119,7 +119,30 @@ def verify_nova():
    os.system("source ~/overcloud && crudini --get /etc/nova/nova.conf key_manager backend castellan.key_manager.barbican_key_manager.BarbicanKeyManager")
 """
 #######################
-      
+###BARBICAN IMAGE CREATION ENCRYPTED
+#######################
+def encrypted_image_creation():
+   # os.system("for i in {1..6};do $(cat /etc/hosts);done")
+   os.system("echo 'ENCRYPTED IMAGE CREATION...'")
+   print("========================== Listing Images =============================")
+   os.system("openstack image list")
+   print("========================== Creating Private Key =============================")
+   os.system("openssl genrsa -out private_key.pem 1024")
+   os.system("openssl rsa -pubout -in private_key.pem -out public_key.pem")
+   os.system("openssl req -new -key private_key.pem -out cert_request.csr")
+   os.system("openssl x509 -req -days 14 -in cert_request.csr -signkey private_key.pem -out x509_signing_cert.crt")
+   print("========================== Adding Key to Barbican Key Store =============================")
+   # os.system("openstack secret store --name signing-cert --algorithm RSA --secret-type certificate --payload-content-type "application/octet-stream" --payload-content-encoding base64  --payload "$(base64 x509_signing_cert.crt)" -c 'Secret href' -f value")
+   return 0
+
+
+
+
+
+
+
+
+
 """command_function(com)
 com="cd /home/osp_admin;pwd"
 command_function(com)
@@ -127,5 +150,6 @@ com="pwd"
 command_function(com)
 """
 ################################### Functions Call ################################
-launch_instance()
+# launch_instance()
 
+encrypted_image_creation()

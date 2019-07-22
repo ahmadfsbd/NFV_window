@@ -392,7 +392,7 @@ def dvr_deployement_test_case_12(controller_ip_list, username, network_name, sub
             logger.info(check)
             ssh_2.close()
             logger.info (res1)
-            if "google-public-dns-a.google.com > %s"%private_ip in res1 and "%s > google-public-dns-a.google.com"%private_ip in res1:
+            if "google-public-dns-a.google.com > %s"%private_ip in res1 and "%s > google-public-dns-a.google.com"%private_ip in res1 or "dns.google > %s"%private_ip in res1 and "%s > dns.google"%private_ip in res1:
                 logger.info("TEST SUCCESSFUL for interface %s" % interface)
                 count += 1
             else:
@@ -1421,19 +1421,19 @@ cidr1 = "192.168.30.0/24"
 gateway_ip1 = "192.168.30.1"
 cidr2 = "192.168.40.0/24"
 gateway_ip2 = "192.168.40.1"
-flavor_name = "last"
+flavor_name = "m1.medium"
 image_name = "centos"
-secgroup_name = "last"
+secgroup_name = "1e54f492-4db9-4467-b677-d7d0ca1de927"
 assign_floating_ip = False
 #test_case_30()
-dvr_deployement_test_case_11(controller_ip,username,router_name,
-                                                        network1_name,network2_name,
-                                                        subnet1_name,subnet2_name,
-                                                        port1_name,port2_name,
-                                                        server1_name,server2_name,
-                                                        image_name,flavor_name,secgroup_name,
-                                                        zone1,zone2, cidr1,gateway_ip1,
-                                                        cidr2, gateway_ip2)
+# dvr_deployement_test_case_11(controller_ip,username,router_name,
+#                                                         network1_name,network2_name,
+#                                                         subnet1_name,subnet2_name,
+#                                                         port1_name,port2_name,
+#                                                         server1_name,server2_name,
+#                                                         image_name,flavor_name,secgroup_name,
+#                                                         zone1,zone2, cidr1,gateway_ip1,
+#                                                         cidr2, gateway_ip2)
 
 # dvr_deployement_test_case_16(username,network_name,cidr,gateway_ip,subnet_name,router_name,port_name,server_name,image_name,flavor_name,secgroup_name,zone)
 # dvr_deployement_test_case_29(username, server1_name, server2_name, network_name, subnet_name,
@@ -1531,12 +1531,12 @@ logger.info ("Compute ip's %s" %compute)
 
 # dvr_deployement_test_case_13(controller_ip_list=controller, username=stamp_user, network_name=data["network_name"],
 #                           subnet_name=data["subnet_name"], router_name=data["router_name"], port_name=data["port_name"], server_name=data["server_name"],
-#                                  image_name=data["static_image"], flavor_name=data["static_flavor"],
+#                                  image_name=data["encrypted_image"], flavor_name=data["static_flavor"],
 #                              secgroup_name=data["static_secgroup"], zone=data["zone1"], cidr=data["cidr"], gateway_ip=data["gateway_ip"])
 
 # dvr_deployement_test_case_12(controller_ip_list=controller, username=stamp_user, network_name=data["network_name"],
 #                              subnet_name=data["subnet_name"], router_name=data["router_name"], port_name=data["port_name"], server_name=data["server_name"],
-#                                  image_name=data["static_image"], flavor_name=data["static_flavor"],
+#                                  image_name=data["encrypted_image"], flavor_name=data["static_flavor"],
 #                              secgroup_name=data["static_secgroup"], zone=data["zone1"], cidr=data["cidr"], gateway_ip=data["gateway_ip"])
 
 # dvr_deployement_test_case_11(controller_ip=controller[0], username=stamp_user, router_name=data["router_name"],
@@ -1544,7 +1544,7 @@ logger.info ("Compute ip's %s" %compute)
 #                                                        subnet1_name=data["subnet1_name"], subnet2_name=data["subnet2_name"],
 #                                                        port1_name=data["port1_name"], port2_name=data["port2_name"],
 #                                                        server1_name=data["server1_name"], server2_name=data["server2_name"],
-#                                                        image_name=data["static_image"],
+#                                                        image_name=data["encrypted_image"],
 #                                                        flavor_name=data["static_flavor"],
 #                                                        secgroup_name=data["static_secgroup"],
 #                                                        zone1=data["zone2"], zone2=data["zone3"],
@@ -1559,4 +1559,10 @@ logger.info ("Compute ip's %s" %compute)
 # #
 # dvr_deployement_test_case_4(controller, stamp_user)#DONE
 
-
+# ssh_obj.ssh_to(logger, "192.168.120.21", "heat-admin")
+# ssh_obj.send_key_if_not_present(logger, destination_path="/home/heat-admin/dvr-key.pem")
+# check = ssh_obj.ping_check_from_namespace(logger, namespace_id="qdhcp-75499bf9-6c48-4020-b39b-70041377240f", ip_of_instance1="192.168.70.6",
+#                                                       username_of_instance="centos",
+#                                                       key_file_path_of_node="/home/heat-admin/dvr-key.pem",
+#                                                       ip_of_instance2="8.8.8.8")
+# ssh_obj.ssh_close()

@@ -519,8 +519,8 @@ port_name = "octavia-port-http"
 zone = "nova0"
 cidr = "192.168.70.0/24"
 gateway_ip = "192.168.70.1"
-flavor_name = "fio_flavor"
-image_name = "centos"
+flavor_name = "m1.medium"
+image_name = "centos_7_signed"
 secgroup_name = "1e54f492-4db9-4467-b677-d7d0ca1de927"
 assign_floating_ip = True
 #
@@ -534,12 +534,12 @@ member1_name="member1_http"
 member2_name="member2_http"
 #
 
-server1_name = "ceph-vm1"
-server2_name = "ceph-vm2"
-network_name = "ceph-net"
-subnet_name = "ceph-subnet"
-router_name = "ceph-router"
-port_name = "ceph-port-http"
+# server1_name = "ceph-vm1"
+# server2_name = "ceph-vm2"
+# network_name = "ceph-net"
+# subnet_name = "ceph-subnet"
+# router_name = "ceph-router"
+# port_name = "ceph-port-http"
 octavia_deployement_test_case_1(router_name=router_name,
                                                         network_name=network_name,
                                                         subnet_name=subnet_name,

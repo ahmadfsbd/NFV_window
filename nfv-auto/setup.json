@@ -26,6 +26,7 @@
 	"static_flavor"				: "sanity_flavor",
 	"ovsdpdk_flavor"			: "ovs_dpdk_flavor",
 	"static_image"				: "centos",
+	"encrypted_image"			: "centos_7_signed",
 	"static_network" 			: "st_network",
 	"static_subnet"				: "st_subnet",
 	"static_cidr"				: "192.168.20.0/24",
