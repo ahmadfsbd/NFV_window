@@ -1,9 +1,9 @@
 {
   "static_image"				  : "centos",
   "static_network" 			      : "st_network",
-  "static_secgroup"			      : "22fe8845-d40a-4ab9-8ea9-10b893c0c764",
+  "static_secgroup"			      : "758b4788-b066-4762-a3e0-c2edfab4edf4",
   "static_flavor"                 : "sanity_flavor",
-  "ovsdpdk_flavor"                : "sanity_flavor",
+  "ovsdpdk_flavor"                : "dpdk-flavor",
   "network_name"                  : "sriov_dpdk_net",
   "sriov_network"                 : "sriov_dpdk_net1",
   "dpdk_network"                  : "sriov_dpdk_net2",
