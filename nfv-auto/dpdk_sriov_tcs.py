@@ -1402,7 +1402,7 @@ network_bool = True
 subnet_bool = True
 port_bool = True
 flav_name = "dpdk-flavor"
-zone    = "nova1"
+zone    = "nova2"
 image_name= "centos"
 server_name = "sriov-vm1"
 sec_group_name="758b4788-b066-4762-a3e0-c2edfab4edf4"
@@ -1411,14 +1411,14 @@ router_name="sriov_router_1"
 #
 #
 #
-test_case_1(network_name, port_name,router_name, subnet_name=subnet_name, cidr=cidr, gateway=gateway,
-                                        network_bool=network_bool, subnet_bool=subnet_bool, port_bool=port_bool,
-                                                            flavor_name=flav_name,
-                                                         availability_zone=zone,
-                                                         image_name=image_name,
-                                                         server_name=server_name,
-                                                         security_group_name=sec_group_name,
-                                                         key_name=key_name, deleteall=True)
+# test_case_1(network_name, port_name,router_name, subnet_name=subnet_name, cidr=cidr, gateway=gateway,
+#                                         network_bool=network_bool, subnet_bool=subnet_bool, port_bool=port_bool,
+#                                                             flavor_name=flav_name,
+#                                                          availability_zone=zone,
+#                                                          image_name=image_name,
+#                                                          server_name=server_name,
+#                                                          security_group_name=sec_group_name,
+#                                                          key_name=key_name, deleteall=True)
 # time.sleep(2)
 # test_case_2(network_name, port_name,router_name, subnet_name=subnet_name, cidr=cidr, gateway=gateway,
 #                                         network_bool=network_bool, subnet_bool=subnet_bool, port_bool=port_bool,
@@ -1436,13 +1436,13 @@ test_case_1(network_name, port_name,router_name, subnet_name=subnet_name, cidr=c
 #            router_name="senario1_sriov_router",
 #            port1_name="senario1_sriov_port1",
 #            port2_name="senario1_sriov_port2",
-#            zone="nova0",
+#            zone="nova2",
 #            cidr="192.168.200.0/24",
 #            gateway_ip="192.168.200.1",
 #            flavor_name="sanity_flavor",
 #            image_name="centos",
 #            secgroup_name="758b4788-b066-4762-a3e0-c2edfab4edf4",
-#            key_name="sriov-key",
+#            key_name="ssh-key",
 #            deleteall=True)
 # time.sleep(2)
 # test_case4(server1_name="senario2_vm_1",
@@ -1452,13 +1452,13 @@ test_case_1(network_name, port_name,router_name, subnet_name=subnet_name, cidr=c
 #            router_name="senario2_sriov_router",
 #            port1_name="senario2_sriov_port1",
 #            port2_name="senario2_sriov_port2",
-#            zone1="nova0",zone2="nova0",
+#            zone1="nova1",zone2="nova2",
 #            cidr="192.168.210.0/24",
 #            gateway_ip="192.168.210.1",
 #            flavor_name="sanity_flavor",
 #            image_name="centos",
 #            secgroup_name="758b4788-b066-4762-a3e0-c2edfab4edf4",
-#            key_name="sriov-key",
+#            key_name="ssh-key",
 #            deleteall=True)
 # time.sleep(2)
 # test_case5()
@@ -1515,7 +1515,7 @@ gateway = "192.168.100.1"
 #     sriov_cidr="192.168.70.0/24", sriov_gateway="192.168.70.1",
 #         dpdk_cidr="192.168.80.0/24", dpdk_gateway="192.168.80.1",
 #     network_bool=False, subnet_bool=False, port_bool=False,
-#     router_name="sriov_dpdk_router", zone="nova0",
+#     router_name="sriov_dpdk_router", zone="nova2",
 #     image="centos", sriov_server="s_instance", dpdk_server="d_instance",
 #     key_name=data["key_name"], secgroup=data["static_secgroup"],
 # deleteall=True
@@ -1527,7 +1527,7 @@ gateway = "192.168.100.1"
 #     sriov_cidr="192.168.70.0/24", sriov_gateway="192.168.70.1",
 #         dpdk_cidr="192.168.80.0/24", dpdk_gateway="192.168.80.1",
 #     network_bool=False, subnet_bool=False, port_bool=False,
-#     router_name="sriov_dpdk_router", zone1="nova0", zone2="nova2",
+#     router_name="sriov_dpdk_router", zone1="nova1", zone2="nova2",
 #     image="centos", sriov_server="s_instance", dpdk_server="d_instance",
 #     key_name=data["key_name"], secgroup=data["static_secgroup"],
 # deleteall=True

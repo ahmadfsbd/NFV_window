@@ -68,6 +68,7 @@ conn_delete = delete_object.os_connection_creation()
 # os.system("openstack keypair create dvr-key > dvr-key.pem")
 # os.system("openstack keypair create static-key > static-key.pem")
 os.system("openstack keypair create ssh-key > /home/osp_admin/ssh-key.pem")
+os.system("chmod 400 osp_admin/ssh-key.pem")
 os.system("openstack keypair list")
 
 os.system("openstack flavor create dpdk-flavor --ram 4096 --disk 30 --vcpus 4")
