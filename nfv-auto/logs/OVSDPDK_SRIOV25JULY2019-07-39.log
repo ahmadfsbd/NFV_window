@@ -65,3 +65,34 @@ Router already exists.
 Creating Server with Port ID..
 Creating & Assigning Floating IP..
 Instance >> Fixed IP: (192.168.210.29) , Floating IP: (100.67.153.72)
+PING 192.168.210.29 (192.168.210.29) 56(84) bytes of data.
+64 bytes from 192.168.210.29: icmp_seq=1 ttl=64 time=0.080 ms
+64 bytes from 192.168.210.29: icmp_seq=2 ttl=64 time=0.041 ms
+64 bytes from 192.168.210.29: icmp_seq=3 ttl=64 time=0.039 ms
+64 bytes from 192.168.210.29: icmp_seq=4 ttl=64 time=0.039 ms
+64 bytes from 192.168.210.29: icmp_seq=5 ttl=64 time=0.039 ms
+
+--- 192.168.210.29 ping statistics ---
+5 packets transmitted, 5 received, 0% packet loss, time 3999ms
+rtt min/avg/max/mdev = 0.039/0.047/0.080/0.017 ms
+
+Test SUCCESSFUL
+Deleting Server: senario2_vm_1..
+Server Deleted successfully
+Deleting all unattached floating IPs.
+Deleting Server: senario2_vm_2..
+Server Deleted successfully
+Deleting all unattached floating IPs.
+Deleting Network & Router..
+Deleting Interfaces..
+Interface Deleted successfully
+Deleting Port..
+Port Deleted successfully
+Deleting Port..
+Port Deleted successfully
+Deleting Subnetwork..
+Subnet Deleted successfully
+Deleting Network..
+Network Deleted successfully
+Deleting Router..
+Router Deleted successfully

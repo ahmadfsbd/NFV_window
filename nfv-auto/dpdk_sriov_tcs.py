@@ -450,6 +450,10 @@ def test_case8(flavor_name, availability_zone, image_name, port_name, server_nam
     logger.info("====  TEST CASE 8:Create an Instance on OVS-DPDK enabled compute node with all necessary metadata tags====")
     logger.info("====      i-e cpu_policy, cpu_thread_policy, mem_page_size, numa_nodes and numa_mempolicy in mode 2.. ====")
     logger.info("==========================================================================================================")
+    # delete_object.delete_1_instance_and_router_with_1_network(logger, conn_delete, server_name=server_name,
+    #                                                           network_name=network_name,
+    #                                                           router_name=router_name, port_name=port_name)
+    # exit()
     try:
         # flavor = creation_object.os_flavor_ovsdpdk_creation(logger, conn_create, name=flavor_name,
         #                                            ram=4096, vcpus=6, disk=40)
@@ -459,7 +463,7 @@ def test_case8(flavor_name, availability_zone, image_name, port_name, server_nam
                                                                  router_name=router_name,
                                                                  subnet_name=subnet_name,
                                                                  cidr=cidr, gateway=gateway,
-                                        flavor_name="sanity_flavor",
+                                        flavor_name=flavor_name,
                                         availability_zone=availability_zone,
                                         image_name=image_name,
                                         server_name=server_name,
@@ -1467,7 +1471,7 @@ router_name="sriov_router_1"
 # time.sleep(2)
 # test_case7()
 # time.sleep(2)
-fla = "dpdk-flavor"
+fla = "huge-flavor"
 zone="nova0"
 img="centos"
 secg="758b4788-b066-4762-a3e0-c2edfab4edf4"
@@ -1492,10 +1496,10 @@ gateway = "192.168.100.1"
 # router_name="sriov_router_1"
 
 
-# test_case8(flavor_name=fla, availability_zone=zone, image_name=img, port_name=por,
-#            server_name=ser, secgroup_name=secg,
-#                network_name=net, router_name=rout, subnet_name=subnet_name, cidr=cidr, gateway=gateway,
-#                deleteall=True)
+test_case8(flavor_name=fla, availability_zone=zone, image_name=img, port_name=por,
+           server_name=ser, secgroup_name=secg,
+               network_name=net, router_name=rout, subnet_name=subnet_name, cidr=cidr, gateway=gateway,
+               deleteall=False)
 # time.sleep(2)
 #####################################################################################################################
 # test_case9()
