@@ -14,14 +14,14 @@ import datetime
 
 ############################## Variables that will be used 
 pf_id=""
-nic id=""
+nic_id=""
 aggregate_group_name="sriov"
 compute_node="r153-dell-compute-0"
 flavor="sriov_offload_flavor"
 sriov_net_name="sriov_net"
 physical_network_name="physint"
 sriov_subnet_name="sriov_sub"
-image_name=""
+image_name="centos"
 sriov_vm_name="sriov_vm"
 sriov_port_id=""
 availablity_zone="sriov"
@@ -128,7 +128,7 @@ def create_sriov_offload_enabled_instance_test_case_7(availablity_zone,aggregate
       print("Creating key pair with the name of sriov_keypair.pem")
       os.system("openstack keypair create sriov_keypair >> sriov_keypair.pem")
       
-      os.system("openstack server create --flavor $flavor --availability-zone $availablity_zone --$image_name --nic port-id=$sriov_port_id --security-group $security_group --key-name sriov_keypair $sriov_vm_name") 
+      os.system("openstack server create --flavor $flavor --availability-zone $availablity_zone --$image_name --nic port-id=$sriov_port_id --security-group $security_group --key-name sriov_keypair $sriov_vm_name")ï¿½
       print("===================================================================================================================")
       if(os.system(openstack server show $sriov_vm_name | grep status)== "Active"):
          print("================= Test Case Completed Successfully ======================")
