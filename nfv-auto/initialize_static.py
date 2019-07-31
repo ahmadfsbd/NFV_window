@@ -67,14 +67,14 @@ conn_delete = delete_object.os_connection_creation()
 # os.system("openstack keypair create sriov-key > sriov-key.pem")
 # os.system("openstack keypair create dvr-key > dvr-key.pem")
 # os.system("openstack keypair create static-key > static-key.pem")
-os.system("openstack keypair create ssh-key > /home/osp_admin/ssh-key.pem")
-os.system("chmod 400 osp_admin/ssh-key.pem")
-os.system("openstack keypair list")
+# os.system("openstack keypair create ssh-key > /home/osp_admin/ssh-key.pem")
+# os.system("chmod 400 /home/osp_admin/ssh-key.pem")
+# os.system("openstack keypair list")
 
-os.system("openstack flavor create dpdk-flavor --ram 4096 --disk 30 --vcpus 4")
-os.system("openstack flavor set --property hw:cpu_policy=dedicated --property hw:mem_page_size=1GB dpdk-flavor")
-os.system("openstack flavor list")
-os.system("openstack image list")
+# os.system("openstack flavor create dpdk-flavor --ram 4096 --disk 30 --vcpus 4")
+# os.system("openstack flavor set --property hw:cpu_policy=dedicated --property hw:mem_page_size=1GB dpdk-flavor")
+# os.system("openstack flavor list")
+# os.system("openstack image list")
 #=================R146===================#
 
 # list = ["r146-dell-compute-0.r146.nfv.lab",

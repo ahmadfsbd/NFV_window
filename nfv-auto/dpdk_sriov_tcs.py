@@ -1409,7 +1409,7 @@ flav_name = "dpdk-flavor"
 zone    = "nova2"
 image_name= "centos"
 server_name = "sriov-vm1"
-sec_group_name="758b4788-b066-4762-a3e0-c2edfab4edf4"
+sec_group_name="1047ba76-637d-4ae2-b2ae-d3bb8ce66391"
 key_name = "ssh-key"
 router_name="sriov_router_1"
 #
@@ -1445,7 +1445,7 @@ router_name="sriov_router_1"
 #            gateway_ip="192.168.200.1",
 #            flavor_name="sanity_flavor",
 #            image_name="centos",
-#            secgroup_name="758b4788-b066-4762-a3e0-c2edfab4edf4",
+#            secgroup_name="1047ba76-637d-4ae2-b2ae-d3bb8ce66391",
 #            key_name="ssh-key",
 #            deleteall=True)
 # time.sleep(2)
@@ -1461,7 +1461,7 @@ router_name="sriov_router_1"
 #            gateway_ip="192.168.210.1",
 #            flavor_name="sanity_flavor",
 #            image_name="centos",
-#            secgroup_name="758b4788-b066-4762-a3e0-c2edfab4edf4",
+#            secgroup_name="1047ba76-637d-4ae2-b2ae-d3bb8ce66391",
 #            key_name="ssh-key",
 #            deleteall=True)
 # time.sleep(2)
@@ -1474,7 +1474,7 @@ router_name="sriov_router_1"
 fla = "huge-flavor"
 zone="nova0"
 img="centos"
-secg="758b4788-b066-4762-a3e0-c2edfab4edf4"
+secg="1047ba76-637d-4ae2-b2ae-d3bb8ce66391"
 por="dpdk_port1"
 net="dpdk_net_1"
 ser="dpdk_server_1"
@@ -1496,10 +1496,10 @@ gateway = "192.168.100.1"
 # router_name="sriov_router_1"
 
 
-test_case8(flavor_name=fla, availability_zone=zone, image_name=img, port_name=por,
-           server_name=ser, secgroup_name=secg,
-               network_name=net, router_name=rout, subnet_name=subnet_name, cidr=cidr, gateway=gateway,
-               deleteall=False)
+# test_case8(flavor_name=fla, availability_zone=zone, image_name=img, port_name=por,
+#            server_name=ser, secgroup_name=secg,
+#                network_name=net, router_name=rout, subnet_name=subnet_name, cidr=cidr, gateway=gateway,
+#                deleteall=False)
 # time.sleep(2)
 #####################################################################################################################
 # test_case9()

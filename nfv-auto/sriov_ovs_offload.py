@@ -232,7 +232,7 @@ deleteall=True
         6. Create port with vnic type = direct named it as sriov_port
         7. Create VM using above created nic port"""
     logger.info("==========================================================================================================")
-    logger.info("====         TEST CASE 1:     Create SRIOV Enabled Instance.                                     =====")
+    logger.info("====         TEST CASE 1:     Create SRIOV OFFLOAD Enabled Instance.                                     =====")
     logger.info("==========================================================================================================")
     try:
         # agg = creation_object.os_aggregate_creation_and_add_host(logger, conn_create, name, availablity_zone, host_name)
@@ -242,7 +242,7 @@ deleteall=True
         #                                                           network_name=network_name,
         #                                                           router_name=router_name, port_name=port_name)
         #exit()
-        output = creation_object.os_create_sriov_enabled_instance(logger, conn_create, network_name=network_name,
+        output = creation_object.os_create_sriov_offload_enabled_instance(logger, conn_create, network_name=network_name,
                                                                   port_name=port_name,
                                                                   router_name=router_name,
                                                                   subnet_name=subnet_name,
@@ -305,7 +305,7 @@ deleteall=True
         # agg = creation_object.os_aggregate_creation_and_add_host(logger, conn_create, name, availablity_zone, host_name)
         # fal = creation_object.os_flavor_creation(logger, conn_create, "sriov_flavor", 4096, 2, 150)
         # [network_id, subnet_id, port_id, port_ip]
-        output = creation_object.os_create_sriov_enabled_instance(logger, conn_create, network_name=network_name,
+        output = creation_object.os_create_sriov_offload_enabled_instance(logger, conn_create, network_name=network_name,
                                                                   port_name=port_name,
                                                                   router_name=router_name,
                                                                   subnet_name=subnet_name,
@@ -364,7 +364,7 @@ def test_case_3(network_name=f_data["sriov_network_name"],
     logger.info("==========================================================================================================")
     try:
         vfcount_before_server_creation = check_number_of_vfs(zone=availability_zone)
-        output = creation_object.os_create_sriov_enabled_instance(logger, conn_create, network_name=network_name,
+        output = creation_object.os_create_sriov_offload_enabled_instance(logger, conn_create, network_name=network_name,
                                                                   port_name=port_name,
                                                                   router_name=router_name,
                                                                   subnet_name=subnet_name,
@@ -575,7 +575,7 @@ deleteall=True
         # pdb.set_trace()
         router = creation_object.os_router_creation(logger, conn_create, router_name=router_name,
                                                      port_name=sriov_port, net_name=network_name)
-        sriov = creation_object.os_create_sriov_enabled_instance(logger, conn_create, network_name=network_name,
+        sriov = creation_object.os_create_sriov_offload_enabled_instance(logger, conn_create, network_name=network_name,
                                                                   port_name=sriov_port,
                                                                   router_name=router_name,
                                                                   subnet_name=subnet_name,
@@ -677,7 +677,7 @@ deleteall=True
         # pdb.set_trace()
         router = creation_object.os_router_creation(logger, conn_create, router_name=router_name,
                                                      port_name=sriov_port, net_name=network_name)
-        sriov = creation_object.os_create_sriov_enabled_instance(logger, conn_create, network_name=network_name,
+        sriov = creation_object.os_create_sriov_offload_enabled_instance(logger, conn_create, network_name=network_name,
                                                                   port_name=sriov_port,
                                                                   router_name=router_name,
                                                                   subnet_name=subnet_name,
@@ -786,7 +786,7 @@ def test_case8( sriov_network=f_data["sriov_network"], legacy_network=f_data["le
                                                                     port1_name=sriov_port, port2_name=legacy_port,
                                                          net1_name=sriov_network, net2_name=legacy_network)
 
-        sriov = creation_object.os_create_sriov_enabled_instance(logger, conn_create, network_name=sriov_network,
+        sriov = creation_object.os_create_sriov_offload_enabled_instance(logger, conn_create, network_name=sriov_network,
                                                                   port_name=sriov_port,
                                                                   router_name=router_name,
                                                                   subnet_name=sriov_subnet,
@@ -894,7 +894,7 @@ def test_case9(sriov_network=f_data["sriov_network"], legacy_network=f_data["leg
                                                                     port1_name=sriov_port, port2_name=legacy_port,
                                                          net1_name=sriov_network, net2_name=legacy_network)
 
-        sriov = creation_object.os_create_sriov_enabled_instance(logger, conn_create, network_name=sriov_network,
+        sriov = creation_object.os_create_sriov_offload_enabled_instance(logger, conn_create, network_name=sriov_network,
                                                                   port_name=sriov_port,
                                                                   router_name=router_name,
                                                                   subnet_name=sriov_subnet,
@@ -992,7 +992,7 @@ deleteall=True
                                                                     port1_name=sriov_port1, port2_name=sriov_port2,
                                                          net1_name=sriov_network1, net2_name=sriov_network2)
 
-        sriov1 = creation_object.os_create_sriov_enabled_instance(logger, conn_create, network_name=sriov_network1,
+        sriov1 = creation_object.os_create_sriov_offload_enabled_instance(logger, conn_create, network_name=sriov_network1,
                                                                   port_name=sriov_port1,
                                                                   router_name=router_name,
                                                                   subnet_name=sriov_subnet1,
@@ -1008,7 +1008,7 @@ deleteall=True
                                                                   security_group_name=secgroup,
                                                                   key_name=key_name)
 
-        sriov2 = creation_object.os_create_sriov_enabled_instance(logger, conn_create, network_name=sriov_network2,
+        sriov2 = creation_object.os_create_sriov_offload_enabled_instance(logger, conn_create, network_name=sriov_network2,
                                                                   port_name=sriov_port2,
                                                                   router_name=router_name,
                                                                   subnet_name=sriov_subnet2,
@@ -1098,7 +1098,7 @@ deleteall=True
                                                                     port1_name=sriov_port1, port2_name=sriov_port2,
                                                          net1_name=sriov_network1, net2_name=sriov_network2)
 
-        sriov1 = creation_object.os_create_sriov_enabled_instance(logger, conn_create, network_name=sriov_network1,
+        sriov1 = creation_object.os_create_sriov_offload_enabled_instance(logger, conn_create, network_name=sriov_network1,
                                                                   port_name=sriov_port1,
                                                                   router_name=router_name,
                                                                   subnet_name=sriov_subnet1,
@@ -1114,7 +1114,7 @@ deleteall=True
                                                                   security_group_name=secgroup,
                                                                   key_name=key_name)
 
-        sriov2 = creation_object.os_create_sriov_enabled_instance(logger, conn_create, network_name=sriov_network2,
+        sriov2 = creation_object.os_create_sriov_offload_enabled_instance(logger, conn_create, network_name=sriov_network2,
                                                                   port_name=sriov_port2,
                                                                   router_name=router_name,
                                                                   subnet_name=sriov_subnet2,

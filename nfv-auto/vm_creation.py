@@ -468,6 +468,57 @@ class Os_Creation_Modules():
             logger.info ("Cause: " + str(sys.exc_info()[1]))
             logger.info ("Line No: %s \n" % (sys.exc_info()[2].tb_lineno))
 
+    #Creating Sriov offload enabled network
+    def os_create_sriov_offload_enabled_network(self, logger, conn, network_name,  port_name,
+                                        subnet_name=None, cidr=None, gateway=None,
+                                        network_bool=False, subnet_bool=False, port_bool=False
+                                        ):
+        try:
+            network = conn.get_network(network_name)
+            if network is None:
+                logger.info("Creating Sriov Offload Enabled Network: %s"%network_name)
+                provider_dic = {'network_type': 'vlan', 'physical_network': 'physint'}
+                if network_bool:
+                    network = conn.network.create_network(name=network_name, provider=provider_dic)
+            else:
+                logger.info("Network already exists with the same name.")
+
+            n_id = network.id
+            if subnet_bool:
+                logger.info("Creating Sriov Offload Enabled SubNet: %s" % subnet_name)
+                subnetwork = conn.network.create_subnet(
+                                                                network_id=n_id,
+                                                                cidr=cidr,
+                                                                name=subnet_name,
+                                                                ip_version="4",
+                                                                gateway_ip=gateway
+                                                            )
+            # subnet_id="c0b4d175-8db4-4782-9013-9a068d890a51"
+            # net_id = net.id
+            # pdb.set_trace()
+            subnet_id = conn.get_network(name_or_id=network_name).subnets[0]
+            if port_bool:
+                logger.info("Creating Sriov Offload Enabled Port: %s" % port_name)
+                port = conn.network.create_port(
+                    network_id=n_id,
+                    name=port_name,
+                    subnet_id=subnet_id,
+                    binding_vnic_type="direct"
+                )
+
+            logger.info("Setting Switchdev Capabilities to Port: %s" % port_name)
+            port = os.system("openstack port set --binding-profile '{\"capabilities\": [\"switchdev\"]}' %s" % port_name)
+            port = conn.get_port(name_or_id=port_name)
+            p_id = port.id
+            p_ip = port["fixed_ips"][0]["ip_address"]
+            return [n_id, subnet_id, p_id, p_ip]
+
+        except:
+            logger.info("\nUnable to create sriov network / subnet / port.")
+            logger.info ("Error: " + str(sys.exc_info()[0]))
+            logger.info ("Cause: " + str(sys.exc_info()[1]))
+            logger.info ("Line No: %s \n" % (sys.exc_info()[2].tb_lineno))
+
 
     # Creating Network by specifying Network Provider
     def os_network_creation_with_network_provider(self, logger, conn, net_name, provider_dict, cidr, dhcp_boolean,
@@ -924,6 +975,41 @@ class Os_Creation_Modules():
                                                          key_name,
                                                         assign_floating_ip=True):
         network_params = self.os_create_sriov_enabled_network(logger, conn, network_name=network_name,
+                                                                         port_name=port_name,
+                                                                         subnet_name=subnet_name, cidr=cidr,
+                                                                         gateway=gateway,
+                                                                         network_bool=network_bool,
+                                                                         subnet_bool=subnet_bool, port_bool=port_bool
+                                                                         )
+
+        router = self.os_router_creation(logger, conn, router_name=router_name, port_name=port_name,
+                                                    net_name=network_name)
+
+        server = self.os_server_creation_with_port_id(logger, conn, flavor_name=flavor_name,
+                                                                 availability_zone=availability_zone,
+                                                                 image_name=image_name,
+                                                                 port_name=port_name,
+                                                                 server_name=server_name,
+                                                                 security_group_name=security_group_name,
+                                                                 key_name=key_name,
+                                                                 assign_floating_ip=assign_floating_ip,
+                                                                 network_name=network_name)
+        return [network_params, router, server]
+
+
+    # ==============================================================
+    # =============CREATING SRIOV OFFLOAD ENABLED INSTANCES=========
+    # ==============================================================
+    def os_create_sriov_offload_enabled_instance(self, logger, conn, network_name, port_name,router_name, subnet_name, cidr, gateway,
+                                        network_bool, subnet_bool, port_bool,
+                                                            flavor_name,
+                                                         availability_zone,
+                                                         image_name,
+                                                         server_name,
+                                                         security_group_name,
+                                                         key_name,
+                                                        assign_floating_ip=True):
+        network_params = self.os_create_sriov_offload_enabled_network(logger, conn, network_name=network_name,
                                                                          port_name=port_name,
                                                                          subnet_name=subnet_name, cidr=cidr,
                                                                          gateway=gateway,
