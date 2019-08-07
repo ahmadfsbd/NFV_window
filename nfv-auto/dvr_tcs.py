@@ -731,7 +731,7 @@ def dvr_deployement_test_case_19(compute_ip_list, username, network_name, subnet
 
         f_id = str(rout.external_gateway_info["network_id"])
         time.sleep(50)
-        pdb.set_trace()
+        # pdb.set_trace()
         private_ip = str(conn_create.get_server(name_or_id=server_name).accessIPv4)
         floating_ip = flot.floating_ip_address
         network_id = str(conn_create.get_network(network_name).id)
@@ -1423,7 +1423,7 @@ cidr2 = "192.168.40.0/24"
 gateway_ip2 = "192.168.40.1"
 flavor_name = "m1.medium"
 image_name = "centos"
-secgroup_name = "1e54f492-4db9-4467-b677-d7d0ca1de927"
+secgroup_name = "e616eefa-86c8-4993-b8bf-3fc9d1d04003"
 assign_floating_ip = False
 #test_case_30()
 # dvr_deployement_test_case_11(controller_ip,username,router_name,
@@ -1531,12 +1531,12 @@ logger.info ("Compute ip's %s" %compute)
 
 # dvr_deployement_test_case_13(controller_ip_list=controller, username=stamp_user, network_name=data["network_name"],
 #                           subnet_name=data["subnet_name"], router_name=data["router_name"], port_name=data["port_name"], server_name=data["server_name"],
-#                                  image_name=data["encrypted_image"], flavor_name=data["static_flavor"],
+#                                  image_name=data["static_image"], flavor_name=data["static_flavor"],
 #                              secgroup_name=data["static_secgroup"], zone=data["zone1"], cidr=data["cidr"], gateway_ip=data["gateway_ip"])
 
 # dvr_deployement_test_case_12(controller_ip_list=controller, username=stamp_user, network_name=data["network_name"],
 #                              subnet_name=data["subnet_name"], router_name=data["router_name"], port_name=data["port_name"], server_name=data["server_name"],
-#                                  image_name=data["encrypted_image"], flavor_name=data["static_flavor"],
+#                                  image_name=data["static_image"], flavor_name=data["static_flavor"],
 #                              secgroup_name=data["static_secgroup"], zone=data["zone1"], cidr=data["cidr"], gateway_ip=data["gateway_ip"])
 
 # dvr_deployement_test_case_11(controller_ip=controller[0], username=stamp_user, router_name=data["router_name"],
@@ -1544,7 +1544,7 @@ logger.info ("Compute ip's %s" %compute)
 #                                                        subnet1_name=data["subnet1_name"], subnet2_name=data["subnet2_name"],
 #                                                        port1_name=data["port1_name"], port2_name=data["port2_name"],
 #                                                        server1_name=data["server1_name"], server2_name=data["server2_name"],
-#                                                        image_name=data["encrypted_image"],
+#                                                        image_name=data["static_image"],
 #                                                        flavor_name=data["static_flavor"],
 #                                                        secgroup_name=data["static_secgroup"],
 #                                                        zone1=data["zone2"], zone2=data["zone3"],
