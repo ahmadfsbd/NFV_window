@@ -444,7 +444,7 @@ def test_case_4(compute_ip_list=compute,username=username_of_nodes):
             logger.info ("Cause: " + str(sys.exc_info()[1]))
             logger.info ("Line No: %s \n" % (sys.exc_info()[2].tb_lineno))
 
-def test_case_(network_name=f_data["sriov_network_name"],
+def test_case_5(network_name=f_data["sriov_network_name"],
                 port_name=f_data["sriov_port"],
                 router_name=f_data["sriov_router"],
                 subnet_name=f_data["sriov_subnetwork"],
@@ -464,7 +464,7 @@ deleteall=True
         6. Create port with vnic type = direct named it as sriov_port
         7. Create VM using above created nic port"""
     logger.info("==========================================================================================================")
-    logger.info("====         TEST CASE 1:     Create SRIOV OFFLOAD Enabled Instance.                                     =====")
+    logger.info("====         TEST CASE 5:     Create SRIOV OFFLOAD Enabled Instance.                                     =====")
     logger.info("==========================================================================================================")
     try:
         # agg = creation_object.os_aggregate_creation_and_add_host(logger, conn_create, name, availablity_zone, host_name)
@@ -510,7 +510,86 @@ deleteall=True
                                                                   network_name=network_name,
                                                                   router_name=router_name, port_name=port_name)
 
-
+def test_case_6(network_name=f_data["sriov_network_name"],
+                port_name=f_data["sriov_port"],
+                router_name=f_data["sriov_router"],
+                subnet_name=f_data["sriov_subnetwork"],
+                cidr=f_data["cidr"], gateway=f_data["gateway"],
+                network_bool=True, subnet_bool=True, port_bool=True,
+                flavor_name=f_data["sriov_flavor"], availability_zone=f_data["zone1"],
+                image_name=f_data["static_image"],server_name=f_data["sriov_server"],
+                security_group_name=f_data["static_secgroup"],key_name=f_data["key_name"],
+deleteall=True
+                ):
+    """STEPS FOR CREATION OF SRIOV ENABLED INSTANCE
+        1. Create a zone named sriov
+        2. Create aggregate and add host sriov
+        3. Create flavor with 4GB ram, 150GB disk, 2 vcpu
+        4. Create a Network named sriov_net
+        5. Create Subnet named sriov_sub
+        6. Create port with vnic type = direct named it as sriov_port
+        7. Create VM using above created nic port"""
+    logger.info("==========================================================================================================")
+    logger.info("====         TEST CASE 6:     Verify Representor Port Creation.                                     =====")
+    logger.info("==========================================================================================================")
+    try:
+        # agg = creation_object.os_aggregate_creation_and_add_host(logger, conn_create, name, availablity_zone, host_name)
+        # fal = creation_object.os_flavor_creation(logger, conn_create, "sriov_flavor", 4096, 2, 150)
+        # [network_id, subnet_id, port_id, port_ip]
+        # delete_object.delete_1_instance_and_router_with_1_network(logger, conn_delete, server_name=server_name,
+        #                                                           network_name=network_name,
+        #                                                           router_name=router_name, port_name=port_name)
+        #exit()
+        output = creation_object.os_create_sriov_offload_enabled_instance(logger, conn_create, network_name=network_name,
+                                                                  port_name=port_name,
+                                                                  router_name=router_name,
+                                                                  subnet_name=subnet_name,
+                                                                  cidr=cidr,
+                                                                  gateway=gateway,
+                                         network_bool=network_bool, subnet_bool=subnet_bool, port_bool=port_bool,
+                                         flavor_name=flavor_name,
+                                         availability_zone=availability_zone,
+                                         image_name=image_name,
+                                         server_name=server_name,
+                                         security_group_name=security_group_name,
+                                         key_name=key_name)
+        # pdb.set_trace()
+        time.sleep(50)
+        zone = availability_zone
+        if zone == data["zone1"]:
+            ip = cmpt[0]
+        elif zone == data["zone2"]:
+            ip = cmpt[1]
+        elif zone == data["zone3"]:
+            ip = cmpt[2]
+        ssh_obj.ssh_to(logger, ip=ip, username=username_of_nodes)
+        # pdb.set_trace()
+        res = ssh_obj.execute_command_return_output(logger, "sudo ovs-dpctl show")
+        logger.info(res)
+        res1 = res.split("\n")
+        i = len(res1) - 2
+        res2 = res1[i]
+        out = res2.split(":")[1]
+        if "eth" in out:
+            logger.info ("Test 6 SUCCESSFUL")
+        else:
+            logger.info ("Test 6 FAILED")
+        ssh_obj.ssh_close()
+        if deleteall:
+            delete_object.delete_1_instance_and_router_with_1_network(logger, conn_delete, server_name=server_name,
+                                                                      network_name=network_name,
+                                                        router_name=router_name, port_name=port_name)
+        else:
+            logger.info ("Note: Nothing is deleted!")
+        return output
+    except:
+        logger.info ("Unable to execute test case 6")
+        logger.info ("\nError: " + str(sys.exc_info()[0]))
+        logger.info ("Cause: " + str(sys.exc_info()[1]))
+        logger.info ("Line No: %s \n" % (sys.exc_info()[2].tb_lineno))
+        delete_object.delete_1_instance_and_router_with_1_network(logger, conn_delete, server_name=server_name,
+                                                                  network_name=network_name,
+                                                                  router_name=router_name, port_name=port_name)
 def test_case_(network_name=f_data["sriov_network_name"],
                 port_name=f_data["sriov_port"],
                 router_name=f_data["sriov_router"],
@@ -1347,17 +1426,17 @@ deleteall=True
 # pdb.set_trace()
 # test_case_5(zone="sriov")
 
-test_case_1()
-time.sleep(5)
-test_case_2()
-time.sleep(5)
-test_case_3()
-time.sleep(5)
-test_case_4()
+# test_case_1()
 # time.sleep(5)
-# test_case5()
+# test_case_2()
 # time.sleep(5)
-# test_case6()
+# test_case_3()
+# time.sleep(5)
+# test_case_4()
+# time.sleep(5)
+# test_case_5()
+# time.sleep(5)
+test_case_6()
 # time.sleep(5)
 # test_case7()
 # time.sleep(5)
