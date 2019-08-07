@@ -299,40 +299,40 @@ def octavia_deployement_test_case_2(router_name,
 
         ###### Installing nginx in VM ##########
         count = 1
-        for i in range(0,3,2):
-            logger.info("VM IP %s" % ip_list[i])
-            # ssh_obj.execute_command_show_output(logger, "sudo scp -rp -i dvr-key.pem nginx.repo centos@%s:./" %ip_list[i])
-            ssh_obj.ssh_to(logger, ip_list[i], data["static_image"], key_file_name=data["key_file_path"])
-            ssh_obj.execute_command_show_output(logger, "cat /etc/sysconfig/network-scripts/ifcfg-eth0")
-            ssh_obj.execute_command_show_output(logger, "sudo sed -i '/USERCTL=no/ a DNS1=8.8.8.8' /etc/sysconfig/network-scripts/ifcfg-eth0")
-            ssh_obj.execute_command_show_output(logger, "cat /etc/sysconfig/network-scripts/ifcfg-eth0")
-            ssh_obj.execute_command_show_output(logger, "sudo systemctl restart network")
-            ssh_obj.execute_command_show_output(logger, "ping -c 5 google.com")
-            ssh_obj.execute_command_show_output(logger, "ls")
-            ssh_obj.send_nginx_repo_if_not_present(logger, destination_path="./nginx.repo")
-            ssh_obj.execute_command_show_output(logger, "ls")
-            ssh_obj.execute_command_show_output(logger, "ls /etc/yum.repos.d/")
-            ssh_obj.execute_command_show_output(logger, "sudo cp ./nginx.repo /etc/yum.repos.d/")
-            ssh_obj.execute_command_show_output(logger, "ls /etc/yum.repos.d/")
-            # ssh_obj.send_file_or_package(logger, source_path="/home/osp_admin/NFV/nfv-auto/nginx.repo",
-            #                       destination_path="/etc/yum.repo.d/")
-            ssh_obj.execute_command_show_output(logger, "sudo yum-config-manager --enable nginx")
-            ssh_obj.execute_command_show_output(logger, "sudo yum install nginx -y")
-            ssh_obj.execute_command_show_output(logger, "sudo systemctl start nginx")
-            ssh_obj.execute_command_show_output(logger, "sudo systemctl status nginx")
-            ssh_obj.execute_command_show_output(logger, "sudo systemctl enable nginx")
-            ssh_obj.execute_command_show_output(logger, "sudo systemctl status nginx")
-            ###-------------------------------------==================-------------------------------------------------------%%%%%%%%%%%%%%%%%%%%%%
-            ###-------------------------------------For Installing Fio-------------------------------------------------------%%%%%%%%%%%%%%%%%%%%%%
-            ###-------------------------------------==================-------------------------------------------------------%%%%%%%%%%%%%%%%%%%%%%
-            ssh_obj.execute_command_show_output(logger, "sudo yum install fio -y")
-            ###-------------------------------------==================-------------------------------------------------------%%%%%%%%%%%%%%%%%%%%%%
-            ###-------------------------------------==================-------------------------------------------------------%%%%%%%%%%%%%%%%%%%%%%
-            ssh_obj.execute_command_show_output(logger, "sudo cat /usr/share/nginx/html/index.html")
-            ssh_obj.execute_command_show_output(logger,"sudo sed -i '14 s/nginx/nginx %s VM %s/' /usr/share/nginx/html/index.html" %(ip_list[i], count))
-            ssh_obj.execute_command_show_output(logger, "sudo cat /usr/share/nginx/html/index.html")
-            count = count + 1
-            ssh_obj.ssh_close()
+        # for i in range(0,3,2):
+            # logger.info("VM IP %s" % ip_list[i])
+            # # ssh_obj.execute_command_show_output(logger, "sudo scp -rp -i dvr-key.pem nginx.repo centos@%s:./" %ip_list[i])
+            # ssh_obj.ssh_to(logger, ip_list[i], data["static_image"], key_file_name=data["key_file_path"])
+            # ssh_obj.execute_command_show_output(logger, "cat /etc/sysconfig/network-scripts/ifcfg-eth0")
+            # ssh_obj.execute_command_show_output(logger, "sudo sed -i '/USERCTL=no/ a DNS1=8.8.8.8' /etc/sysconfig/network-scripts/ifcfg-eth0")
+            # ssh_obj.execute_command_show_output(logger, "cat /etc/sysconfig/network-scripts/ifcfg-eth0")
+            # ssh_obj.execute_command_show_output(logger, "sudo systemctl restart network")
+            # ssh_obj.execute_command_show_output(logger, "ping -c 5 google.com")
+            # ssh_obj.execute_command_show_output(logger, "ls")
+            # ssh_obj.send_nginx_repo_if_not_present(logger, destination_path="./nginx.repo")
+            # ssh_obj.execute_command_show_output(logger, "ls")
+            # ssh_obj.execute_command_show_output(logger, "ls /etc/yum.repos.d/")
+            # ssh_obj.execute_command_show_output(logger, "sudo cp ./nginx.repo /etc/yum.repos.d/")
+            # ssh_obj.execute_command_show_output(logger, "ls /etc/yum.repos.d/")
+            # # ssh_obj.send_file_or_package(logger, source_path="/home/osp_admin/NFV/nfv-auto/nginx.repo",
+            # #                       destination_path="/etc/yum.repo.d/")
+            # ssh_obj.execute_command_show_output(logger, "sudo yum-config-manager --enable nginx")
+            # ssh_obj.execute_command_show_output(logger, "sudo yum install nginx -y")
+            # ssh_obj.execute_command_show_output(logger, "sudo systemctl start nginx")
+            # ssh_obj.execute_command_show_output(logger, "sudo systemctl status nginx")
+            # ssh_obj.execute_command_show_output(logger, "sudo systemctl enable nginx")
+            # ssh_obj.execute_command_show_output(logger, "sudo systemctl status nginx")
+            # ###-------------------------------------==================-------------------------------------------------------%%%%%%%%%%%%%%%%%%%%%%
+            # ###-------------------------------------For Installing Fio-------------------------------------------------------%%%%%%%%%%%%%%%%%%%%%%
+            # ###-------------------------------------==================-------------------------------------------------------%%%%%%%%%%%%%%%%%%%%%%
+            # ssh_obj.execute_command_show_output(logger, "sudo yum install fio -y")
+            # ###-------------------------------------==================-------------------------------------------------------%%%%%%%%%%%%%%%%%%%%%%
+            # ###-------------------------------------==================-------------------------------------------------------%%%%%%%%%%%%%%%%%%%%%%
+            # ssh_obj.execute_command_show_output(logger, "sudo cat /usr/share/nginx/html/index.html")
+            # ssh_obj.execute_command_show_output(logger,"sudo sed -i '14 s/nginx/nginx %s VM %s/' /usr/share/nginx/html/index.html" %(ip_list[i], count))
+            # ssh_obj.execute_command_show_output(logger, "sudo cat /usr/share/nginx/html/index.html")
+            # count = count + 1
+            # ssh_obj.ssh_close()
         # pdb.set_trace()
         logger.info("Loadbalancer creating..")
         os.system("openstack loadbalancer create --name %s --vip-subnet-id %s" % (lb_name,subnet_name))
@@ -358,23 +358,47 @@ def octavia_deployement_test_case_2(router_name,
         #
         floating_ip = creation_object.os_floating_ip_creation(logger, conn_create)
         f_ip=str(floating_ip['floating_ip_address'])
-        lb_command="openstack loadbalancer show %s" % lb_name
+        lb_command="openstack loadbalancer listener show %s" % listener_name
         lb_data = ssh_obj.locally_execute_command(lb_command)
+        # pdb.set_trace()
         logger.info(lb_data)
-        out = str(lb_data.split("\n")[18].split("|")[2].strip())
-        vip_port_id = str(out)
-        ssh_obj.locally_execute_command("openstack floating ip set --port %s %s"%(vip_port_id, f_ip))
-        os.system("openstack loadbalancer list")
-        logger.info("Testing LB working.......")
-        # os.system("for i in {1..6} ; do curl -w \"\n\" %s ; done" %f_ip)
-        res = ssh_obj.locally_execute_command("for i in {1..6} ; do curl -w \"\n\" %s ; done" %f_ip)
-        logger.info(res)
-        vm1_ip = ip_list[0]
-        vm2_ip = ip_list[2]
-        if vm1_ip in res and vm2_ip in res:
+        out1 = str(lb_data.split("\n")[14].split("|")[2].strip())
+        operating_status = str(out1)
+        out2 = str(lb_data.split("\n")[18].split("|")[2].strip())
+        provisioning_status = str(out2)
+
+        res = "ONLINE && ACTIVE"
+
+        if provisioning_status in res and operating_status in res:
             logger.info("Test Successful")
         else:
             logger.info("Test Failed")
+        time.sleep(10)
+        # pdb.set_trace()
+        if delete_all:
+            logger.info("Pool deleting..")
+            os.system("openstack loadbalancer pool delete %s" % (pool_name))
+            time.sleep(5)
+            logger.info("Listener deleting..")
+            os.system("openstack loadbalancer listener delete %s" % (listener_name))
+            time.sleep(5)
+        # lb_command="openstack loadbalancer show %s" % lb_name
+        # lb_data = ssh_obj.locally_execute_command(lb_command)
+        # logger.info(lb_data)
+        # out = str(lb_data.split("\n")[18].split("|")[2].strip())
+        # vip_port_id = str(out)
+        # ssh_obj.locally_execute_command("openstack floating ip set --port %s %s"%(vip_port_id, f_ip))
+        # os.system("openstack loadbalancer list")
+        # logger.info("Testing LB working.......")
+        # # os.system("for i in {1..6} ; do curl -w \"\n\" %s ; done" %f_ip)
+        # res = ssh_obj.locally_execute_command("for i in {1..6} ; do curl -w \"\n\" %s ; done" %f_ip)
+        # logger.info(res)
+        # vm1_ip = ip_list[0]
+        # vm2_ip = ip_list[2]
+        # if vm1_ip in res and vm2_ip in res:
+        #     logger.info("Test Successful")
+        # else:
+        #     logger.info("Test Failed")
         time.sleep(10)
         # pdb.set_trace()
         if delete_all:
@@ -467,7 +491,7 @@ def octavia_deployement_test_case_3(                    lb_name, listener_name, 
         #
         lb_command="openstack loadbalancer listener show %s" % listener_name
         lb_data = ssh_obj.locally_execute_command(lb_command)
-        pdb.set_trace()
+        # pdb.set_trace()
         logger.info(lb_data)
         out1 = str(lb_data.split("\n")[14].split("|")[2].strip())
         operating_status = str(out1)
@@ -493,7 +517,7 @@ def octavia_deployement_test_case_3(                    lb_name, listener_name, 
 
 
 
-        return ip_list
+        return ou1
     except:
             logger.info ("Unable to execute test case 1")
             logger.info ("\nError: " + str(sys.exc_info()[0]))
@@ -519,9 +543,9 @@ port_name = "octavia-port-http"
 zone = "nova0"
 cidr = "192.168.70.0/24"
 gateway_ip = "192.168.70.1"
-flavor_name = "m1.medium"
+flavor_name = "sanity_flavor"
 image_name = "centos_7_signed"
-secgroup_name = "1e54f492-4db9-4467-b677-d7d0ca1de927"
+secgroup_name = "69829dd9-e432-468b-beb7-e6fd6e67f7c8"
 assign_floating_ip = True
 #
 lb_name="lb1_http"
@@ -540,40 +564,7 @@ member2_name="member2_http"
 # subnet_name = "ceph-subnet"
 # router_name = "ceph-router"
 # port_name = "ceph-port-http"
-octavia_deployement_test_case_1(router_name=router_name,
-                                                        network_name=network_name,
-                                                        subnet_name=subnet_name,
-                                                        port_name=port_name,
-                                                        server1_name=server1_name,server2_name=server2_name,
-                                                        image_name=image_name,flavor_name=flavor_name,secgroup_name=secgroup_name,
-                                                        zone=zone, cidr=cidr,gateway_ip=gateway_ip,assign_floating_ip=assign_floating_ip,
-                                                        lb_name=lb_name,listener_name=listener_name, protocol=protocol, protocol_id=protocol_id,
-                                                        pool_name=pool_name, algorithm=algorithm, member1_name=member1_name, member2_name=member2_name,
-                                                        delete_all=False
-                                                        )
-# server1_name = "octavia_vm1_tcp"
-# server2_name = "octavia_vm2_ycp"
-# network_name = "octavia-network-tcp"
-# subnet_name = "octavia-subnet-tcp"
-# router_name = "octavia-router"
-# port_name = "octavia-port-tcp"
-# zone = "nova0"
-# cidr = "192.168.80.0/24"
-# gateway_ip = "192.168.80.1"
-# flavor_name = "fio_flavor"
-# image_name = "centos7signed"
-# secgroup_name = "1e54f492-4db9-4467-b677-d7d0ca1de927"
-# assign_floating_ip = True
-#
-# lb_name="lb1_tcp"
-# listener_name="listener1_tcp"
-# protocol="TCP"
-# protocol_id="23456"
-# pool_name="pool1_tcp"
-# algorithm="SOURCE_IP"
-# member1_name="member1_tcp"
-# member2_name="member2_tcp"
-# octavia_deployement_test_case_2(router_name=router_name,
+# octavia_deployement_test_case_1(router_name=router_name,
 #                                                         network_name=network_name,
 #                                                         subnet_name=subnet_name,
 #                                                         port_name=port_name,
@@ -584,6 +575,39 @@ octavia_deployement_test_case_1(router_name=router_name,
 #                                                         pool_name=pool_name, algorithm=algorithm, member1_name=member1_name, member2_name=member2_name,
 #                                                         delete_all=False
 #                                                         )
+server1_name = "octavia_vm1_tcp"
+server2_name = "octavia_vm2_ycp"
+network_name = "octavia-network-tcp"
+subnet_name = "octavia-subnet-tcp"
+router_name = "octavia-router"
+port_name = "octavia-port-tcp"
+zone = "nova1"
+cidr = "192.168.80.0/24"
+gateway_ip = "192.168.80.1"
+flavor_name = "sanity_flavor"
+image_name = "centos_7_signed"
+secgroup_name = "69829dd9-e432-468b-beb7-e6fd6e67f7c8"
+assign_floating_ip = True
+
+lb_name="lb1_tcp"
+listener_name="listener1_tcp"
+protocol="TCP"
+protocol_id="23456"
+pool_name="pool1_tcp"
+algorithm="SOURCE_IP"
+member1_name="member1_tcp"
+member2_name="member2_tcp"
+octavia_deployement_test_case_2(router_name=router_name,
+                                                        network_name=network_name,
+                                                        subnet_name=subnet_name,
+                                                        port_name=port_name,
+                                                        server1_name=server1_name,server2_name=server2_name,
+                                                        image_name=image_name,flavor_name=flavor_name,secgroup_name=secgroup_name,
+                                                        zone=zone, cidr=cidr,gateway_ip=gateway_ip,assign_floating_ip=assign_floating_ip,
+                                                        lb_name=lb_name,listener_name=listener_name, protocol=protocol, protocol_id=protocol_id,
+                                                        pool_name=pool_name, algorithm=algorithm, member1_name=member1_name, member2_name=member2_name,
+                                                        delete_all=False
+                                                        )
 
 # lb_name="lb1_http"
 # listener_name="listener2_tcp"

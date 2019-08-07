@@ -103,6 +103,21 @@ def get_sriov_interface_names_from_ini_file():
     logger.info (interface_names)
     return interface_names
 
+def get_sriov_vf_count_from_ini_file():
+    ssh_obj.ssh_to(logger, ip=sah_node_ip, username=sah_node_username, password=sah_node_password)
+    data = ssh_obj.read_remote_file(csp_profile_ini_file_path)
+    sriov_vf_count = []
+    for line in data.split("\n"):
+        if "sriov_vf_count" in line:
+            if "#" in line:
+                pass
+            else:
+                logger.info (line)
+                sriov_vf_count.append(line.split("=")[1])
+    ssh_obj.ssh_close()
+    logger.info (sriov_vf_count)
+    return sriov_vf_count
+
 
 def get_legacy_interface_names_from_ini_file():
     ssh_obj.ssh_to(logger, ip=sah_node_ip, username=sah_node_username, password=sah_node_password)
@@ -144,6 +159,32 @@ def check_number_of_vfs(zone):
     logger.info (vf_count)
     ssh_obj.ssh_close()
     return vf_count
+
+def check_list_of_Pfs(zone):
+    if zone == data["zone1"]:
+        ip = cmpt[0]
+    elif zone == data["zone2"]:
+        ip = cmpt[1]
+    elif zone == data["zone3"]:
+        ip = cmpt[2]
+    ini_file_interface_names = get_sriov_interface_names_from_ini_file()
+    ssh_obj.ssh_to(logger, ip=ip, username=username_of_nodes)
+    interfaces_list = ssh_obj.check_interface_names(logger)
+    for i in range(0,len(ini_file_interface_names)):
+        ini_file_interface_names[i] = ini_file_interface_names[i] + "_"
+    logger.info (ini_file_interface_names)
+    # pdb.set_trace()
+    result = []
+    for interface in interfaces_list:
+        for i in ini_file_interface_names:
+            if i in interface:
+                result.append(interface)
+                logger.info (interface)
+    logger.info (result)
+    vf_count = len(result)
+    logger.info (vf_count)
+    ssh_obj.ssh_close()
+    return result
 
 test_case = {
     6: "Create two sriov-enabled instance on same compute node and verify the communication",
@@ -210,7 +251,98 @@ test_case = {
 #     server = creation_object.os_server_creation_for_sriov(server_name, flavor_name,
 #                 image_name, availability_zone, nic_list)
 #     return server_name
+def test_case_1(network_name=f_data["sriov_network_name"],
+                port_name=f_data["sriov_port"],
+                router_name=f_data["sriov_router"],
+                subnet_name=f_data["sriov_subnetwork"],
+                cidr=f_data["cidr"], gateway=f_data["gateway"],
+                network_bool=True, subnet_bool=True, port_bool=True,
+                flavor_name=f_data["sriov_flavor"], availability_zone=f_data["zone"],
+                image_name=f_data["static_image"],server_name=f_data["sriov_server"],
+                security_group_name=f_data["static_secgroup"],key_name=f_data["key_name"]
+                ):
+    """Step 1.  After creating the sriov-enabled instance, ssh to compute node where instance is resides on
+        Step 2. Run the ifconfig command to verify the creation of VFs of ports assigned in settings file"""
+    logger.info("==========================================================================================================")
+    logger.info("====         TEST CASE 1:     Verify the VFs creations on compute node.                          =====")
+    logger.info("==========================================================================================================")
+    try:
+        vfcount_before_server_creation = check_number_of_vfs(zone=availability_zone)
+        output = creation_object.os_create_sriov_offload_enabled_instance(logger, conn_create, network_name=network_name,
+                                                                  port_name=port_name,
+                                                                  router_name=router_name,
+                                                                  subnet_name=subnet_name,
+                                                                  cidr=cidr,
+                                                                  gateway=gateway,
+                                                                  network_bool=network_bool, subnet_bool=subnet_bool,
+                                                                  port_bool=port_bool,
+                                                                  flavor_name=flavor_name,
+                                                                  availability_zone=availability_zone,
+                                                                  image_name=image_name,
+                                                                  server_name=server_name,
+                                                                  security_group_name=security_group_name,
+                                                                  key_name=key_name)
+        vfcount_after_server_creation = check_number_of_vfs(zone=availability_zone)
+        delete_object.delete_1_instance_and_router_with_1_network(logger, conn_delete, server_name=server_name,
+                                                                  network_name=network_name,
+                                                                  router_name=router_name, port_name=port_name)
+        vfcount_after_server_deletion = check_number_of_vfs(zone=availability_zone)
+        if vfcount_after_server_deletion > vfcount_after_server_creation and vfcount_before_server_creation > vfcount_after_server_creation and vfcount_after_server_deletion == vfcount_before_server_creation:
+            logger.info ("Total number of VF's %s" %vfcount_before_server_creation)
+            logger.info ("1 VF is consumed when instance created....%s" %vfcount_after_server_creation)
+            logger.info ("1 VF is returned when instance deleted....%s" %vfcount_after_server_deletion)
+            logger.info ("Test Successful")
+        else:
+            logger.info ("server creation failed / server is not created on the given compute")
+            logger.info ("Test Failed")
+    except:
+        logger.info ("Unable to execute test case 1")
+        logger.info ("\nError: " + str(sys.exc_info()[0]))
+        logger.info ("Cause: " + str(sys.exc_info()[1]))
+        logger.info ("Line No: %s \n" % (sys.exc_info()[2].tb_lineno))
+        delete_object.delete_1_instance_and_router_with_1_network(logger, conn_delete, server_name=server_name,
+                                                                  network_name=network_name,
+                                                                  router_name=router_name, port_name=port_name)
 
+def test_case_2(network_name=f_data["sriov_network_name"],
+                port_name=f_data["sriov_port"],
+                router_name=f_data["sriov_router"],
+                subnet_name=f_data["sriov_subnetwork"],
+                cidr=f_data["cidr"], gateway=f_data["gateway"],
+                network_bool=True, subnet_bool=True, port_bool=True,
+                flavor_name=f_data["sriov_flavor"], availability_zone=f_data["zone"],
+                image_name=f_data["static_image"],server_name=f_data["sriov_server"],
+                security_group_name=f_data["static_secgroup"],key_name=f_data["key_name"]
+                ):
+    """Step 1.  After creating the sriov-enabled instance, ssh to compute node where instance is resides on
+        Step 2. Run the ifconfig command to verify the creation of VFs of ports assigned in settings file"""
+    logger.info("==========================================================================================================")
+    logger.info("====         TEST CASE 2:     Verify the Switc Mode for OVS-Offload.                                 =====")
+    logger.info("==========================================================================================================")
+    try:
+        vfcount_ini = get_sriov_vf_count_from_ini_file()
+        pf_list= check_list_of_Pfs(zone=availability_zone)
+        offload_param="switchdev"
+        out = ssh_obj.execute_command_return_output(logger, "cat pilot/templates/neutron-sriov.yaml | grep switchdev")
+        res1 = out.split(":")[1]
+        
+
+        if vfcount_after_server_deletion > vfcount_after_server_creation and vfcount_before_server_creation > vfcount_after_server_creation and vfcount_after_server_deletion == vfcount_before_server_creation:
+            logger.info ("Total number of VF's %s" %vfcount_before_server_creation)
+            logger.info ("1 VF is consumed when instance created....%s" %vfcount_after_server_creation)
+            logger.info ("1 VF is returned when instance deleted....%s" %vfcount_after_server_deletion)
+            logger.info ("Test Successful")
+        else:
+            logger.info ("server creation failed / server is not created on the given compute")
+            logger.info ("Test Failed")
+    except:
+        logger.info ("Unable to execute test case 1")
+        logger.info ("\nError: " + str(sys.exc_info()[0]))
+        logger.info ("Cause: " + str(sys.exc_info()[1]))
+        logger.info ("Line No: %s \n" % (sys.exc_info()[2].tb_lineno))
+        delete_object.delete_1_instance_and_router_with_1_network(logger, conn_delete, server_name=server_name,
+                                                                  network_name=network_name,
+                                                                  router_name=router_name, port_name=port_name)
 
 def test_case_1(network_name=f_data["sriov_network_name"],
                 port_name=f_data["sriov_port"],
@@ -347,58 +479,7 @@ deleteall=True
 
 
 
-def test_case_3(network_name=f_data["sriov_network_name"],
-                port_name=f_data["sriov_port"],
-                router_name=f_data["sriov_router"],
-                subnet_name=f_data["sriov_subnetwork"],
-                cidr=f_data["cidr"], gateway=f_data["gateway"],
-                network_bool=True, subnet_bool=True, port_bool=True,
-                flavor_name=f_data["sriov_flavor"], availability_zone=f_data["zone"],
-                image_name=f_data["static_image"],server_name=f_data["sriov_server"],
-                security_group_name=f_data["static_secgroup"],key_name=f_data["key_name"]
-                ):
-    """Step 1.  After creating the sriov-enabled instance, ssh to compute node where instance is resides on
-        Step 2. Run the ifconfig command to verify the creation of VFs of ports assigned in settings file"""
-    logger.info("==========================================================================================================")
-    logger.info("====         TEST CASE 3:     Verify the VFs creations on compute node.                          =====")
-    logger.info("==========================================================================================================")
-    try:
-        vfcount_before_server_creation = check_number_of_vfs(zone=availability_zone)
-        output = creation_object.os_create_sriov_offload_enabled_instance(logger, conn_create, network_name=network_name,
-                                                                  port_name=port_name,
-                                                                  router_name=router_name,
-                                                                  subnet_name=subnet_name,
-                                                                  cidr=cidr,
-                                                                  gateway=gateway,
-                                                                  network_bool=network_bool, subnet_bool=subnet_bool,
-                                                                  port_bool=port_bool,
-                                                                  flavor_name=flavor_name,
-                                                                  availability_zone=availability_zone,
-                                                                  image_name=image_name,
-                                                                  server_name=server_name,
-                                                                  security_group_name=security_group_name,
-                                                                  key_name=key_name)
-        vfcount_after_server_creation = check_number_of_vfs(zone=availability_zone)
-        delete_object.delete_1_instance_and_router_with_1_network(logger, conn_delete, server_name=server_name,
-                                                                  network_name=network_name,
-                                                                  router_name=router_name, port_name=port_name)
-        vfcount_after_server_deletion = check_number_of_vfs(zone=availability_zone)
-        if vfcount_after_server_deletion > vfcount_after_server_creation and vfcount_before_server_creation > vfcount_after_server_creation and vfcount_after_server_deletion == vfcount_before_server_creation:
-            logger.info ("Total number of VF's %s" %vfcount_before_server_creation)
-            logger.info ("1 VF is consumed when instance created....%s" %vfcount_after_server_creation)
-            logger.info ("1 VF is returned when instance deleted....%s" %vfcount_after_server_deletion)
-            logger.info ("Test Successful")
-        else:
-            logger.info ("server creation failed / server is not created on the given compute")
-            logger.info ("Test Failed")
-    except:
-        logger.info ("Unable to execute test case 1")
-        logger.info ("\nError: " + str(sys.exc_info()[0]))
-        logger.info ("Cause: " + str(sys.exc_info()[1]))
-        logger.info ("Line No: %s \n" % (sys.exc_info()[2].tb_lineno))
-        delete_object.delete_1_instance_and_router_with_1_network(logger, conn_delete, server_name=server_name,
-                                                                  network_name=network_name,
-                                                                  router_name=router_name, port_name=port_name)
+
 
 
 def test_case4(server1_name=f_data["sriov_server1"], server2_name=f_data["sriov_server2"],
