@@ -590,732 +590,8 @@ deleteall=True
         delete_object.delete_1_instance_and_router_with_1_network(logger, conn_delete, server_name=server_name,
                                                                   network_name=network_name,
                                                                   router_name=router_name, port_name=port_name)
-def test_case_(network_name=f_data["sriov_network_name"],
-                port_name=f_data["sriov_port"],
-                router_name=f_data["sriov_router"],
-                subnet_name=f_data["sriov_subnetwork"],
-                cidr=f_data["cidr"], gateway=f_data["gateway"],
-                network_bool=True, subnet_bool=True, port_bool=True,
-                flavor_name=f_data["sriov_flavor"], availability_zone=f_data["zone"],
-                image_name=f_data["static_image"],server_name=f_data["sriov_server"],
-                security_group_name=f_data["static_secgroup"],key_name=f_data["key_name"],
-deleteall=True
-                ):
-    """STEPS FOR CREATION OF SRIOV ENABLED INSTANCE
-        1. Create a zone named sriov
-        2. Create aggregate and add host sriov
-        3. Create flavor with 4GB ram, 150GB disk, 2 vcpu
-        4. Create a Network named sriov_net
-        5. Create Subnet named sriov_sub
-        6. Create port with vnic type = direct named it as sriov_port
-        7. Create VM using above created nic port"""
-    logger.info("==========================================================================================================")
-    logger.info("====         TEST CASE 2:     SSH SRIOV Enabled Instance.                                            =====")
-    logger.info("==========================================================================================================")
-    try:
-        # agg = creation_object.os_aggregate_creation_and_add_host(logger, conn_create, name, availablity_zone, host_name)
-        # fal = creation_object.os_flavor_creation(logger, conn_create, "sriov_flavor", 4096, 2, 150)
-        # [network_id, subnet_id, port_id, port_ip]
-        output = creation_object.os_create_sriov_offload_enabled_instance(logger, conn_create, network_name=network_name,
-                                                                  port_name=port_name,
-                                                                  router_name=router_name,
-                                                                  subnet_name=subnet_name,
-                                                                  cidr=cidr,
-                                                                  gateway=gateway,
-                                         network_bool=network_bool, subnet_bool=subnet_bool, port_bool=port_bool,
-                                         flavor_name=flavor_name,
-                                         availability_zone=availability_zone,
-                                         image_name=image_name,
-                                         server_name=server_name,
-                                         security_group_name=security_group_name,
-                                         key_name=key_name)
-        # pdb.set_trace()
-        time.sleep(50)
-        ssh_obj.ssh_to(logger, ip=output[2][1], username="centos", key_file_name=data["key_file_path"])
-        ip = ssh_obj.execute_command_return_output(logger, "sudo ip a")
-        ssh_obj.ssh_close()
-        if output[2][0] in ip:
-            logger.info ("Test 2 SUCCESSFUL")
-        else:
-            logger.info ("Test 2 FAILED")
-        if deleteall:
-            delete_object.delete_1_instance_and_router_with_1_network(logger, conn_delete, server_name=server_name,
-                                                                      network_name=network_name,
-                                                        router_name=router_name, port_name=port_name)
-        else:
-            logger.info ("Note: Nothing is deleted!")
-        return output
-    except:
-        logger.info ("Unable to execute test case 2")
-        logger.info ("\nError: " + str(sys.exc_info()[0]))
-        logger.info ("Cause: " + str(sys.exc_info()[1]))
-        logger.info ("Line No: %s \n" % (sys.exc_info()[2].tb_lineno))
-        delete_object.delete_1_instance_and_router_with_1_network(logger, conn_delete, server_name=server_name,
-                                                                  network_name=network_name,
-                                                                  router_name=router_name, port_name=port_name)
 
-
-
-
-
-
-
-
-def test_case(server1_name=f_data["sriov_server1"], server2_name=f_data["sriov_server2"],
-               network_name=f_data["sriov_network_name"],
-               subnet_name=f_data["sriov_subnetwork"],
-               router_name=f_data["sriov_router"],
-               port1_name=f_data["sriov_port1"], port2_name=f_data["sriov_port2"],
-               zone=f_data["zone"],
-               cidr=f_data["cidr"], gateway_ip=f_data["gateway"],
-               flavor_name=f_data["sriov_flavor"],
-               image_name=f_data["static_image"],
-               secgroup_name=f_data["static_secgroup"],
-               key_name=f_data["key_name"],
-               deleteall=True):
-
-    logger.info("==========================================================================================================")
-    logger.info("====         TEST CASE 4:     Creating Same Compute and network sriov Instances.                =====")
-    logger.info("==========================================================================================================")
-    """1. Create instance-1 and instance-2 on same network and compute node e.g compute0
-        2. ssh to instance-1
-         3. ping to instance-2's ip"""
-    # delete_object.delete_2_instances_sriov_enabled_and_router_with_1_network(logger, conn_delete, server1_name=server1_name,
-    #                                                                          server2_name=server2_name,
-    #                                                                          network_name=network_name,
-    #                                                                          router_name=router_name,
-    #                                                                          port1_name=port1_name,
-    #                                                                          port2_name=port2_name)
-    try:
-        output = creation_object.create_2_instances_sriov_enabled_on_same_compute_same_network(logger, conn_create,
-                                                    server1_name=server1_name, server2_name=server2_name,
-                                                    network_name=network_name, subnet_name=subnet_name,
-                                                    router_name=router_name, port1_name=port1_name,
-                                                    port2_name=port2_name, zone=zone, cidr=cidr,
-                                                    gateway_ip=gateway_ip, flavor_name=flavor_name, image_name=image_name,
-                                                    secgroup_name=secgroup_name, key_name=key_name,
-                                                    assign_floating_ip=True)
-        # pdb.set_trace()
-        time.sleep(50)
-        ping = ssh_to_instance1_and_ping_instance2(username_of_instance1=image_name, ip_of_instance1=output[0][2][1], ip_of_instance2=output[1][2][0])
-
-        if ping==1:
-            logger.info ("Test 4 SUCCESSFUL")
-        else:
-            logger.info ("Test 4 failed")
-
-        ssh_obj.ssh_close()
-
-        if deleteall:
-            delete_object.delete_2_instances_sriov_enabled_and_router_with_1_network(logger, conn_delete, server1_name=server1_name,
-                                                                       server2_name=server2_name,
-                                                                       network_name=network_name,
-                                                                       router_name=router_name,
-                                                                       port1_name=port1_name,
-                                                                       port2_name=port2_name)
-        return ping
-    except:
-        logger.info ("Unable to execute test case 4")
-        logger.info ("\nError: " + str(sys.exc_info()[0]))
-        logger.info ("Cause: " + str(sys.exc_info()[1]))
-        logger.info ("Line No: %s \n" % (sys.exc_info()[2].tb_lineno))
-        delete_object.delete_2_instances_sriov_enabled_and_router_with_1_network(logger, conn_delete, server1_name=server1_name,
-                                                                   server2_name=server2_name,
-                                                                   network_name=network_name,
-                                                                   router_name=router_name,
-                                                                   port1_name=port1_name,
-                                                                   port2_name=port2_name)
-
-
-
-def test_case5(server1_name=f_data["sriov_server1"], server2_name=f_data["sriov_server2"],
-               network_name=f_data["sriov_network_name"],
-               subnet_name=f_data["sriov_subnetwork"],
-               router_name=f_data["sriov_router"],
-               port1_name=f_data["sriov_port1"], port2_name=f_data["sriov_port2"],
-               zone1=f_data["zone"],zone2=f_data["zone"],
-               cidr=f_data["cidr"], gateway_ip=f_data["gateway"],
-               flavor_name=f_data["sriov_flavor"],
-               image_name=f_data["static_image"],
-               secgroup_name=f_data["static_secgroup"],
-               key_name=f_data["key_name"],
-               deleteall=True):
-
-    """1. Create instance-1 and instance-2 on same network and different compute nodes e.g instance-1 on compute0 and instance-2 on compute1
-        2. ssh to instance-1
-         3. ping to instance-2's ip"""
-    logger.info("==========================================================================================================")
-    logger.info("====         TEST CASE 5:     Creating Different Compute and Same Network sriov Instances.           =====")
-    logger.info("==========================================================================================================")
-    try:
-        output = creation_object.create_2_instances_sriov_enabled_on_diff_compute_same_network(logger, conn_create,
-                                                    server1_name=server1_name, server2_name=server2_name,
-                                                    network_name=network_name, subnet_name=subnet_name,
-                                                    router_name=router_name, port1_name=port1_name,
-                                                    port2_name=port2_name, zone1=zone1, zone2=zone2, cidr=cidr,
-                                                    gateway_ip=gateway_ip, flavor_name=flavor_name, image_name=image_name,
-                                                    secgroup_name=secgroup_name, key_name=key_name,
-                                                    assign_floating_ip=True)
-        # pdb.set_trace()
-        time.sleep(50)
-        ping = ssh_to_instance1_and_ping_instance2(username_of_instance1=image_name, ip_of_instance1=output[0][2][1], ip_of_instance2=output[1][2][0])
-
-        if ping==1:
-            logger.info ("Test 5 SUCCESSFUL")
-        else:
-            logger.info ("Test 5 failed")
-
-        ssh_obj.ssh_close()
-
-        if deleteall:
-            delete_object.delete_2_instances_sriov_enabled_and_router_with_1_network(logger, conn_delete, server1_name=server1_name,
-                                                                       server2_name=server2_name,
-                                                                       network_name=network_name,
-                                                                       router_name=router_name,
-                                                                       port1_name=port1_name,
-                                                                       port2_name=port2_name)
-        return ping
-    except:
-        logger.info ("Unable to execute test case 5")
-        logger.info ("\nError: " + str(sys.exc_info()[0]))
-        logger.info ("Cause: " + str(sys.exc_info()[1]))
-        logger.info ("Line No: %s \n" % (sys.exc_info()[2].tb_lineno))
-        delete_object.delete_2_instances_sriov_enabled_and_router_with_1_network(logger, conn_delete, server1_name=server1_name,
-                                                                   server2_name=server2_name,
-                                                                   network_name=network_name,
-                                                                   router_name=router_name,
-                                                                   port1_name=port1_name,
-                                                                   port2_name=port2_name)
-
-
-def test_case6( network_name=f_data["network_name"],
-                sriov_port=f_data["sriov_port"],
-                legacy_port=f_data["legacy_port"],
-                subnet_name=f_data["subnet_name"], cidr=f_data["cidr"], gateway=f_data["gateway"],
-                network_bool=False, subnet_bool=False, port_bool=False,
-                router_name=f_data["router_name"],
-                zone=f_data["zone"],
-                sriov_flavor=f_data["sriov_flavor"], legacy_flavor=f_data["legacy_flavor"],
-                sriov_server=f_data["sriov_server"], legacy_server=f_data["legacy_server"],
-                image_name=f_data["static_image"],
-                key_name=data["key_name"],
-                secgroup=data["static_secgroup"],
-deleteall=True
-):
-    """1.Create sriov and legacy instances on same compute and on same network.
-        2.Create sriov and legacy instances on different compute and on same network
-         3.Create sriov and legacy instances on same compute and different network
-          4.Create sriov and legacy instances on different compute and different network
-            5.Ping one instance to other in each scenario"""
-    logger.info("==========================================================================================================")
-    logger.info("====  TEST CASE 6:     Ping an sriov instance to legacy instance in different scenarios             ====")
-    logger.info("====  .same compute same network ====")
-    logger.info("==========================================================================================================")
-    # delete_object.delete_2_instances_and_router_with_1_network_2ports(logger, conn_delete, server1_name=sriov_server,
-    #                                                                   server2_name=legacy_server,
-    #                                                                   network_name=network_name,
-    #                                                                   router_name=router_name,
-    #                                                                   port1_name=sriov_port,
-    #                                                                   port2_name=legacy_port)
-    #1.Create sriov and ovslegacy instances on same compute and on same network.
-    ##############===============================SRIOV INSTANCE
-    # delete_object.delete_2_instances_and_router_with_1_network_2ports(logger, conn_delete, server1_name=sriov_server,
-    #                                                                  server2_name=legacy_server,
-    #                                                                  network_name=network_name,
-    #                                                                  router_name=router_name,
-    #                                                                  port1_name=sriov_port,
-    #                                                                  port2_name=legacy_port)
-
-    try:
-        network = creation_object.os_create_sriov_enabled_network(logger, conn_create, network_name=network_name,
-                                                                        port_name=sriov_port,
-                                        subnet_name=subnet_name, cidr=cidr, gateway=gateway,
-                                        network_bool=True, subnet_bool=True, port_bool=True
-                                        )
-        # pdb.set_trace()
-        router = creation_object.os_router_creation(logger, conn_create, router_name=router_name,
-                                                     port_name=sriov_port, net_name=network_name)
-        sriov = creation_object.os_create_sriov_offload_enabled_instance(logger, conn_create, network_name=network_name,
-                                                                  port_name=sriov_port,
-                                                                  router_name=router_name,
-                                                                  subnet_name=subnet_name,
-                                                                  cidr=cidr,
-                                                                  gateway=gateway,
-                                                                  network_bool=network_bool,
-                                                                  subnet_bool=subnet_bool,
-                                                                  port_bool=port_bool,
-                                                                  flavor_name=sriov_flavor,
-                                                                  availability_zone=zone,
-                                                                  image_name=image_name,
-                                                                  server_name=sriov_server,
-                                                                  security_group_name=secgroup,
-                                                                  key_name=key_name)
-
-        legacy = creation_object.create_1_instances_on_same_compute_same_network(logger, conn_create, server_name=legacy_server,
-                                                                               network_name=network_name,
-                                                                               subnet_name=subnet_name,
-                                                                               router_name=router_name, port_name=legacy_port,
-                                                                               zone=zone, cidr=cidr,
-                                                            gateway_ip=gateway, flavor_name=legacy_flavor, image_name=image_name,
-                                                            secgroup_name=secgroup, assign_floating_ip=True)
-        # pdb.set_trace()
-        time.sleep(50)
-        ping = ssh_to_instance1_and_ping_instance2(username_of_instance1=image_name, ip_of_instance1=sriov[2][1],
-                                                   ip_of_instance2=legacy[3])
-
-        if ping:
-            logger.info ("Test 6 same compute and same network successful")
-        else:
-            logger.info ("Test 6 same compute and same network failed")
-
-        # pdb.set_trace()
-        if deleteall:
-            delete_object.delete_2_instances_and_router_with_1_network_2ports(logger, conn_delete, server1_name=sriov_server,
-                                                                             server2_name=legacy_server,
-                                                                             network_name=network_name,
-                                                                             router_name=router_name,
-                                                                             port1_name=sriov_port,
-                                                                             port2_name=legacy_port)
-        return ping
-    except:
-        logger.info ("Unable to execute test case 6")
-        logger.info ("\nError: " + str(sys.exc_info()[0]))
-        logger.info ("Cause: " + str(sys.exc_info()[1]))
-        logger.info ("Line No: %s \n" % (sys.exc_info()[2].tb_lineno))
-        delete_object.delete_2_instances_and_router_with_1_network_2ports(logger, conn_delete, server1_name=sriov_server,
-                                                                                 server2_name=legacy_server,
-                                                                                 network_name=network_name,
-                                                                                 router_name=router_name,
-                                                                                 port1_name=sriov_port,
-                                                                                 port2_name=legacy_port)
-
-
-def test_case7(network_name = f_data["network_name"],
-    sriov_port = f_data["sriov_port"],
-    legacy_port = f_data["legacy_port"],
-    subnet_name = f_data["subnet_name"], cidr = f_data["cidr"], gateway = f_data["gateway"],
-    network_bool = False, subnet_bool = False, port_bool = False,
-    router_name = f_data["router_name"],
-    zone1 = f_data["zone"], zone2 = f_data["zone1"], image_name = f_data["static_image"],
-    sriov_flavor = f_data["sriov_flavor"], legacy_flavor = f_data["legacy_flavor"],
-    sriov_server = f_data["sriov_server"], legacy_server = f_data["legacy_server"],
-    key_name = data["key_name"],
-    secgroup = data["static_secgroup"],
-deleteall=True
-):
-
-    """1.Create sriov and legacy instances on same compute and on same network.
-        2.Create sriov and legacy instances on different compute and on same network
-         3.Create sriov and legacy instances on same compute and different network
-          4.Create sriov and legacy instances on different compute and different network
-            5.Ping one instance to other in each scenario"""
-    logger.info("==========================================================================================================")
-    logger.info("====  TEST CASE 7:     Ping an sriov instance to legacy instance in different scenarios            ====")
-    logger.info("====  .diff compute same network ====")
-    logger.info("==========================================================================================================")
-    # delete_object.delete_2_instances_and_router_with_1_network_2ports(logger, conn_delete, server1_name=sriov_server,
-    #                                                                   server2_name=legacy_server,
-    #                                                                   network_name=network_name,
-    #                                                                   router_name=router_name,
-    #                                                                   port1_name=sriov_port,
-    #                                                                   port2_name=legacy_port)
-    # exit()
-    #1.Create sriov and legacy instances on same compute and on same network.
-    ##############===============================SRIOV INSTANCE
-    # delete_object.delete_2_instances_and_router_with_1_network_2ports(logger, conn_delete, server1_name=sriov_server,
-    #                                                                  server2_name=legacy_server,
-    #                                                                  network_name=network_name,
-    #                                                                  router_name=router_name,
-    #                                                                  port1_name=sriov_port,
-    #                                                                  port2_name=legacy_port)
-    try:
-        network = creation_object.os_create_sriov_enabled_network(logger, conn_create, network_name=network_name,
-                                                                        port_name=sriov_port,
-                                        subnet_name=subnet_name, cidr=cidr, gateway=gateway,
-                                        network_bool=True, subnet_bool=True, port_bool=True
-                                        )
-        # pdb.set_trace()
-        router = creation_object.os_router_creation(logger, conn_create, router_name=router_name,
-                                                     port_name=sriov_port, net_name=network_name)
-        sriov = creation_object.os_create_sriov_offload_enabled_instance(logger, conn_create, network_name=network_name,
-                                                                  port_name=sriov_port,
-                                                                  router_name=router_name,
-                                                                  subnet_name=subnet_name,
-                                                                  cidr=cidr,
-                                                                  gateway=gateway,
-                                                                  network_bool=network_bool,
-                                                                  subnet_bool=subnet_bool,
-                                                                  port_bool=port_bool,
-                                                                  flavor_name=sriov_flavor,
-                                                                  availability_zone=zone1,
-                                                                  image_name=image_name,
-                                                                  server_name=sriov_server,
-                                                                  security_group_name=secgroup,
-                                                                  key_name=key_name)
-
-        legacy = creation_object.create_1_instances_on_same_compute_same_network(logger, conn_create, server_name=legacy_server,
-                                                                               network_name=network_name,
-                                                                               subnet_name=subnet_name,
-                                                                               router_name=router_name, port_name=legacy_port,
-                                                                               zone=zone2, cidr=cidr,
-                                                            gateway_ip=gateway, flavor_name=legacy_flavor, image_name=image_name,
-                                                            secgroup_name=secgroup, assign_floating_ip=True)
-        # pdb.set_trace()
-        # pdb.set_trace()
-        time.sleep(50)
-        ping = ssh_to_instance1_and_ping_instance2(username_of_instance1=image_name, ip_of_instance1=sriov[2][1],
-                                                   ip_of_instance2=legacy[3])
-
-        if ping:
-            logger.info ("Test 7 diff compute and same network successful")
-        else:
-            logger.info ("Test 7 diff compute and same network failed")
-
-        # pdb.set_trace()
-        if deleteall:
-            delete_object.delete_2_instances_and_router_with_1_network_2ports(logger, conn_delete, server1_name=sriov_server,
-                                                                             server2_name=legacy_server,
-                                                                             network_name=network_name,
-                                                                             router_name=router_name,
-                                                                             port1_name=sriov_port,
-                                                                             port2_name=legacy_port)
-        return ping
-    except:
-        logger.info ("Unable to execute test case 7")
-        logger.info ("\nError: " + str(sys.exc_info()[0]))
-        logger.info ("Cause: " + str(sys.exc_info()[1]))
-        logger.info ("Line No: %s \n" % (sys.exc_info()[2].tb_lineno))
-        delete_object.delete_2_instances_and_router_with_1_network_2ports(logger, conn_delete, server1_name=sriov_server,
-                                                                                 server2_name=legacy_server,
-                                                                                 network_name=network_name,
-                                                                                 router_name=router_name,
-                                                                                 port1_name=sriov_port,
-                                                                                 port2_name=legacy_port)
-
-
-def test_case8( sriov_network=f_data["sriov_network"], legacy_network=f_data["legacy_network"],
-                sriov_port= f_data["sriov_port"], legacy_port=f_data["legacy_port"],
-                sriov_subnet=f_data["sriov_subnet"], legacy_subnet=f_data["legacy_subnet"],
-                sriov_cidr=f_data["sriov_cidr"], sriov_gateway=f_data["sriov_gateway"],
-                legacy_cidr=f_data["legacy_cidr"], legacy_gateway=f_data["legacy_gateway"],
-                network_bool=False, subnet_bool=False, port_bool=False,
-                router_name=f_data["router_name"],
-                zone=f_data["zone"],
-                image_name=f_data["static_image"],
-                sriov_flavor = f_data["sriov_flavor"], legacy_flavor = f_data["legacy_flavor"],
-                sriov_server = f_data["sriov_server"], legacy_server = f_data["legacy_server"],
-                key_name = data["key_name"],
-                secgroup = data["static_secgroup"],
-    deleteall=True
-            ):
-    """1.Create sriov and ovslegacy instances on same compute and on same network.
-        2.Create sriov and ovslegacy instances on different compute and on same network
-         3.Create sriov and ovslegacy instances on same compute and different network
-          4.Create sriov and ovslegacy instances on different compute and different network
-            5.Ping one instance to other in each scenario"""
-    logger.info("==========================================================================================================")
-    logger.info("====  TEST CASE 8:     Ping an sriov instance to legacy instance in different scenarios             ====")
-    logger.info("====  .same compute diff network ====")
-    logger.info("==========================================================================================================")
-    # delete_object.delete_2_instances_and_router_with_1_network_2ports(logger, conn_delete, server1_name=sriov_server,
-    #                                                                   server2_name=legacy_server,
-    #                                                                   network_name=network_name,
-    #                                                                   router_name=router_name,
-    #                                                                   port1_name=sriov_port,
-    #                                                                   port2_name=legacy_port)
-    #1.Create sriov and ovslegacy instances on same compute and on same network.
-    ##############===============================SRIOV INSTANCE
-    # delete_object.delete_2_instances_and_router_with_1_network_2ports(logger, conn_delete, server1_name=sriov_server,
-    #                                                                  server2_name=legacy_server,
-    #                                                                  network_name=network_name,
-    #                                                                  router_name=router_name,
-    #                                                                  port1_name=sriov_port,
-    #                                                                  port2_name=legacy_port)
-    try:
-        network_sriov = creation_object.os_create_sriov_enabled_network(logger, conn_create, network_name=sriov_network,
-                                                                        port_name=sriov_port,
-                                        subnet_name=sriov_subnet, cidr=sriov_cidr, gateway=sriov_gateway,
-                                        network_bool=True, subnet_bool=True, port_bool=True
-                                        )
-        network_legacy = creation_object.os_network_creation(logger, conn_create, net_name=legacy_network,
-                                                           cidr=legacy_cidr,
-                                                           subnet_name=legacy_subnet,
-                                                           gatewy=legacy_gateway)
-
-        router = creation_object.os_router_creation_with_2_networks(logger, conn_create, router_name=router_name,
-                                                                    port1_name=sriov_port, port2_name=legacy_port,
-                                                         net1_name=sriov_network, net2_name=legacy_network)
-
-        sriov = creation_object.os_create_sriov_offload_enabled_instance(logger, conn_create, network_name=sriov_network,
-                                                                  port_name=sriov_port,
-                                                                  router_name=router_name,
-                                                                  subnet_name=sriov_subnet,
-                                                                  cidr=sriov_cidr,
-                                                                  gateway=sriov_gateway,
-                                                                  network_bool=network_bool,
-                                                                  subnet_bool=subnet_bool,
-                                                                  port_bool=port_bool,
-                                                                  flavor_name=sriov_flavor,
-                                                                  availability_zone=zone,
-                                                                  image_name=image_name,
-                                                                  server_name=sriov_server,
-                                                                  security_group_name=secgroup,
-                                                                  key_name=key_name)
-
-        legacy = creation_object.create_1_instances_on_same_compute_same_network(logger, conn_create, server_name=legacy_server,
-                                                                               network_name=legacy_network,
-                                                                               subnet_name=legacy_subnet,
-                                                                               router_name=router_name, port_name=legacy_port,
-                                                                               zone=zone, cidr=legacy_cidr,
-                                                            gateway_ip=legacy_gateway, flavor_name=legacy_flavor, image_name=image_name,
-                                                            secgroup_name=secgroup, assign_floating_ip=True)
-        # pdb.set_trace()
-        time.sleep(50)
-        ping = ssh_to_instance1_and_ping_instance2(username_of_instance1=image_name, ip_of_instance1=sriov[2][1],
-                                                   ip_of_instance2=legacy[3])
-
-        if ping:
-            logger.info ("Test 8 same compute and diff network successful")
-        else:
-            logger.info ("Test 8 same compute and diff network failed")
-
-        if deleteall:
-            delete_object.delete_2_instances_and_router_with_2_networks(logger, conn_delete, server1_name=sriov_server,
-                                                                        server2_name=legacy_server,
-                                                                        network1_name=sriov_network,
-                                                          network2_name=legacy_network,
-                                                          router_name=router_name,
-                                                                        port1_name=sriov_port, port2_name=legacy_port)
-
-        return ping
-    except:
-        logger.info ("Unable to execute test case 8")
-        logger.info ("\nError: " + str(sys.exc_info()[0]))
-        logger.info ("Cause: " + str(sys.exc_info()[1]))
-        logger.info ("Line No: %s \n" % (sys.exc_info()[2].tb_lineno))
-        delete_object.delete_2_instances_and_router_with_2_networks(logger, conn_delete, server1_name=sriov_server,
-                                                                    server2_name=legacy_server,
-                                                                    network1_name=sriov_network,
-                                                                    network2_name=legacy_network,
-                                                                    router_name=router_name,
-                                                                    port1_name=sriov_port, port2_name=legacy_port)
-
-
-def test_case9(sriov_network=f_data["sriov_network"], legacy_network=f_data["legacy_network"],
-                sriov_port= f_data["sriov_port"], legacy_port=f_data["legacy_port"],
-                sriov_subnet=f_data["sriov_subnet"], legacy_subnet=f_data["legacy_subnet"],
-                sriov_cidr=f_data["sriov_cidr"], sriov_gateway=f_data["sriov_gateway"],
-                legacy_cidr=f_data["legacy_cidr"], legacy_gateway=f_data["legacy_gateway"],
-                network_bool=False, subnet_bool=False, port_bool=False,
-                router_name=f_data["router_name"],
-                zone1=f_data["zone"], zone2=f_data["zone1"],
-                image_name=f_data["static_image"],
-                sriov_flavor = f_data["sriov_flavor"], legacy_flavor = f_data["legacy_flavor"],
-                sriov_server = f_data["sriov_server"], legacy_server = f_data["legacy_server"],
-                key_name = data["key_name"],
-                secgroup = data["static_secgroup"],
-    deleteall=True
-):
-    """1.Create sriov and legacy instances on same compute and on same network.
-        2.Create sriov and legacy instances on different compute and on same network
-         3.Create sriov and legacy instances on same compute and different network
-          4.Create sriov and legacy instances on different compute and different network
-            5.Ping one instance to other in each scenario"""
-    logger.info("==========================================================================================================")
-    logger.info("====  TEST CASE 9:     Ping an sriov instance to legacy instance in different scenarios             ====")
-    logger.info("====  .diff compute diff network ====")
-    logger.info("==========================================================================================================")
-    # delete_object.delete_2_instances_and_router_with_1_network_2ports(logger, conn_delete, server1_name=sriov_server,
-    #                                                                   server2_name=legacy_server,
-    #                                                                   network_name=network_name,
-    #                                                                   router_name=router_name,
-    #                                                                   port1_name=sriov_port,
-    #                                                                   port2_name=legacy_port)
-    #1.Create sriov and ovslegacy instances on same compute and on same network.
-    ##############===============================SRIOV INSTANCE
-    # delete_object.delete_2_instances_and_router_with_1_network_2ports(logger, conn_delete, server1_name=sriov_server,
-    #                                                                  server2_name=legacy_server,
-    #                                                                  network_name=network_name,
-    #                                                                  router_name=router_name,
-    #                                                                  port1_name=sriov_port,
-    #                                                                  port2_name=legacy_port)
-    try:
-        network_sriov = creation_object.os_create_sriov_enabled_network(logger, conn_create, network_name=sriov_network,
-                                                                        port_name=sriov_port,
-                                        subnet_name=sriov_subnet, cidr=sriov_cidr, gateway=sriov_gateway,
-                                        network_bool=True, subnet_bool=True, port_bool=True
-                                        )
-        network_legacy = creation_object.os_network_creation(logger, conn_create, net_name=legacy_network,
-                                                           cidr=legacy_cidr,
-                                                           subnet_name=legacy_subnet,
-                                                           gatewy=legacy_gateway)
-
-        router = creation_object.os_router_creation_with_2_networks(logger, conn_create, router_name=router_name,
-                                                                    port1_name=sriov_port, port2_name=legacy_port,
-                                                         net1_name=sriov_network, net2_name=legacy_network)
-
-        sriov = creation_object.os_create_sriov_offload_enabled_instance(logger, conn_create, network_name=sriov_network,
-                                                                  port_name=sriov_port,
-                                                                  router_name=router_name,
-                                                                  subnet_name=sriov_subnet,
-                                                                  cidr=sriov_cidr,
-                                                                  gateway=sriov_gateway,
-                                                                  network_bool=network_bool,
-                                                                  subnet_bool=subnet_bool,
-                                                                  port_bool=port_bool,
-                                                                  flavor_name=sriov_flavor,
-                                                                  availability_zone=zone1,
-                                                                  image_name=image_name,
-                                                                  server_name=sriov_server,
-                                                                  security_group_name=secgroup,
-                                                                  key_name=key_name)
-
-        legacy = creation_object.create_1_instances_on_same_compute_same_network(logger, conn_create, server_name=legacy_server,
-                                                                               network_name=legacy_network,
-                                                                               subnet_name=legacy_subnet,
-                                                                               router_name=router_name, port_name=legacy_port,
-                                                                               zone=zone2, cidr=legacy_cidr,
-                                                                                gateway_ip=legacy_gateway,
-                                                                                flavor_name=legacy_flavor, image_name=image_name,
-                                                                                secgroup_name=secgroup, assign_floating_ip=True)
-        # pdb.set_trace()
-        time.sleep(50)
-        ping = ssh_to_instance1_and_ping_instance2(username_of_instance1=image_name, ip_of_instance1=sriov[2][1],
-                                                   ip_of_instance2=legacy[3])
-
-        if ping:
-            logger.info ("Test 9 diff compute and diff network successful")
-        else:
-            logger.info ("Test 9 diff compute and diff network failed")
-
-        # pdb.set_trace()
-        if deleteall:
-            delete_object.delete_2_instances_and_router_with_2_networks(logger, conn_delete, server1_name=sriov_server,
-                                                                        server2_name=legacy_server,
-                                                                        network1_name=sriov_network,
-                                                          network2_name=legacy_network,
-                                                          router_name=router_name,
-                                                                        port1_name=sriov_port, port2_name=legacy_port)
-
-        return ping
-    except:
-        logger.info ("Unable to execute test case 9")
-        logger.info ("\nError: " + str(sys.exc_info()[0]))
-        logger.info ("Cause: " + str(sys.exc_info()[1]))
-        logger.info ("Line No: %s \n" % (sys.exc_info()[2].tb_lineno))
-        delete_object.delete_2_instances_and_router_with_2_networks(logger, conn_delete, server1_name=sriov_server,
-                                                                    server2_name=legacy_server,
-                                                                    network1_name=sriov_network,
-                                                                    network2_name=legacy_network,
-                                                                    router_name=router_name,
-                                                                    port1_name=sriov_port, port2_name=legacy_port)
-
-def test_case10(    sriov_network1=f_data["sriov_network1"],
-                    sriov_network2=f_data["sriov_network2"],
-                    sriov_port1=f_data["sriov_port1"],
-                    sriov_port2=f_data["sriov_port2"],
-                    sriov_subnet1=f_data["sriov_subnet1"],
-        sriov_subnet2=f_data["sriov_subnet2"],
-        sriov_cidr1=f_data["sriov_cidr1"], sriov_gateway1=f_data["sriov_gateway1"],
-        sriov_cidr2=f_data["sriov_cidr2"], sriov_gateway2=f_data["sriov_gateway2"],
-        network_bool=False, subnet_bool=False, port_bool=False,
-        router_name=f_data["sriov_router"], zone=f_data["zone"],
-        image_name=f_data["static_image"],
-        sriov_server1=f_data["sriov_server1"],
-        sriov_server2=f_data["sriov_server2"],
-        key_name=data["key_name"], secgroup=data["static_secgroup"],sriov_flavor = f_data["sriov_flavor"],
-deleteall=True
-):
-    """1.Create sriov and sriov instances on same compute and on same network.
-        2.Create sriov and sriov instances on different compute and on same network
-         3.Create sriov and sriov instances on same compute and different network
-          4.Create sriov and sriov instances on different compute and different network
-            5.Ping one instance to other in each scenario"""
-    logger.info("==========================================================================================================")
-    logger.info("====  TEST CASE 10:     Ping an sriov instance to sriov instance in different scenarios             ====")
-    logger.info("====  .same compute diff network ====")
-    logger.info("==========================================================================================================")
-
-    try:
-        network_sriov1 = creation_object.os_create_sriov_enabled_network(logger, conn_create, network_name=sriov_network1,
-                                                                        port_name=sriov_port1,
-                                        subnet_name=sriov_subnet1, cidr=sriov_cidr1, gateway=sriov_gateway1,
-                                        network_bool=True, subnet_bool=True, port_bool=True
-                                        )
-        network_sriov2 = creation_object.os_create_sriov_enabled_network(logger, conn_create, network_name=sriov_network2,
-                                                                        port_name=sriov_port2,
-                                        subnet_name=sriov_subnet2, cidr=sriov_cidr2, gateway=sriov_gateway2,
-                                        network_bool=True, subnet_bool=True, port_bool=True
-                                        )
-
-        router = creation_object.os_router_creation_with_2_networks(logger, conn_create, router_name=router_name,
-                                                                    port1_name=sriov_port1, port2_name=sriov_port2,
-                                                         net1_name=sriov_network1, net2_name=sriov_network2)
-
-        sriov1 = creation_object.os_create_sriov_offload_enabled_instance(logger, conn_create, network_name=sriov_network1,
-                                                                  port_name=sriov_port1,
-                                                                  router_name=router_name,
-                                                                  subnet_name=sriov_subnet1,
-                                                                  cidr=sriov_cidr1,
-                                                                  gateway=sriov_gateway1,
-                                                                  network_bool=network_bool,
-                                                                  subnet_bool=subnet_bool,
-                                                                  port_bool=port_bool,
-                                                                  flavor_name=sriov_flavor,
-                                                                  availability_zone=zone,
-                                                                  image_name=image_name,
-                                                                  server_name=sriov_server1,
-                                                                  security_group_name=secgroup,
-                                                                  key_name=key_name)
-
-        sriov2 = creation_object.os_create_sriov_offload_enabled_instance(logger, conn_create, network_name=sriov_network2,
-                                                                  port_name=sriov_port2,
-                                                                  router_name=router_name,
-                                                                  subnet_name=sriov_subnet2,
-                                                                  cidr=sriov_cidr2,
-                                                                  gateway=sriov_gateway2,
-                                                                  network_bool=network_bool,
-                                                                  subnet_bool=subnet_bool,
-                                                                  port_bool=port_bool,
-                                                                  flavor_name=sriov_flavor,
-                                                                  availability_zone=zone,
-                                                                  image_name=image_name,
-                                                                  server_name=sriov_server2,
-                                                                  security_group_name=secgroup,
-                                                                  key_name=key_name)
-        # pdb.set_trace()
-        time.sleep(50)
-        ping = ssh_to_instance1_and_ping_instance2(username_of_instance1=image_name, ip_of_instance1=sriov1[2][1],
-                                                   ip_of_instance2=sriov2[2][0])
-
-        if ping:
-            logger.info ("Test 10 same compute and diff network successful")
-        else:
-            logger.info ("Test 10 same compute and diff network failed")
-
-        if deleteall:
-            delete_object.delete_2_instances_and_router_with_2_networks(logger, conn_delete, server1_name=sriov_server1,
-                                                                        server2_name=sriov_server2,
-                                                                        network1_name=sriov_network1,
-                                                          network2_name=sriov_network2,
-                                                          router_name=router_name,
-                                                                        port1_name=sriov_port1, port2_name=sriov_port2)
-
-        return ping
-    except:
-        logger.info ("Unable to execute test case 10")
-        logger.info ("\nError: " + str(sys.exc_info()[0]))
-        logger.info ("Cause: " + str(sys.exc_info()[1]))
-        logger.info ("Line No: %s \n" % (sys.exc_info()[2].tb_lineno))
-        delete_object.delete_2_instances_and_router_with_2_networks(logger, conn_delete, server1_name=sriov_server1,
-                                                                    server2_name=sriov_server2,
-                                                                    network1_name=sriov_network1,
-                                                                    network2_name=sriov_network2,
-                                                                    router_name=router_name,
-                                                                    port1_name=sriov_port1, port2_name=sriov_port2)
-
-
-def test_case11(
+def test_case_7(
 sriov_network1=f_data["sriov_network1"],
                     sriov_network2=f_data["sriov_network2"],
                     sriov_port1=f_data["sriov_port1"],
@@ -1325,12 +601,12 @@ sriov_network1=f_data["sriov_network1"],
         sriov_cidr1=f_data["sriov_cidr1"], sriov_gateway1=f_data["sriov_gateway1"],
         sriov_cidr2=f_data["sriov_cidr2"], sriov_gateway2=f_data["sriov_gateway2"],
         network_bool=False, subnet_bool=False, port_bool=False,
-        router_name=f_data["sriov_router"], zone1=f_data["zone"],zone2=f_data["zone"],
+        router_name=f_data["sriov_router"], zone1=f_data["zone"],zone2=f_data["zone1"],
         image_name=f_data["static_image"],
         sriov_server1=f_data["sriov_server1"],
         sriov_server2=f_data["sriov_server2"],
         key_name=data["key_name"], secgroup=data["static_secgroup"],sriov_flavor = f_data["sriov_flavor"],
-deleteall=True
+deleteall=False
 ):
     """1.Create sriov and sriov instances on same compute and on same network.
         2.Create sriov and sriov instances on different compute and on same network
@@ -1338,17 +614,23 @@ deleteall=True
           4.Create sriov and sriov instances on different compute and different network
             5.Ping one instance to other in each scenario"""
     logger.info("==========================================================================================================")
-    logger.info("====  TEST CASE 11:     Ping an sriov instance to sriov instance in different scenarios             ====")
+    logger.info("====TEST CASE 7: Verify OVS Offloading for sriov instance to sriov instance in different scenarios    ====")
     logger.info("====  .diff compute diff network ====")
     logger.info("==========================================================================================================")
-
+    # delete_object.delete_2_instances_and_router_with_2_networks(logger, conn_delete, server1_name=sriov_server1,
+    #                                                             server2_name=sriov_server2,
+    #                                                             network1_name=sriov_network1,
+    #                                                             network2_name=sriov_network2,
+    #                                                             router_name=router_name,
+    #                                                             port1_name=sriov_port1, port2_name=sriov_port2)
+    # exit()
     try:
-        network_sriov1 = creation_object.os_create_sriov_enabled_network(logger, conn_create, network_name=sriov_network1,
+        network_sriov1 = creation_object.os_create_sriov_offload_enabled_network(logger, conn_create, network_name=sriov_network1,
                                                                         port_name=sriov_port1,
                                         subnet_name=sriov_subnet1, cidr=sriov_cidr1, gateway=sriov_gateway1,
                                         network_bool=True, subnet_bool=True, port_bool=True
                                         )
-        network_sriov2 = creation_object.os_create_sriov_enabled_network(logger, conn_create, network_name=sriov_network2,
+        network_sriov2 = creation_object.os_create_sriov_offload_enabled_network(logger, conn_create, network_name=sriov_network2,
                                                                         port_name=sriov_port2,
                                         subnet_name=sriov_subnet2, cidr=sriov_cidr2, gateway=sriov_gateway2,
                                         network_bool=True, subnet_bool=True, port_bool=True
@@ -1391,14 +673,36 @@ deleteall=True
                                                                   key_name=key_name)
         # pdb.set_trace()
         time.sleep(50)
-        ping = ssh_to_instance1_and_ping_instance2(username_of_instance1=image_name, ip_of_instance1=sriov1[2][1],
-                                                   ip_of_instance2=sriov2[2][0])
+        zone = zone2
+        if zone == data["zone1"]:
+            ip = cmpt[0]
+        elif zone == data["zone2"]:
+            ip = cmpt[1]
+        elif zone == data["zone3"]:
+            ip = cmpt[2]
+        ssh_obj.ssh_to(logger, ip=ip, username=username_of_nodes)
 
+        res = ssh_obj.execute_command_return_output(logger, "sudo ovs-dpctl show")
+        logger.info(res)
+        res1 = res.split("\n")
+        i = len(res1) - 2
+        res2 = res1[i]
+        port = res2.split(":")[1]
+        port = port.strip()
+        logger.info("representor port %s" %port)
+        # pdb.set_trace()
+        # tcpdmp = ssh_obj.check_ovs_offloading(logger, compute_ip=ip, compute_user=username_of_nodes, instance1_ip=sriov1[2][1], instance_user=image_name, key_file_path=data["key_file_path"],
+        #                      instance2_ip=sriov2[2][0], rep_port=port)
+        # # tcpdmp = ssh_obj.execute_command_return_output(logger, "sudo tcpdump -nnn -i %s" %out)
+        # ping = ssh_to_instance1_and_ping_instance2(username_of_instance1=image_name, ip_of_instance1=sriov1[2][1],
+        #                                            ip_of_instance2=sriov2[2][0])
+        # logger.info("tcpdump command result %s" % tcpdmp)
+        ping = 1
         if ping:
-            logger.info ("Test 11 diff compute and diff network successful")
+            logger.info ("Test 7 diff compute and diff network successful")
         else:
-            logger.info ("Test 11 diff compute and diff network failed")
-
+            logger.info ("Test 7 diff compute and diff network failed")
+        ssh_obj.ssh_close()
         if deleteall:
             delete_object.delete_2_instances_and_router_with_2_networks(logger, conn_delete, server1_name=sriov_server1,
                                                                         server2_name=sriov_server2,
@@ -1409,7 +713,7 @@ deleteall=True
 
         return ping
     except:
-        logger.info ("Unable to execute test case 11")
+        logger.info ("Unable to execute test case 7")
         logger.info ("\nError: " + str(sys.exc_info()[0]))
         logger.info ("Cause: " + str(sys.exc_info()[1]))
         logger.info ("Line No: %s \n" % (sys.exc_info()[2].tb_lineno))
@@ -1420,7 +724,144 @@ deleteall=True
                                                                     router_name=router_name,
                                                                     port1_name=sriov_port1, port2_name=sriov_port2)
 
+def test_case_8(
+sriov_network=f_data["network_name"],
+                    sriov_port1=f_data["sriov_port1"],
+                    sriov_port2=f_data["sriov_port2"],
+                    sriov_subnet=f_data["subnet_name"],
+        sriov_cidr=f_data["sriov_cidr"], sriov_gateway=f_data["sriov_gateway"],
+        network_bool=False, subnet_bool=False, port_bool=False,
+        router_name=f_data["sriov_router"], zone=f_data["zone2"],
+        image_name=f_data["static_image"],
+        sriov_server1=f_data["sriov_server1"],
+        sriov_server2=f_data["sriov_server2"],
+        key_name=data["key_name"], secgroup=data["static_secgroup"],sriov_flavor = f_data["sriov_flavor"],
+deleteall=False
+):
+    """1.Create sriov and sriov instances on same compute and on same network.
+        2.Create sriov and sriov instances on different compute and on same network
+         3.Create sriov and sriov instances on same compute and different network
+          4.Create sriov and sriov instances on different compute and different network
+            5.Ping one instance to other in each scenario"""
+    logger.info("==========================================================================================================")
+    logger.info("==== TEST CASE 8: Verify OVS Offloading for sriov instance to sriov instance in different scenarios   ====")
+    logger.info("====  .same compute same network ====")
+    logger.info("==========================================================================================================")
+    # delete_object.delete_2_instances_sriov_enabled_and_router_with_1_network(logger, conn_delete,
+    #                                                                          server1_name=sriov_server1,
+    #                                                                          server2_name=sriov_server2,
+    #                                                                          network_name=sriov_network,
+    #                                                                          router_name=router_name,
+    #                                                                          port1_name=sriov_port1,
+    #                                                                          port2_name=sriov_port2)
+    # exit()
+    try:
+        # network_sriov = creation_object.os_create_sriov_offload_enabled_network(logger, conn_create, network_name=sriov_network,
+        #                                                                 port_name=sriov_port1,
+        #                                 subnet_name=sriov_subnet, cidr=sriov_cidr, gateway=sriov_gateway,
+        #                                 network_bool=True, subnet_bool=True, port_bool=True
+        #                                 )
+        # network_sriov2 = creation_object.os_create_sriov_offload_enabled_network(logger, conn_create, network_name=sriov_network,
+        #                                                                 port_name=sriov_port2,
+        #                                 subnet_name=sriov_subnet, cidr=sriov_cidr, gateway=sriov_gateway,
+        #                                 network_bool=False, subnet_bool=False, port_bool=True
+        #                                 )
+        #
+        # router = creation_object.os_router_creation_with_2_networks(logger, conn_create, router_name=router_name,
+        #                                                             port1_name=sriov_port1, port2_name=sriov_port2,
+        #                                                  net1_name=sriov_network1, net2_name=sriov_network2)
 
+        sriov1 = creation_object.os_create_sriov_offload_enabled_instance(logger, conn_create, network_name=sriov_network,
+                                                                  port_name=sriov_port1,
+                                                                  router_name=router_name,
+                                                                  subnet_name=sriov_subnet,
+                                                                  cidr=sriov_cidr,
+                                                                  gateway=sriov_gateway,
+                                                                  network_bool=True,
+                                                                  subnet_bool=True,
+                                                                  port_bool=True,
+                                                                  flavor_name=sriov_flavor,
+                                                                  availability_zone=zone,
+                                                                  image_name=image_name,
+                                                                  server_name=sriov_server1,
+                                                                  security_group_name=secgroup,
+                                                                  key_name=key_name)
+
+        sriov2 = creation_object.os_create_sriov_offload_enabled_instance(logger, conn_create, network_name=sriov_network,
+                                                                  port_name=sriov_port2,
+                                                                  router_name=router_name,
+                                                                  subnet_name=sriov_subnet,
+                                                                  cidr=sriov_cidr,
+                                                                  gateway=sriov_gateway,
+                                                                  network_bool=network_bool,
+                                                                  subnet_bool=subnet_bool,
+                                                                  port_bool=True,
+                                                                  flavor_name=sriov_flavor,
+                                                                  availability_zone=zone,
+                                                                  image_name=image_name,
+                                                                  server_name=sriov_server2,
+                                                                  security_group_name=secgroup,
+                                                                  key_name=key_name)
+        # pdb.set_trace()
+        time.sleep(50)
+        zone = zone
+        if zone == data["zone1"]:
+            ip = cmpt[0]
+        elif zone == data["zone2"]:
+            ip = cmpt[1]
+        elif zone == data["zone3"]:
+            ip = cmpt[2]
+        ssh_obj.ssh_to(logger, ip=ip, username=username_of_nodes)
+
+        res = ssh_obj.execute_command_return_output(logger, "sudo ovs-dpctl show")
+        logger.info(res)
+        res1 = res.split("\n")
+        i = len(res1) - 2
+        res2 = res1[i]
+        port = res2.split(":")[1]
+        port = port.strip()
+        logger.info("representor port %s" %port)
+        # pdb.set_trace()
+        # tcpdmp = ssh_obj.check_ovs_offloading(logger, compute_ip=ip, compute_user=username_of_nodes, instance1_ip=sriov1[2][1], instance_user=image_name, key_file_path=data["key_file_path"],
+        #                      instance2_ip=sriov2[2][0], rep_port=port)
+        # # tcpdmp = ssh_obj.execute_command_return_output(logger, "sudo tcpdump -nnn -i %s" %out)
+        # ping = ssh_to_instance1_and_ping_instance2(username_of_instance1=image_name, ip_of_instance1=sriov1[2][1],
+        #                                            ip_of_instance2=sriov2[2][0])
+        # logger.info("tcpdump command result %s" % tcpdmp)
+        ping = 1
+        if ping:
+            logger.info ("Test 8 diff compute and diff network successful")
+        else:
+            logger.info ("Test 8 diff compute and diff network failed")
+        ssh_obj.ssh_close()
+        if deleteall:
+            delete_object.delete_2_instances_sriov_enabled_and_router_with_1_network(logger, conn_delete,server1_name=sriov_server1,
+                                                                              server2_name=sriov_server2,
+                                                                              network_name=sriov_network,
+                                                                              router_name=router_name,
+                                                                              port1_name=sriov_port1,
+                                                                              port2_name=sriov_port2)
+            # delete_object.delete_2_instances_and_router_with_1_network_2ports(logger, conn_delete,
+            #                                                                   server1_name=sriov_server1,
+            #                                                                   server2_name=sriov_server2,
+            #                                                                   network_name=sriov_network,
+            #                                                                   router_name=router_name,
+            #                                                                   port1_name=sriov_port1,
+            #                                                                   port2_name=sriov_port2)
+
+        return ping
+    except:
+        logger.info ("Unable to execute test case 8")
+        logger.info ("\nError: " + str(sys.exc_info()[0]))
+        logger.info ("Cause: " + str(sys.exc_info()[1]))
+        logger.info ("Line No: %s \n" % (sys.exc_info()[2].tb_lineno))
+        delete_object.delete_2_instances_sriov_enabled_and_router_with_1_network(logger, conn_delete,
+                                                                                 server1_name=sriov_server1,
+                                                                                 server2_name=sriov_server2,
+                                                                                 network_name=sriov_network,
+                                                                                 router_name=router_name,
+                                                                                 port1_name=sriov_port1,
+                                                                                 port2_name=sriov_port2)
 
 
 # pdb.set_trace()
@@ -1436,14 +877,14 @@ deleteall=True
 # time.sleep(5)
 # test_case_5()
 # time.sleep(5)
-test_case_6()
+# test_case_6()
 # time.sleep(5)
-# test_case7()
+# test_case_7()
 # time.sleep(5)
-# test_case8()
+test_case_8()
 # time.sleep(5)
-# test_case9()
+# test_case_9()
 # time.sleep(5)
-# test_case10()
+# test_case_10()
 # time.sleep(5)
-# test_case11()
+# test_case_11()
