@@ -1643,6 +1643,117 @@ class Os_Creation_Modules():
             logger.info ("Cause: " + str(sys.exc_info()[1]))
             logger.info ("Line No: %s \n" % (sys.exc_info()[2].tb_lineno))
 
+            ##================================================SRIOV OFFLOAD SENARIOS========================================================
+            # SENARIO 1 Create_2_Instances_on_SAME_Compute_SAME_Network
+            def create_2_instances_sriov_offload_enabled_on_same_compute_same_network(self, logger, conn, server1_name,
+                                                                              server2_name, network_name,
+                                                                              subnet_name,
+                                                                              router_name, port1_name, port2_name, zone,
+                                                                              cidr,
+                                                                              gateway_ip, flavor_name, image_name,
+                                                                              secgroup_name, key_name,
+                                                                              assign_floating_ip):
+                try:
+                    """ This function creates:
+                                1 networks
+                                1 subnets
+                                1 routers
+                                1 ports
+                                2 instances
+                        This function uses existing:
+                                flavor
+                                image
+                                security group 
+                                """
+                    logger.info("Creating two instances on Same Compute and Same Tenant Network..")
+                    server1 = self.os_create_sriov_offload_enabled_instance(logger, conn, network_name=network_name,
+                                                                    port_name=port1_name, router_name=router_name,
+                                                                    subnet_name=subnet_name, cidr=cidr,
+                                                                    gateway=gateway_ip,
+                                                                    network_bool=True, subnet_bool=True, port_bool=True,
+                                                                    flavor_name=flavor_name,
+                                                                    availability_zone=zone,
+                                                                    image_name=image_name,
+                                                                    server_name=server1_name,
+                                                                    security_group_name=secgroup_name,
+                                                                    key_name=key_name,
+                                                                    assign_floating_ip=assign_floating_ip)
+                    server2 = self.os_create_sriov_offload_enabled_instance(logger, conn, network_name=network_name,
+                                                                    port_name=port2_name, router_name=router_name,
+                                                                    subnet_name=subnet_name, cidr=cidr,
+                                                                    gateway=gateway_ip,
+                                                                    network_bool=False, subnet_bool=False,
+                                                                    port_bool=True,
+                                                                    flavor_name=flavor_name,
+                                                                    availability_zone=zone,
+                                                                    image_name=image_name,
+                                                                    server_name=server2_name,
+                                                                    security_group_name=secgroup_name,
+                                                                    key_name=key_name,
+                                                                    assign_floating_ip=assign_floating_ip)
+                    return [server1, server2]
+                except:
+                    logger.info("\nUnable to create 2 instances on same compute and same network")
+                    logger.info("Error: " + str(sys.exc_info()[0]))
+                    logger.info("Cause: " + str(sys.exc_info()[1]))
+                    logger.info("Line No: %s \n" % (sys.exc_info()[2].tb_lineno))
+
+            # SENARIO 2 Create_2_Instances_on_DIFF_Compute_SAME_Network
+            def create_2_instances_sriov_offload_enabled_on_diff_compute_same_network(self, logger, conn, server1_name,
+                                                                              server2_name,
+                                                                              network_name,
+                                                                              subnet_name,
+                                                                              router_name, port1_name, port2_name,
+                                                                              zone1, zone2,
+                                                                              cidr,
+                                                                              gateway_ip, flavor_name, image_name,
+                                                                              secgroup_name, key_name,
+                                                                              assign_floating_ip):
+                try:
+                    """ This function creates:
+                                1 networks
+                                1 subnets
+                                1 routers
+                                1 ports
+                                2 instances
+                        This function uses existing:
+                                flavor
+                                image
+                                security group 
+                                """
+                    logger.info("Creating two instances on Same Compute and Same Tenant Network..")
+                    server1 = self.os_create_sriov_offload_enabled_instance(logger, conn, network_name=network_name,
+                                                                    port_name=port1_name, router_name=router_name,
+                                                                    subnet_name=subnet_name, cidr=cidr,
+                                                                    gateway=gateway_ip,
+                                                                    network_bool=True, subnet_bool=True, port_bool=True,
+                                                                    flavor_name=flavor_name,
+                                                                    availability_zone=zone1,
+                                                                    image_name=image_name,
+                                                                    server_name=server1_name,
+                                                                    security_group_name=secgroup_name,
+                                                                    key_name=key_name,
+                                                                    assign_floating_ip=assign_floating_ip)
+                    server2 = self.os_create_sriov_offload_enabled_instance(logger, conn, network_name=network_name,
+                                                                    port_name=port2_name, router_name=router_name,
+                                                                    subnet_name=subnet_name, cidr=cidr,
+                                                                    gateway=gateway_ip,
+                                                                    network_bool=False, subnet_bool=False,
+                                                                    port_bool=True,
+                                                                    flavor_name=flavor_name,
+                                                                    availability_zone=zone2,
+                                                                    image_name=image_name,
+                                                                    server_name=server2_name,
+                                                                    security_group_name=secgroup_name,
+                                                                    key_name=key_name,
+                                                                    assign_floating_ip=assign_floating_ip)
+                    return [server1, server2]
+                except:
+                    logger.info("\nUnable to create 2 instances on same compute and same network")
+                    logger.info("Error: " + str(sys.exc_info()[0]))
+                    logger.info("Cause: " + str(sys.exc_info()[1]))
+                    logger.info("Line No: %s \n" % (sys.exc_info()[2].tb_lineno))
+
                     # def os_create_server_for_ovsdpdk(self,**kwargs):
     #     fal = self.os_flavor_creation(conn, "ovsdpdk_flavor", 4096, 6, 40)
     #     f_id = fal.id

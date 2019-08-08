@@ -29,6 +29,11 @@ class ssh_functions():
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.load_system_host_keys()
 
+    def start_first_session(self):
+        ssh_1 = paramiko.SSHClient()
+        ssh_1.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh_1.load_system_host_keys()
+        return ssh_1
 
     def start_second_session(self):
         ssh_2 = paramiko.SSHClient()
@@ -315,6 +320,65 @@ class ssh_functions():
             logger.info("Line No: %s \n" % (sys.exc_info()[2].tb_lineno))
             return -1
 
+    def execute_tcp_dump(self, logger,session=None, timeout=0, interface=None, find=None):
+        global stdout_a
+        try:
+            # print "\nExecuting tcp dump command to capture PAD packets"
+            if find is None:
+                stdin_a, stdout_a, stderr_a = session.exec_command("sudo timeout %s tcpdump -nnn -i %s > tcpdump.txt" %
+                                                                   (timeout, interface))
+            else:
+                stdin_a, stdout_a, stderr_a = session.exec_command(
+                    "sudo timeout %s tcpdump -nnn -i %s | grep '%s' > tcpdump.txt" %(timeout, interface, find))
+        except:
+            logger.info("\nError while executing tcp dump command")
+
+#=========================================== SRIOV OFFLOAD REPRESENTOR PORT CHECK ====================================#####
+    def check_ovs_offloading(self, logger, compute_ip, compute_user, instance1_ip, instance_user, key_file_path, instance2_ip, rep_port):
+        """Note: username and password of both VMs must be same.
+                 Or if ssh is with key then both VMs must have the same key path."""
+        try:
+            ssh_1 = self.start_first_session()
+            ssh_2 = self.start_second_session()
+
+
+            pdb.set_trace()
+            self.ssh_to(logger, ip=compute_ip, username=compute_user, password=None, key_file_name=None, session=ssh_2)
+            self.ssh_to(logger, ip=instance1_ip, username=instance_user, password=None, key_file_name=key_file_path, session=ssh_1)
+            output = self.execute_tcp_dump(logger, session=ssh_2, timeout=120, interface=rep_port, find=None)
+            stdin, stdout, stderr = ssh_1.exec_command("ping -c 30 %s" % instance2_ip, get_pty=True)
+            time.sleep(1)
+            logger.info("\nTcpdump output: %s\n" % output)
+            ping = stdout.read()
+            ssh_1.close()
+            logger.info("\nPING output: %s\n" % ping)
+            ssh_2.close()
+            # stdin, stdout, stderr = ssh_2.exec_command("sudo tcpdump -nnn -i %s" % rep_port, get_pty=True)
+            ######save output
+            # time.sleep(1)
+            # output_a = stdout_a.read()
+            # #####show output
+            # time.sleep(1)
+            # for line in stdout.readlines():
+            #     logger.info(line.strip())
+
+
+
+            # for line in stdout_iperf.readlines():
+            #     logger.info(str(line.strip()))
+            #     if "receiver" in str(line.strip()):
+            #         bandwidth = ((line.split("Bytes")[1]).strip()).split("  ")[0]
+            return output
+        except:
+            ssh_2.close()
+            ssh_1.close()
+            logger.info("\nError encountered while checking ovs offload of instance2: %s and instance1: %s" %
+                   (instance2_ip, instance1_ip))
+            logger.info("\nError: " + str(sys.exc_info()[0]))
+            logger.info("Cause: " + str(sys.exc_info()[1]))
+            logger.info("Line No: %s \n" % (sys.exc_info()[2].tb_lineno))
+            return output
+#####################################################################################################################################################
     # def check_bandwidth_with_packet_size(self):
 
     def ssh_close(self):
