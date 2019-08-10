@@ -1,6 +1,7 @@
 #!/bin/bash
 counter=0
 line=''
+<<<<<<< HEAD
 check_power_status()
 {   echo "================ Checking Power status of nOdes ========================"
     echo "================ Checking Power status of nOdes ========================">> node_clean.log
@@ -20,6 +21,8 @@ check_power_status()
   echo "=============================================================================================================" >> node_clean.log
 }
 
+=======
+>>>>>>> 3fd1fb1ae0525ebe7ded70c66b69700457aeb1ee
 setting_Maintenance()
 {   echo "================ Setting Node Maintenanace MOde to True ========================"
     echo "================ Setting Node Maintenanace MOde to True ========================">> node_clean.log
@@ -43,6 +46,7 @@ deleting_node()
 echo "================================ Node Clean Log File =====================" > node_clean.log
 output=$(ironic node-list)
 node_uuids=$(echo "$output" | awk -F "|" '/-/ { print $1}')
+<<<<<<< HEAD
 power_status=$(echo "$output" | awk -F "|" '/-/ { print $1}')
 echo "$node_uuids" > node_uuid_list.txt
 echo "$power_status" > node_power_status.txt
@@ -61,3 +65,15 @@ while read -r line; do
 done < "$filename"
 #cd
 #rm -rf instackenv.json
+=======
+echo "$node_uuids" > node_uuid_list.txt
+
+filename="node_uuid_list.txt"
+while read -r line; do
+  setting_Maintenance $line
+  deleting_node $line
+done < "$filename"
+
+cd
+rm -rf instackenv.json
+>>>>>>> 3fd1fb1ae0525ebe7ded70c66b69700457aeb1ee
