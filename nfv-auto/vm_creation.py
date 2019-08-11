@@ -266,22 +266,24 @@ class Os_Creation_Modules():
             logger.info("Security Group already exists with the same name.")
         return sec_group
 
-    def os_sec_group_n_rules_creation(self, logger, conn, name, desc, protocol_list, remote_ip):
+    def os_sec_group_n_rules_creation(self, logger, conn, name, desc, protocol_list, remote_ip, default_bool=True):
         logger.info ("Creating Security Group : %s" % name)
         sec_group = conn.get_security_group(name)
         if sec_group is None:
             sec_group = conn.create_security_group(name=name, description=desc)
-            for protocol in protocol_list:
-                for dir in ['ingress', 'egress']:
-                    logger.info("Adding rule for: %s, %s" % (protocol, dir))
-                    add_rule = conn.create_security_group_rule(
+        else:
+            if default_bool:
+                for protocol in protocol_list:
+                    for dir in ['ingress', 'egress']:
+                        logger.info("Adding rule for: %s, %s" % (protocol, dir))
+                        add_rule = conn.create_security_group_rule(
                                                             secgroup_name_or_id=name,
                                                             protocol=protocol,
                                                             remote_ip_prefix=remote_ip,
                                                             direction=dir
                                                             )
-        else:
-            logger.info("Security Group already exists with the same name.")
+            else:
+                logger.info("Security Group already exists with the same name.")
         return sec_group
 
 
