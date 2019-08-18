@@ -8,6 +8,7 @@ import time
 import pdb
 import sys
 import json
+from source_R153rc import Source_Module
 
 feature_name = "Initializing_Static"
 
@@ -90,7 +91,8 @@ conn=obj.os_connection_creation()
 # # obj.os_flavor_sriov_creation(logger, conn, "sriov_flavor", 1024, 2, 40)
 # # obj.os_image_creation(logger, conn, data["static_image"], data["static_image_path"],data["static_image_format"],"bare")
 #
-net_info = obj.os_network_creation(logger, conn, data["static_network"], data["static_cidr"], data["static_subnet"], data["static_gateway"],provider_dic={ 'network_type': 'vlan','physical_network' : 'physint', 'segmentation_id': 205 })
+net_info = obj.os_network_creation(logger, conn, data["static_network"], data["static_cidr"], data["static_subnet"], data["static_gateway"])
+#,provider_dic={ 'network_type': 'vlan','physical_network' : 'physint', 'segmentation_id': 205 })
 logger.info(net_info)
 os.system("openstack network list")
 os.system("openstack network show %s" %data["static_network"])
