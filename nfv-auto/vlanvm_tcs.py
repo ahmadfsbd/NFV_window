@@ -193,11 +193,35 @@ def test_case3(delete_all=False):
     print("==========================================================================================================")
     print("====         VLAN AWARE VMS CASE 3:      Launch the instance with the vlan aware interface.          =====")
     print("==========================================================================================================")
-    output = None
+    # output = None
+    # net_info = creation_object.os_network_creation(logger, conn_create, vlan_data["parent_network"], data["static_cidr"], data["static_subnet"],
+    #                                    data["static_gateway"])
+    # # ,provider_dic={ 'network_type': 'vlan','physical_network' : 'physint', 'segmentation_id': 205 })
+    # logger.info(net_info)
+    # os.system("openstack network list")
+    # os.system("openstack network show %s" % data["static_network"])
+    # # pdb.set_trace()
+    # net_data = str(net_info)
+    # seg_id = net_data.split(",")[11].strip()
+    # segmentation_id = seg_id.split("=")[1].strip()
+    # logger.info(seg_id)
+    # logger.info("Creating Parent Network")
+    # os.system("openstack network create --provider-network-type vlan --provider-physical-network physint --provider-segment 219 parent_network")
+    # os.system("openstack subnet create --network parent_network --subnet-range 192.168.10.0/24 parent_subnet")
+    # logger.info("Creating Sub Network")
+    # os.system("openstack network create --provider-network-type vlan --provider-physical-network physint --provider-segment 220 sub_network")
+    # os.system("openstack subnet create --network sub_network --subnet-range 192.168.90.0/24 sub_subnet")
+    # logger.info("Attaching Network to Router")
+    # os.system("openstack  router add subnet router parent_subnet")
+    # os.system("openstack router add subnet router sub_subnet")
+    # os.system("openstack network list | grep network")
+    # os.system("openstack port list | grep subnet")
+    # os.system("openstack router list")
+
     new_eth_file_path = "/etc/sysconfig/network-scripts/ifcfg-eth0.%s" % vlan_data["segmentation_id"]
     new_route_file_path = "/etc/sysconfig/network-scripts/route-eth0.%s" % vlan_data["segmentation_id"]
     try:
-        pdb.set_trace()
+        # pdb.set_trace()
         output =  creation_object.os_create_vlan_aware_instance(logger, conn_create, parent_network=parent_network,
                                                                 parentport_name=parentport_name,
                                                                 subport_network=subport_network,
@@ -342,7 +366,7 @@ def test_case7():
         pass
     except:
         pass
-test_case1()
+# test_case1()
 test_case3(delete_all=True)
 
 
