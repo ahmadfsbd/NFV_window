@@ -23,19 +23,19 @@ import time
 """
 
 """
-	SETTING ENVIRONMENT VARIABLE FOR R154
+	SETTING ENVIRONMENT VARIABLE FOR R153
 """
 os.environ["OS_NO_CACHE"]="True"
 os.environ["COMPUTE_API_VERSION"]="1.1"
 os.environ["OS_USERNAME"]="admin"
-os.environ["no_proxy"]=",100.67.154.160,192.168.120.251"
+os.environ["no_proxy"]=",100.67.153.161,192.168.120.100"
 os.environ["OS_USER_DOMAIN_NAME"]="Default"
 os.environ["OS_VOLUME_API_VERSION"]="3"
-os.environ["OS_CLOUDNAME"]="r154"
-os.environ["OS_AUTH_URL"]="http://100.67.154.160:5000//v3"
+os.environ["OS_CLOUDNAME"]="r153"
+os.environ["OS_AUTH_URL"]="http://100.67.153.61:5000//v3"
 os.environ["NOVA_VERSION"]="1.1"
 os.environ["OS_IMAGE_API_VERSION"]="2"
-os.environ["OS_PASSWORD"]="wX7Jq9yrDZxytCp7NgUEc3qK6"
+os.environ["OS_PASSWORD"]="fpJwYm9yqWNZXsfaANJFPcvwC"
 os.environ["OS_PROJECT_DOMAIN_NAME"]="Default"
 os.environ["OS_IDENTITY_API_VERSION"]="3"
 os.environ["OS_PROJECT_NAME"]="admin"
@@ -403,11 +403,14 @@ class Os_Creation_Modules():
 
 
     #logger.info("MODULE# 5 NETWORK CEREATION"
-    def os_network_creation(self, logger, conn, net_name, cidr, subnet_name, gatewy):
+    def os_network_creation(self, logger, conn, net_name, cidr, subnet_name, gatewy, provider_dic=None):
         logger.info ("Creating Network: %s" % net_name)
         network = conn.get_network(net_name)
         if network is None:
-            network = conn.network.create_network(name=net_name)
+            if provider_dic:
+                network = conn.network.create_network(name=net_name, provider=provider_dic)
+            else:
+                network = conn.network.create_network(name=net_name)
             n_id = network.id
             subnetwork=conn.network.create_subnet(
                                                     network_id=n_id,

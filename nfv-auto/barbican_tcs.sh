@@ -2,13 +2,13 @@
 
 ################## ------- Varibales ----------###################
 ###-- 3 compute nodes ---##
-compute_node1_ip='192.168.10.140'
-compute_node2_ip='192.168.10.140'
-compute_node3_ip='192.168.10.140'
+compute_node1_ip='192.168.120.42'
+compute_node2_ip='192.168.120.30'
+compute_node3_ip='192.168.120.25'
 ###-- 3 controller nodes ---##
-controller_node1_ip='192.168.10.140'
-controller_node2_ip='192.168.10.140'
-controller_node3_ip='192.168.10.140'
+controller_node1_ip='192.168.120.47'
+controller_node2_ip='192.168.120.38'
+controller_node3_ip='192.168.120.34'
 barbican_parameter='command' # value of this parameter ----> castellan.key_manager.barbican_key_manager.BarbicanKeyManager
 #verify glance is configured to use barbican
 glance_parameter='True'
@@ -232,9 +232,9 @@ attach_encrypted_volume_to_existing_instance()
 }
 #############---------- Main ------------#############
 
-#verify_glance_with_barbican
-#verify_cinder_uses_barbican
-#verify_nova_uses_barbican
+verify_glance_with_barbican
+verify_cinder_uses_barbican
+verify_nova_uses_barbican
 #encrypted_volume_creation
 #verify_addition_of_key_to_barbican_secret_store ## this should be called in 'creating_signed_image', if needed 
 #creating_signed_image

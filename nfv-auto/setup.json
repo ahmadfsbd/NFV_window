@@ -33,7 +33,7 @@
 	"static_gateway"			: "192.168.20.1",
 	"static_router"				: "st_router",
 	"static_port"				: "st_port",
-	"static_secgroup"			: "b60dd52c-fb27-4c4c-8c9f-cdeb51e9b339",
+	"static_secgroup"			: "58834fe0-ac66-4120-9b2b-2b1399373bae",
 	"key_name"					: "ssh-key",
 	"key_file_path"				: "/home/osp_admin/ssh-key.pem",
 	"nginx_repo_path"			: "/home/osp_admin/NFV_window/nfv-auto/nginx.repo",

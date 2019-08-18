@@ -16,7 +16,7 @@ import logging
 from logging.handlers import TimedRotatingFileHandler
 import datetime
 
-feature_name = "OVSDPDK_SRIOV"
+feature_name = "VLAN_AWARE_VM"
 
 monthdict = {"01": "JAN", "02": "FEB" ,"03": "MAR", "04": "APR", "05": "MAY", "06": "JUNE", "07": "JULY",
              "08": "AUG", "09": "SEPT", "10": "OCT", "11": "NOV", "12": "DEC"}
@@ -74,17 +74,18 @@ def test_case1():
         2. $ sudo docker ps | grep neutron
         3. $ sudo docker exec -it <neutron_api_contid> bash
         4. # cat /etc/neutron/neutron.conf | grep service_plugins"""
+
     print("==========================================================================================================")
     print("====         VLAN AWARE VMS CASE 1:      Verify trunk plugin is enabled in controller nodes.         =====")
     print("==========================================================================================================")
     try:
-        ssh_obj.ssh_to(logger, "controler_ip","heat-admin")
+        ssh_obj.ssh_to(logger, "192.168.120.30","heat-admin")
         res = ssh_obj.execute_command_return_output(logger, "sudo docker ps | grep neutron_api")
         out = res.split("\n")
         #print out
         l3_agent_id_control = str(out[0].split(" ")[0])
         #print l3_agent_id_control.strip()
-        res = ssh_obj.execute_command_return_output(logger, "sudo docker exec -t %s cat /etc/neutron/neutron.conf | grep \"service_plugins\"" %l3_agent_id_control)
+        res = ssh_obj.execute_command_return_output(logger, "sudo docker exec -t %s cat /var/lib/config-data/puppet-generated/neutron/etc/neutron/neutron.conf | grep \"service_plugins\"" %l3_agent_id_control)
         # res1 = ssh_obj.execute_command_return_output(logger, "sudo docker exec --help")
         # print res1
         # res = ssh_obj.execute_command_return_output(logger, "sudo docker exec -t cbc18421d202 cat /etc/neutron/l3_agent.ini")
@@ -96,7 +97,7 @@ def test_case1():
         ssh_obj.ssh_close()
         return res
     except:
-        print "Unable to execute test case 11"
+        print "Unable to execute test case 1"
         print ("\nError: " + str(sys.exc_info()[0]))
         print ("Cause: " + str(sys.exc_info()[1]))
         print ("Line No: %s \n" % (sys.exc_info()[2].tb_lineno))
@@ -227,7 +228,7 @@ def test_case3(delete_all=False):
 
         if delete_all:
             delete_object.os_delete_server(logger, conn_delete, server_name=server_name)
-            os.system("bash /home/osp_admin/ahmed_synced/input_files/delete-trunks.sh %s %s %s"%(trunk_name,
+            os.system("bash /home/osp_admin/NFV_window/nfv-auto/delete-trunks.sh %s %s %s"%(trunk_name,
                                                                                                  parentport_name,
                                                                                                  subport_name))
         return output
@@ -238,7 +239,7 @@ def test_case3(delete_all=False):
         print ("Line No: %s \n" % (sys.exc_info()[2].tb_lineno))
         # dele = delete_object.os_delete_vlanaware_server(logger, conn_delete, server_name, parentport_name, subport_name, trunk_name, delete_parentport=True, delete_subport=True, delete_trunk=True, network_name=None)
         delete_object.os_delete_server(logger, conn_delete, server_name=server_name)
-        os.system("bash /home/osp_admin/ahmed_synced/input_files/delete-trunks.sh %s %s %s" % (trunk_name, parentport_name, subport_name))
+        os.system("bash /home/osp_admin/NFV_window/nfv-auto/delete-trunks.sh %s %s %s" % (trunk_name, parentport_name, subport_name))
         return output
 
 def test_case4():
@@ -341,7 +342,7 @@ def test_case7():
         pass
     except:
         pass
-
+test_case1()
 test_case3(delete_all=True)
 
 
