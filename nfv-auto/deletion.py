@@ -4,6 +4,7 @@
 from openstack import connection
 from paramiko import SSHClient
 import sys
+from source_R8rc import Source_Module
 
 filepath=sys.argv[1]
 with open(filepath) as fp:

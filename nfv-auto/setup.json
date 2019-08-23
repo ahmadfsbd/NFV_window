@@ -33,7 +33,7 @@
 	"static_gateway"			: "192.168.20.1",
 	"static_router"				: "st_router",
 	"static_port"				: "st_port",
-	"static_secgroup"			: "58834fe0-ac66-4120-9b2b-2b1399373bae",
+	"static_secgroup"			: "cdccf2e8-d780-47b8-9c94-634b54fb5a14",
 	"key_name"					: "ssh-key",
 	"key_file_path"				: "/home/osp_admin/ssh-key.pem",
 	"nginx_repo_path"			: "/home/osp_admin/NFV_window/nfv-auto/nginx.repo",
@@ -42,6 +42,6 @@
 	"iperf_package_path"		: "/home/osp_admin/NFV_window/nfv-auto/iperf3-3.1.7-2.el7.x86_64.rpm",
 	"static_image_path"			: "/home/osp_admin/CentOS-7-x86_64-GenericCloud.qcow2",
 	"static_image_format"		: "qcow2",
-	"overcloud_rc_file_path"	: "/home/osp_admin/r153rc",
+	"overcloud_rc_file_path"	: "/home/osp_admin/r8-14grc",
 	"static_volume"				: "volume"
 }

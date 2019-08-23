@@ -362,7 +362,7 @@ def dvr_deployement_test_case_12(controller_ip_list, username, network_name, sub
                 ssh_obj.ssh_close()
         # pdb.set_trace()
         ssh_obj.ssh_to(logger, control_ip, username)
-        ssh_obj.send_key_if_not_present(logger, destination_path="/home/heat-admin/dvr-key.pem")
+        ssh_obj.send_key_if_not_present(logger, destination_path="/home/heat-admin/ssh-key.pem")
         res = ssh_obj.execute_command_return_output(logger, "sudo ip netns exec %s ip a | grep %s" %
                                                     (snat_namespace_id, interface_name_tc12))
         out = res.split("\n")
@@ -384,7 +384,7 @@ def dvr_deployement_test_case_12(controller_ip_list, username, network_name, sub
             tcpres = execute_tcp_dump(session=ssh_2, timeout=30, namespace_id=snat_namespace_id, interface=interface)
             check = ssh_obj.ping_check_from_namespace(logger, namespace_id=namespace_id, ip_of_instance1=private_ip,
                                                       username_of_instance="centos",
-                                                      key_file_path_of_node="/home/heat-admin/dvr-key.pem",
+                                                      key_file_path_of_node="/home/heat-admin/ssh-key.pem",
                                                       ip_of_instance2="8.8.8.8")
 
             res1 = str(stdout_a.read())
@@ -473,7 +473,7 @@ def dvr_deployement_test_case_13(controller_ip_list, username, network_name, sub
 
         logger.info (control_ip)
         ssh_obj.ssh_to(logger, control_ip, username)
-        ssh_obj.send_key_if_not_present(logger, destination_path="/home/heat-admin/dvr-key.pem")
+        ssh_obj.send_key_if_not_present(logger, destination_path="/home/heat-admin/ssh-key.pem")
         res = ssh_obj.execute_command_return_output(logger, "sudo ip netns exec %s ip a | grep %s" %
                                                     (qr_namespace_id, interface_name_tc13))
         out = res.split("\n")
@@ -760,7 +760,7 @@ def dvr_deployement_test_case_19(compute_ip_list, username, network_name, subnet
                 ssh_obj.ssh_close()
         # pdb.set_trace()
         ssh_obj.ssh_to(logger, comp_ip, username)
-        ssh_obj.send_key_if_not_present(logger, destination_path="/home/heat-admin/dvr-key.pem")
+        ssh_obj.send_key_if_not_present(logger, destination_path="/home/heat-admin/ssh-key.pem")
         res = ssh_obj.execute_command_return_output(logger, "sudo ip netns exec %s ip a | grep %s" %
                                                     (fip_namespace_id, interface_name_tc19))
         out = res.split("\n")
@@ -1529,10 +1529,10 @@ logger.info ("Compute ip's %s" %compute)
 
 # dvr_deployement_test_case_14(controller, stamp_user)#DONE
 
-# dvr_deployement_test_case_13(controller_ip_list=controller, username=stamp_user, network_name=data["network_name"],
-#                           subnet_name=data["subnet_name"], router_name=data["router_name"], port_name=data["port_name"], server_name=data["server_name"],
-#                                  image_name=data["static_image"], flavor_name=data["static_flavor"],
-#                              secgroup_name=data["static_secgroup"], zone=data["zone1"], cidr=data["cidr"], gateway_ip=data["gateway_ip"])
+dvr_deployement_test_case_13(controller_ip_list=controller, username=stamp_user, network_name=data["network_name"],
+                          subnet_name=data["subnet_name"], router_name=data["router_name"], port_name=data["port_name"], server_name=data["server_name"],
+                                 image_name=data["static_image"], flavor_name=data["static_flavor"],
+                             secgroup_name=data["static_secgroup"], zone=data["zone1"], cidr=data["cidr"], gateway_ip=data["gateway_ip"])
 
 # dvr_deployement_test_case_12(controller_ip_list=controller, username=stamp_user, network_name=data["network_name"],
 #                              subnet_name=data["subnet_name"], router_name=data["router_name"], port_name=data["port_name"], server_name=data["server_name"],
@@ -1560,9 +1560,9 @@ logger.info ("Compute ip's %s" %compute)
 # dvr_deployement_test_case_4(controller, stamp_user)#DONE
 
 # ssh_obj.ssh_to(logger, "192.168.120.21", "heat-admin")
-# ssh_obj.send_key_if_not_present(logger, destination_path="/home/heat-admin/dvr-key.pem")
+# ssh_obj.send_key_if_not_present(logger, destination_path="/home/heat-admin/ssh-key.pem")
 # check = ssh_obj.ping_check_from_namespace(logger, namespace_id="qdhcp-75499bf9-6c48-4020-b39b-70041377240f", ip_of_instance1="192.168.70.6",
 #                                                       username_of_instance="centos",
-#                                                       key_file_path_of_node="/home/heat-admin/dvr-key.pem",
+#                                                       key_file_path_of_node="/home/heat-admin/ssh-key.pem",
 #                                                       ip_of_instance2="8.8.8.8")
 # ssh_obj.ssh_close()

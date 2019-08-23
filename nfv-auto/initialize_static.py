@@ -8,7 +8,7 @@ import time
 import pdb
 import sys
 import json
-from source_R153rc import Source_Module
+from source_R8rc import Source_Module
 
 feature_name = "Initializing_Static"
 
@@ -76,6 +76,18 @@ conn=obj.os_connection_creation()
 # for i in list:
 #     obj.os_aggregate_creation_and_add_host(logger, conn, "nova%s"%c, availablity_zone="nova%s"%c, host_name=i)
 #     c += 1
+
+# ==================r8===================#
+
+# list = ["r8-14g-dell-compute-0.oss.labs",
+#     "r8-14g-dell-compute-1.oss.labs", "r8-14g-dell-compute-2.oss.labs"]
+# c = 0
+# for i in list:
+#     obj.os_aggregate_creation_and_add_host(logger, conn, "nova%s"%c, availablity_zone="nova%s"%c, host_name=i)
+#     c += 1
+
+
+
 # os.system("openstack aggregate list")
 # os.system("openstack flavor list")
 # logger.info("Adding Security Group Rules")
@@ -91,17 +103,17 @@ conn=obj.os_connection_creation()
 # # obj.os_flavor_sriov_creation(logger, conn, "sriov_flavor", 1024, 2, 40)
 # # obj.os_image_creation(logger, conn, data["static_image"], data["static_image_path"],data["static_image_format"],"bare")
 #
-net_info = obj.os_network_creation(logger, conn, data["static_network"], data["static_cidr"], data["static_subnet"], data["static_gateway"])
+# net_info = obj.os_network_creation(logger, conn, data["static_network"], data["static_cidr"], data["static_subnet"], data["static_gateway"])
 #,provider_dic={ 'network_type': 'vlan','physical_network' : 'physint', 'segmentation_id': 205 })
-logger.info(net_info)
-os.system("openstack network list")
-os.system("openstack network show %s" %data["static_network"])
+# logger.info(net_info)
+# os.system("openstack network list")
+# os.system("openstack network show %s" %data["static_network"])
 # pdb.set_trace()
-net_data=str(net_info)
-seg_id= net_data.split(",")[11].strip()
-segmentation_id=seg_id.split("=")[1].strip()
-logger.info(seg_id)
-logger.info(segmentation_id)
+# net_data=str(net_info)
+# seg_id= net_data.split(",")[11].strip()
+# segmentation_id=seg_id.split("=")[1].strip()
+# logger.info(seg_id)
+# logger.info(segmentation_id)
 # # obj.os_flavor_ovsdpdk_creation(logger, conn, data["ovsdpdk_flavor"], 1024, 2, 40)
 # # os.system("openstack keypair list")
 # obj.os_router_creation(logger, conn, data["static_router"], data["static_port"], data["static_network"])

@@ -163,6 +163,9 @@ deleteall=True
         #                                                           network_name=network_name,
         #                                                           router_name=router_name, port_name=port_name)
         # exit()
+        # for x in range(2,7):
+        #     port_name="sriov_net1_port_%s"%x
+        #     server_name="sriov-vm-%s"%x
         output = creation_object.os_create_sriov_enabled_instance(logger, conn_create, network_name=network_name,
                                                                   port_name=port_name,
                                                                   router_name=router_name,
@@ -364,35 +367,36 @@ def test_case5():
     logger.info("====         DVR TEST CASE 5:     Check the ports are assigned correctly to OVS-DPDK.                =====")
     logger.info("==========================================================================================================")
     # pdb.set_trace()
-    ssh_obj.ssh_to(logger, cmpt[0], username_of_nodes)
-    res = ssh_obj.execute_command_return_output(logger, "sudo cat /var/lib/os-net-config/dpdk_mapping.yaml")
-    out = res.split("\n")
-    logger.info (out)
-    pp = []
-    for port in out:
-        if "name" in port:
-            pp.append(port.split(":")[1].replace("\\r","").strip())
+    for cmp in [cmpt[0], cmpt[1], cmpt[2]]:
+        ssh_obj.ssh_to(logger, cmp, username_of_nodes)
+        res = ssh_obj.execute_command_return_output(logger, "sudo cat /var/lib/os-net-config/dpdk_mapping.yaml")
+        out = res.split("\n")
+        logger.info (out)
+        pp = []
+        for port in out:
+            if "name" in port:
+                pp.append(port.split(":")[1].replace("\\r","").strip())
+            else:
+                pass
+
+        logger.info (pp)
+        inter_count = len(pp)
+        interface_count = 0
+        sha_dpdk_interfaces = get_dpdk_interface_names_from_ini_file()
+
+        for int in sha_dpdk_interfaces:
+            if int in pp:
+                interface_count += 1
+                logger.info (int)
+            else:
+                logger.info ("Interface %s Not Fount"%int)
+                interface_count = 0
+        ssh_obj.ssh_close()
+
+        if inter_count == interface_count:
+            logger.info ("Interface Matched Test Successful")
         else:
-            pass
-
-    logger.info (pp)
-    inter_count = len(pp)
-    interface_count = 0
-    sha_dpdk_interfaces = get_dpdk_interface_names_from_ini_file()
-
-    for int in sha_dpdk_interfaces:
-        if int in pp:
-            interface_count += 1
-            logger.info (int)
-        else:
-            logger.info ("Interface %s Not Fount"%int)
-            interface_count = 0
-    ssh_obj.ssh_close()
-
-    if inter_count == interface_count:
-        logger.info ("Interface Matched Test Successful")
-    else:
-        logger.info ("Test Failed")
+            logger.info ("Test Failed")
 
     return sha_dpdk_interfaces
 
@@ -402,19 +406,20 @@ def test_case6():
     logger.info("==========================================================================================================")
     logger.info("====        TEST CASE 6:    Check the Port assigned to OVS-DPDK are active after the deployment.      ====")
     logger.info("==========================================================================================================")
-    ssh_obj.ssh_to(logger, cmpt[0], username_of_nodes)
-    # pdb.set_trace()
-    res = ssh_obj.execute_command_return_output(logger, "sudo ovs-appctl bond/show")
-    # out = res.split("\n")
-    logger.info (res)
-    # pdb.set_trace()
+    for cmp in [cmpt[0], cmpt[1], cmpt[2]]:
+        ssh_obj.ssh_to(logger, cmp, username_of_nodes)
+        # pdb.set_trace()
+        res = ssh_obj.execute_command_return_output(logger, "sudo ovs-appctl bond/show")
+        # out = res.split("\n")
+        logger.info (res)
+        # pdb.set_trace()
 
-    if "slave dpdk0: enabled" in res and "slave dpdk1: enabled" in res:
-        logger.info ("TEST SUCCESSFUL")
-    else:
-        logger.info ("TEST Failed")
-    #Need to insert the pass fail critaria
-    ssh_obj.ssh_close()
+        if "slave dpdk0: enabled" in res and "slave dpdk1: enabled" in res:
+            logger.info ("TEST SUCCESSFUL")
+        else:
+            logger.info ("TEST Failed")
+        #Need to insert the pass fail critaria
+        ssh_obj.ssh_close()
     return res
 
 
@@ -648,18 +653,25 @@ deleteall=True
                                                                                zone=zone2, cidr=cidr,
                                                             gateway_ip=gateway, flavor_name="sanity_flavor", image_name=image,
                                                             secgroup_name=secgroup, assign_floating_ip=True)
+        time.sleep(50)
         # pdb.set_trace()
-        time.sleep(10)
+        logger.info("==================================================")
+        logger.info("==Ping from SR-IOV instance to OVS-DPDK Instance==")
+        logger.info("==================================================")
         ssh_obj.ssh_to(logger, ip=sriov[2][1],username="centos", key_file_name=data["key_file_path"])
         ping = ssh_obj.simple_ping_check(logger, dpdk[3])
-
+        ssh_obj.ssh_close()
+        logger.info("==================================================")
+        logger.info("==Ping from OVS-DPDK instance to SR-IOV Instance==")
+        logger.info("==================================================")
+        ssh_obj.ssh_to(logger, ip=dpdk[4], username="centos", key_file_name=data["key_file_path"])
+        ping = ssh_obj.simple_ping_check(logger, sriov[2][0])
         if ping:
             logger.info ("Test 10 diff compute and same network successful")
         else:
             logger.info ("Test 10 diff compute and same network failed")
 
         ssh_obj.ssh_close()
-        # pdb.set_trace()
         if deleteall:
             delete_object.delete_2_instances_and_router_with_1_network_2ports(logger, conn_delete, server1_name=sriov_server,
                                                                              server2_name=dpdk_server,
@@ -747,10 +759,18 @@ deleteall=True
                                                                                zone=zone, cidr=dpdk_cidr,
                                                             gateway_ip=dpdk_gateway, flavor_name="sanity_flavor", image_name=image,
                                                             secgroup_name=secgroup, assign_floating_ip=True)
-        # pdb.set_trace()
-        time.sleep(10)
+        time.sleep(50)
+        logger.info("==================================================")
+        logger.info("==Ping from SR-IOV instance to OVS-DPDK Instance==")
+        logger.info("==================================================")
         ssh_obj.ssh_to(logger, ip=sriov[2][1],username="centos", key_file_name=data["key_file_path"])
         ping = ssh_obj.simple_ping_check(logger, dpdk[3])
+        ssh_obj.ssh_close()
+        logger.info("==================================================")
+        logger.info("==Ping from OVS-DPDK instance to SR-IOV Instance==")
+        logger.info("==================================================")
+        ssh_obj.ssh_to(logger, ip=dpdk[4], username="centos", key_file_name=data["key_file_path"])
+        ping = ssh_obj.simple_ping_check(logger, sriov[2][0])
 
         if ping:
             logger.info("Test 11 same compute and diff network successful")
@@ -847,9 +867,18 @@ deleteall=True
                                                                                zone=zone2, cidr=dpdk_cidr,
                                                             gateway_ip=dpdk_gateway, flavor_name="sanity_flavor", image_name=image,
                                                             secgroup_name=secgroup, assign_floating_ip=True)
-        # pdb.set_trace()
-        ssh_obj.ssh_to(logger, ip=sriov[2][1], username="centos", key_file_name=data["key_file_path"])
+        time.sleep(50)
+        logger.info("==================================================")
+        logger.info("==Ping from SR-IOV instance to OVS-DPDK Instance==")
+        logger.info("==================================================")
+        ssh_obj.ssh_to(logger, ip=sriov[2][1],username="centos", key_file_name=data["key_file_path"])
         ping = ssh_obj.simple_ping_check(logger, dpdk[3])
+        ssh_obj.ssh_close()
+        logger.info("==================================================")
+        logger.info("==Ping from OVS-DPDK instance to SR-IOV Instance==")
+        logger.info("==================================================")
+        ssh_obj.ssh_to(logger, ip=dpdk[4], username="centos", key_file_name=data["key_file_path"])
+        ping = ssh_obj.simple_ping_check(logger, sriov[2][0])
 
         if ping:
             logger.info("Test 12 diff compute and diff network successful")
@@ -983,7 +1012,7 @@ def test_case13(network_name, sriov_port, dpdk_port, subnet_name, cidr, gateway,
                                                                                port_name=dpdk_port,
                                                                                zone=zone, cidr=cidr,
                                                                                gateway_ip=gateway,
-                                                                               flavor_name="ovsdpdk_flavor",
+                                                                               flavor_name="sanity_flavor",
                                                                                image_name=image,
                                                                                secgroup_name=secgroup,
                                                                                assign_floating_ip=True)
@@ -1398,31 +1427,31 @@ deleteall=True
 
 """
 network_name = "sriov_net_1"
-port_name = "sriov_net1_port_1"
+port_name = "sriov_net1_port_8"
 subnet_name = "sriov_subnet_1"
 cidr = "192.168.100.0/24"
 gateway = "192.168.100.1"
-network_bool = True
-subnet_bool = True
+network_bool = False
+subnet_bool = False
 port_bool = True
-flav_name = "dpdk-flavor"
+flav_name = "sanity_flavor"
 zone    = "nova2"
 image_name= "centos"
-server_name = "sriov-vm1"
-sec_group_name="1047ba76-637d-4ae2-b2ae-d3bb8ce66391"
+server_name = "sriov-vm8"
+sec_group_name="b0842a1d-901b-4a85-8fe7-c3e2ecbe2eb8"
 key_name = "ssh-key"
 router_name="sriov_router_1"
 #
 #
 #
-# test_case_1(network_name, port_name,router_name, subnet_name=subnet_name, cidr=cidr, gateway=gateway,
-#                                         network_bool=network_bool, subnet_bool=subnet_bool, port_bool=port_bool,
-#                                                             flavor_name=flav_name,
-#                                                          availability_zone=zone,
-#                                                          image_name=image_name,
-#                                                          server_name=server_name,
-#                                                          security_group_name=sec_group_name,
-#                                                          key_name=key_name, deleteall=True)
+test_case_1(network_name, port_name,router_name, subnet_name=subnet_name, cidr=cidr, gateway=gateway,
+                                        network_bool=network_bool, subnet_bool=subnet_bool, port_bool=port_bool,
+                                                            flavor_name=flav_name,
+                                                         availability_zone=zone,
+                                                         image_name=image_name,
+                                                         server_name=server_name,
+                                                         security_group_name=sec_group_name,
+                                                         key_name=key_name, deleteall=False)
 # time.sleep(2)
 # test_case_2(network_name, port_name,router_name, subnet_name=subnet_name, cidr=cidr, gateway=gateway,
 #                                         network_bool=network_bool, subnet_bool=subnet_bool, port_bool=port_bool,
@@ -1440,12 +1469,12 @@ router_name="sriov_router_1"
 #            router_name="senario1_sriov_router",
 #            port1_name="senario1_sriov_port1",
 #            port2_name="senario1_sriov_port2",
-#            zone="nova2",
+#            zone="nova0",
 #            cidr="192.168.200.0/24",
 #            gateway_ip="192.168.200.1",
 #            flavor_name="sanity_flavor",
 #            image_name="centos",
-#            secgroup_name="1047ba76-637d-4ae2-b2ae-d3bb8ce66391",
+#            secgroup_name="b0842a1d-901b-4a85-8fe7-c3e2ecbe2eb8",
 #            key_name="ssh-key",
 #            deleteall=True)
 # time.sleep(2)
@@ -1461,7 +1490,7 @@ router_name="sriov_router_1"
 #            gateway_ip="192.168.210.1",
 #            flavor_name="sanity_flavor",
 #            image_name="centos",
-#            secgroup_name="1047ba76-637d-4ae2-b2ae-d3bb8ce66391",
+#            secgroup_name="b0842a1d-901b-4a85-8fe7-c3e2ecbe2eb8",
 #            key_name="ssh-key",
 #            deleteall=True)
 # time.sleep(2)
@@ -1471,10 +1500,10 @@ router_name="sriov_router_1"
 # time.sleep(2)
 # test_case7()
 # time.sleep(2)
-fla = "huge-flavor"
+fla = "sanity_flavor"
 zone="nova0"
 img="centos"
-secg="1047ba76-637d-4ae2-b2ae-d3bb8ce66391"
+secg="b0842a1d-901b-4a85-8fe7-c3e2ecbe2eb8"
 por="dpdk_port1"
 net="dpdk_net_1"
 ser="dpdk_server_1"

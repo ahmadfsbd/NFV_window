@@ -11,6 +11,7 @@ import time
 import logging
 from logging.handlers import TimedRotatingFileHandler
 import datetime
+from source_R8rc import Source_Module
 
 feature_name = "SRIOV"
 
@@ -217,11 +218,11 @@ def test_case_1(network_name=f_data["sriov_network_name"],
                 router_name=f_data["sriov_router"],
                 subnet_name=f_data["sriov_subnetwork"],
                 cidr=f_data["cidr"], gateway=f_data["gateway"],
-                network_bool=True, subnet_bool=True, port_bool=True,
-                flavor_name=f_data["sriov_flavor"], availability_zone=f_data["zone1"],
+                network_bool=False, subnet_bool=False, port_bool=True,
+                flavor_name=f_data["sriov_flavor"], availability_zone=f_data["zone"],
                 image_name=f_data["static_image"],server_name=f_data["sriov_server"],
                 security_group_name=f_data["static_secgroup"],key_name=f_data["key_name"],
-deleteall=True
+deleteall=False
                 ):
     """STEPS FOR CREATION OF SRIOV ENABLED INSTANCE
         1. Create a zone named sriov
@@ -242,32 +243,35 @@ deleteall=True
         #                                                           network_name=network_name,
         #                                                           router_name=router_name, port_name=port_name)
         #exit()
-        output = creation_object.os_create_sriov_enabled_instance(logger, conn_create, network_name=network_name,
-                                                                  port_name=port_name,
-                                                                  router_name=router_name,
-                                                                  subnet_name=subnet_name,
-                                                                  cidr=cidr,
-                                                                  gateway=gateway,
-                                         network_bool=network_bool, subnet_bool=subnet_bool, port_bool=port_bool,
-                                         flavor_name=flavor_name,
-                                         availability_zone=availability_zone,
-                                         image_name=image_name,
-                                         server_name=server_name,
-                                         security_group_name=security_group_name,
-                                         key_name=key_name)
-        # pdb.set_trace()
-        time.sleep(50)
-        ping = ssh_obj.locally_ping_check(logger, ip=output[2][1])
-        if ping:
-            logger.info ("Test 1 SUCCESSFUL")
-        else:
-            logger.info ("Test 1 FAILED")
-        if deleteall:
-            delete_object.delete_1_instance_and_router_with_1_network(logger, conn_delete, server_name=server_name,
-                                                                      network_name=network_name,
-                                                        router_name=router_name, port_name=port_name)
-        else:
-            logger.info ("Note: Nothing is deleted!")
+        for x in range(11, 18):
+            port_name="s_port%s"%x
+            server_name="s_instance%s"%x
+            output = creation_object.os_create_sriov_enabled_instance(logger, conn_create, network_name=network_name,
+                                                                      port_name=port_name,
+                                                                      router_name=router_name,
+                                                                      subnet_name=subnet_name,
+                                                                      cidr=cidr,
+                                                                      gateway=gateway,
+                                             network_bool=network_bool, subnet_bool=subnet_bool, port_bool=port_bool,
+                                             flavor_name=flavor_name,
+                                             availability_zone=availability_zone,
+                                             image_name=image_name,
+                                             server_name=server_name,
+                                             security_group_name=security_group_name,
+                                             key_name=key_name)
+            # pdb.set_trace()
+            time.sleep(50)
+            ping = ssh_obj.locally_ping_check(logger, ip=output[2][1])
+            if ping:
+                logger.info ("Test 1 SUCCESSFUL")
+            else:
+                logger.info ("Test 1 FAILED")
+            if deleteall:
+                delete_object.delete_1_instance_and_router_with_1_network(logger, conn_delete, server_name=server_name,
+                                                                          network_name=network_name,
+                                                            router_name=router_name, port_name=port_name)
+            else:
+                logger.info ("Note: Nothing is deleted!")
         return output
     except:
         logger.info ("Unable to execute test case 1")
@@ -392,7 +396,7 @@ def test_case_3(network_name=f_data["sriov_network_name"],
             logger.info ("server creation failed / server is not created on the given compute")
             logger.info ("Test Failed")
     except:
-        logger.info ("Unable to execute test case 1")
+        logger.info ("Unable to execute test case 3")
         logger.info ("\nError: " + str(sys.exc_info()[0]))
         logger.info ("Cause: " + str(sys.exc_info()[1]))
         logger.info ("Line No: %s \n" % (sys.exc_info()[2].tb_lineno))
@@ -437,7 +441,17 @@ def test_case4(server1_name=f_data["sriov_server1"], server2_name=f_data["sriov_
                                                     assign_floating_ip=True)
         # pdb.set_trace()
         time.sleep(50)
-        ping = ssh_to_instance1_and_ping_instance2(username_of_instance1=image_name, ip_of_instance1=output[0][2][1], ip_of_instance2=output[1][2][0])
+        logger.info("=================================================")
+        logger.info("Pinging from Sriov Instance 1 to Sriov Instance 2")
+        logger.info("=================================================")
+        ping = ssh_to_instance1_and_ping_instance2(username_of_instance1=image_name, ip_of_instance1=output[0][2][1],
+                                                   ip_of_instance2=output[1][2][0])
+        logger.info("=================================================")
+        logger.info("Pinging from Sriov Instance 2 to Sriov Instance 1")
+        logger.info("=================================================")
+        ping = ssh_to_instance1_and_ping_instance2(username_of_instance1=image_name, ip_of_instance1=output[1][2][1],
+                                                   ip_of_instance2=output[0][2][0])
+        # ping = ssh_to_instance1_and_ping_instance2(username_of_instance1=image_name, ip_of_instance1=output[0][2][1], ip_of_instance2=output[1][2][0])
 
         if ping==1:
             logger.info ("Test 4 SUCCESSFUL")
@@ -473,7 +487,7 @@ def test_case5(server1_name=f_data["sriov_server1"], server2_name=f_data["sriov_
                subnet_name=f_data["sriov_subnetwork"],
                router_name=f_data["sriov_router"],
                port1_name=f_data["sriov_port1"], port2_name=f_data["sriov_port2"],
-               zone1=f_data["zone"],zone2=f_data["zone"],
+               zone1=f_data["zone"],zone2=f_data["zone1"],
                cidr=f_data["cidr"], gateway_ip=f_data["gateway"],
                flavor_name=f_data["sriov_flavor"],
                image_name=f_data["static_image"],
@@ -498,7 +512,17 @@ def test_case5(server1_name=f_data["sriov_server1"], server2_name=f_data["sriov_
                                                     assign_floating_ip=True)
         # pdb.set_trace()
         time.sleep(50)
-        ping = ssh_to_instance1_and_ping_instance2(username_of_instance1=image_name, ip_of_instance1=output[0][2][1], ip_of_instance2=output[1][2][0])
+        logger.info("=================================================")
+        logger.info("Pinging from Sriov Instance 1 to Sriov Instance 2")
+        logger.info("=================================================")
+        ping = ssh_to_instance1_and_ping_instance2(username_of_instance1=image_name, ip_of_instance1=output[0][2][1],
+                                                   ip_of_instance2=output[1][2][0])
+        logger.info("=================================================")
+        logger.info("Pinging from Sriov Instance 2 to Sriov Instance 1")
+        logger.info("=================================================")
+        ping = ssh_to_instance1_and_ping_instance2(username_of_instance1=image_name, ip_of_instance1=output[1][2][1],
+                                                   ip_of_instance2=output[0][2][0])
+        # ping = ssh_to_instance1_and_ping_instance2(username_of_instance1=image_name, ip_of_instance1=output[0][2][1], ip_of_instance2=output[1][2][0])
 
         if ping==1:
             logger.info ("Test 5 SUCCESSFUL")
@@ -600,8 +624,16 @@ deleteall=True
                                                             secgroup_name=secgroup, assign_floating_ip=True)
         # pdb.set_trace()
         time.sleep(50)
+        logger.info("==============================================")
+        logger.info("Pinging from Sriov Instance to Legacy Instance")
+        logger.info("==============================================")
         ping = ssh_to_instance1_and_ping_instance2(username_of_instance1=image_name, ip_of_instance1=sriov[2][1],
                                                    ip_of_instance2=legacy[3])
+        logger.info("==============================================")
+        logger.info("Pinging from Legacy Instance to Sriov Instance")
+        logger.info("==============================================")
+        ping = ssh_to_instance1_and_ping_instance2(username_of_instance1=image_name, ip_of_instance1=legacy[4],
+                                                   ip_of_instance2=sriov[2][0])
 
         if ping:
             logger.info ("Test 6 same compute and same network successful")
@@ -703,8 +735,16 @@ deleteall=True
         # pdb.set_trace()
         # pdb.set_trace()
         time.sleep(50)
+        logger.info("==============================================")
+        logger.info("Pinging from Sriov Instance to Legacy Instance")
+        logger.info("==============================================")
         ping = ssh_to_instance1_and_ping_instance2(username_of_instance1=image_name, ip_of_instance1=sriov[2][1],
                                                    ip_of_instance2=legacy[3])
+        logger.info("==============================================")
+        logger.info("Pinging from Legacy Instance to Sriov Instance")
+        logger.info("==============================================")
+        ping = ssh_to_instance1_and_ping_instance2(username_of_instance1=image_name, ip_of_instance1=legacy[4],
+                                                   ip_of_instance2=sriov[2][0])
 
         if ping:
             logger.info ("Test 7 diff compute and same network successful")
@@ -740,7 +780,7 @@ def test_case8( sriov_network=f_data["sriov_network"], legacy_network=f_data["le
                 legacy_cidr=f_data["legacy_cidr"], legacy_gateway=f_data["legacy_gateway"],
                 network_bool=False, subnet_bool=False, port_bool=False,
                 router_name=f_data["router_name"],
-                zone=f_data["zone"],
+                zone=f_data["zone2"],
                 image_name=f_data["static_image"],
                 sriov_flavor = f_data["sriov_flavor"], legacy_flavor = f_data["legacy_flavor"],
                 sriov_server = f_data["sriov_server"], legacy_server = f_data["legacy_server"],
@@ -811,8 +851,16 @@ def test_case8( sriov_network=f_data["sriov_network"], legacy_network=f_data["le
                                                             secgroup_name=secgroup, assign_floating_ip=True)
         # pdb.set_trace()
         time.sleep(50)
+        logger.info("==============================================")
+        logger.info("Pinging from Sriov Instance to Legacy Instance")
+        logger.info("==============================================")
         ping = ssh_to_instance1_and_ping_instance2(username_of_instance1=image_name, ip_of_instance1=sriov[2][1],
                                                    ip_of_instance2=legacy[3])
+        logger.info("==============================================")
+        logger.info("Pinging from Legacy Instance to Sriov Instance")
+        logger.info("==============================================")
+        ping = ssh_to_instance1_and_ping_instance2(username_of_instance1=image_name, ip_of_instance1=legacy[4],
+                                                   ip_of_instance2=sriov[2][0])
 
         if ping:
             logger.info ("Test 8 same compute and diff network successful")
@@ -848,7 +896,7 @@ def test_case9(sriov_network=f_data["sriov_network"], legacy_network=f_data["leg
                 legacy_cidr=f_data["legacy_cidr"], legacy_gateway=f_data["legacy_gateway"],
                 network_bool=False, subnet_bool=False, port_bool=False,
                 router_name=f_data["router_name"],
-                zone1=f_data["zone"], zone2=f_data["zone1"],
+                zone1=f_data["zone2"], zone2=f_data["zone1"],
                 image_name=f_data["static_image"],
                 sriov_flavor = f_data["sriov_flavor"], legacy_flavor = f_data["legacy_flavor"],
                 sriov_server = f_data["sriov_server"], legacy_server = f_data["legacy_server"],
@@ -920,8 +968,16 @@ def test_case9(sriov_network=f_data["sriov_network"], legacy_network=f_data["leg
                                                                                 secgroup_name=secgroup, assign_floating_ip=True)
         # pdb.set_trace()
         time.sleep(50)
+        logger.info("==============================================")
+        logger.info("Pinging from Sriov Instance to Legacy Instance")
+        logger.info("==============================================")
         ping = ssh_to_instance1_and_ping_instance2(username_of_instance1=image_name, ip_of_instance1=sriov[2][1],
                                                    ip_of_instance2=legacy[3])
+        logger.info("==============================================")
+        logger.info("Pinging from Legacy Instance to Sriov Instance")
+        logger.info("==============================================")
+        ping = ssh_to_instance1_and_ping_instance2(username_of_instance1=image_name, ip_of_instance1=legacy[4],
+                                                   ip_of_instance2=sriov[2][0])
 
         if ping:
             logger.info ("Test 9 diff compute and diff network successful")
@@ -959,7 +1015,7 @@ def test_case10(    sriov_network1=f_data["sriov_network1"],
         sriov_cidr1=f_data["sriov_cidr1"], sriov_gateway1=f_data["sriov_gateway1"],
         sriov_cidr2=f_data["sriov_cidr2"], sriov_gateway2=f_data["sriov_gateway2"],
         network_bool=False, subnet_bool=False, port_bool=False,
-        router_name=f_data["sriov_router"], zone=f_data["zone"],
+        router_name=f_data["sriov_router"], zone=f_data["zone2"],
         image_name=f_data["static_image"],
         sriov_server1=f_data["sriov_server1"],
         sriov_server2=f_data["sriov_server2"],
@@ -1025,8 +1081,16 @@ deleteall=True
                                                                   key_name=key_name)
         # pdb.set_trace()
         time.sleep(50)
+        logger.info("=================================================")
+        logger.info("Pinging from Sriov Instance 1 to Sriov Instance 2")
+        logger.info("=================================================")
         ping = ssh_to_instance1_and_ping_instance2(username_of_instance1=image_name, ip_of_instance1=sriov1[2][1],
                                                    ip_of_instance2=sriov2[2][0])
+        logger.info("=================================================")
+        logger.info("Pinging from Sriov Instance 2 to Sriov Instance 1")
+        logger.info("=================================================")
+        ping = ssh_to_instance1_and_ping_instance2(username_of_instance1=image_name, ip_of_instance1=sriov2[2][1],
+                                                   ip_of_instance2=sriov1[2][0])
 
         if ping:
             logger.info ("Test 10 same compute and diff network successful")
@@ -1065,7 +1129,7 @@ sriov_network1=f_data["sriov_network1"],
         sriov_cidr1=f_data["sriov_cidr1"], sriov_gateway1=f_data["sriov_gateway1"],
         sriov_cidr2=f_data["sriov_cidr2"], sriov_gateway2=f_data["sriov_gateway2"],
         network_bool=False, subnet_bool=False, port_bool=False,
-        router_name=f_data["sriov_router"], zone1=f_data["zone"],zone2=f_data["zone"],
+        router_name=f_data["sriov_router"], zone1=f_data["zone2"],zone2=f_data["zone"],
         image_name=f_data["static_image"],
         sriov_server1=f_data["sriov_server1"],
         sriov_server2=f_data["sriov_server2"],
@@ -1131,8 +1195,16 @@ deleteall=True
                                                                   key_name=key_name)
         # pdb.set_trace()
         time.sleep(50)
+        logger.info("=================================================")
+        logger.info("Pinging from Sriov Instance 1 to Sriov Instance 2")
+        logger.info("=================================================")
         ping = ssh_to_instance1_and_ping_instance2(username_of_instance1=image_name, ip_of_instance1=sriov1[2][1],
                                                    ip_of_instance2=sriov2[2][0])
+        logger.info("=================================================")
+        logger.info("Pinging from Sriov Instance 2 to Sriov Instance 1")
+        logger.info("=================================================")
+        ping = ssh_to_instance1_and_ping_instance2(username_of_instance1=image_name, ip_of_instance1=sriov2[2][1],
+                                                   ip_of_instance2=sriov1[2][0])
 
         if ping:
             logger.info ("Test 11 diff compute and diff network successful")

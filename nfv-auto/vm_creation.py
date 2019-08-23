@@ -5,7 +5,7 @@ import json
 from openstack import connection
 import pdb
 import time
-from source_R153rc import Source_Module
+from source_R8rc import Source_Module
 
 
 """
@@ -41,7 +41,7 @@ from source_R153rc import Source_Module
 # os.environ["OS_AUTH_TYPE"]="password"
 
 global_setup_file = "setup.json"
-global_stamp_file = "stamp_data.json"
+global_stamp_file = "R8_stamp_data.json"
 
 
 if os.path.exists(global_stamp_file):
