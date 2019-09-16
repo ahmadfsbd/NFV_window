@@ -2,7 +2,7 @@
   "static_image"				  : "centos",
   "key_name"					  : "ssh-key",
   "static_network" 			      : "st_network",
-  "static_secgroup"			      : "5107782d-adfe-4e58-9dd6-9d20621a1113",
+  "static_secgroup"			      : "003a159f-563a-472d-8c59-20c1feb2871c",
   "legacy_flavor"                 : "m1.medium",
   "sanity_flavor"                 : "sanity_flavor",
   "sriov_flavor"                  : "sanity_flavor",

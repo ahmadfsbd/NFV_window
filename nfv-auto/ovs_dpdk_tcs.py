@@ -156,7 +156,9 @@ def test_case_3():
         ssh_obj.ssh_to(logger, flt_ip, data["static_image"], key_file_name=data["key_file_path"])
         logger.info("Trying to ping the gateway through instance..")
         flag = ssh_obj.simple_ping_check(logger, str(gateway_floating_ip))
-        if flag is True:
+        # pdb.set_trace()
+        # logger.info(flag)
+        if flag:
             logger.info("\nTest Case 3 Passed, Ping successful.\n")
         else:
             logger.info("\nTest Case 3 Failed! Ping unsuccessful!\n")
@@ -461,9 +463,9 @@ def test_case_17(delete_after_create=True):
                                                      network2_name=data["network2_name"], subnet1_name=data["subnet1_name"],
                                                      subnet2_name=data["subnet2_name"], router_name=data["router_name"],
                                                      port1_name=data["port1_name"], port2_name=data["port2_name"],
-                                                     zone1=data["zone1"], zone2=data["zone2"], cidr1=data["cidr1"],
+                                                     zone1=data["zone2"], zone2=data["zone2"], cidr1=data["cidr1"],
                                                      gateway_ip1=data["gateway_ip1"], cidr2=data["cidr2"],
-                                                     gateway_ip2=data["gateway_ip2"], flavor_name=data["ovsdpdk_flavor"],
+                                                     gateway_ip2=data["gateway_ip2"], flavor_name=data["static_flavor"],
                                                      image_name=data["static_image"],secgroup_name=data["static_secgroup"],
                                                      assign_floating_ip=False)
         out = initialize_ping_check_from_namespace(ips_list,
@@ -521,6 +523,7 @@ def test_case_23():
 
 # pdb.set_trace()
 # test_case_3()
+# test_case_4()
 # test_case_5()
 # test_case_9()
 # test_case_10()

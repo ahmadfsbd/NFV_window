@@ -1,5 +1,4 @@
 import os
-os.system("source /home/osp_admin/.env/bin/activate")
 import sys
 import json
 from openstack import connection
