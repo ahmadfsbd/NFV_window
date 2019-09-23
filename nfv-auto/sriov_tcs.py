@@ -218,8 +218,8 @@ def test_case_1(network_name=f_data["sriov_network_name"],
                 router_name=f_data["sriov_router"],
                 subnet_name=f_data["sriov_subnetwork"],
                 cidr=f_data["cidr"], gateway=f_data["gateway"],
-                network_bool=False, subnet_bool=False, port_bool=True,
-                flavor_name=f_data["sriov_flavor"], availability_zone=f_data["zone"],
+                network_bool=True, subnet_bool=True, port_bool=True,
+                flavor_name=f_data["sriov_flavor"], availability_zone=f_data["zone1"],
                 image_name=f_data["static_image"],server_name=f_data["sriov_server"],
                 security_group_name=f_data["static_secgroup"],key_name=f_data["key_name"],
 deleteall=False
@@ -242,10 +242,13 @@ deleteall=False
         # delete_object.delete_1_instance_and_router_with_1_network(logger, conn_delete, server_name=server_name,
         #                                                           network_name=network_name,
         #                                                           router_name=router_name, port_name=port_name)
-        #exit()
-        for x in range(11, 18):
+        # exit()
+        for x in range(1,8):
             port_name="s_port%s"%x
             server_name="s_instance%s"%x
+            if x > 1:
+                network_bool="False"
+                subnet_bool="False"
             output = creation_object.os_create_sriov_enabled_instance(logger, conn_create, network_name=network_name,
                                                                       port_name=port_name,
                                                                       router_name=router_name,

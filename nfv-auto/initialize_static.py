@@ -1,4 +1,4 @@
-from vm_creation import Os_Creation_Modules, data
+from vm_creation import Os_Creation_Modules, data, stamp_data
 from delete_os import Os_Deletion_Modules
 import os
 import logging
@@ -91,7 +91,7 @@ conn=obj.os_connection_creation()
 # os.system("openstack aggregate list")
 # os.system("openstack flavor list")
 # logger.info("Adding Security Group Rules")
-#
+
 # obj.os_sec_group_n_rules_creation(logger, conn, data["static_secgroup"], "Secgroup for icmp,tcp,udp", ["tcp", "icmp", "udp"], "0.0.0.0/0")
 
 # logger.info("Creating Keypair and setting permission")
@@ -103,10 +103,10 @@ conn=obj.os_connection_creation()
 # # obj.os_flavor_sriov_creation(logger, conn, "sriov_flavor", 1024, 2, 40)
 # # obj.os_image_creation(logger, conn, data["static_image"], data["static_image_path"],data["static_image_format"],"bare")
 #
-# net_info = obj.os_network_creation(logger, conn, data["static_network"], data["static_cidr"], data["static_subnet"], data["static_gateway"])
+net_info = obj.os_network_creation(logger, conn, data["static_network"], data["static_cidr"], data["static_subnet"], data["static_gateway"])
 #,provider_dic={ 'network_type': 'vlan','physical_network' : 'physint', 'segmentation_id': 205 })
-# logger.info(net_info)
-# os.system("openstack network list")
+logger.info(net_info)
+os.system("openstack network list")
 # os.system("openstack network show %s" %data["static_network"])
 # pdb.set_trace()
 # net_data=str(net_info)
@@ -116,7 +116,7 @@ conn=obj.os_connection_creation()
 # logger.info(segmentation_id)
 # # obj.os_flavor_ovsdpdk_creation(logger, conn, data["ovsdpdk_flavor"], 1024, 2, 40)
 # # os.system("openstack keypair list")
-# obj.os_router_creation(logger, conn, data["static_router"], data["static_port"], data["static_network"])
+obj.os_router_creation(logger, conn, data["static_router"], data["static_port"], data["static_network"])
 # obj.os_server_creation(logger, conn, data["server_name"], data["static_flavor"], data["static_image"], data["static_network"], data["static_secgroup"], data["zone1"], data["key_name"], 1, 3)
 # obj.os_keypair_creation_with_key_file(logger, conn, data["key_name"], data["key_file_path"])
 

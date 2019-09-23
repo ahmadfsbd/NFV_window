@@ -638,6 +638,7 @@ def dvr_deployement_test_case_16(compute_list, username, network_name, cidr, gat
             logger.info("TEST FAILED")
 
         ssh_obj.ssh_close()
+        pdb.set_trace()
         delete_object.delete_1_instance_and_router_with_1_network(logger, conn_delete, server_name, network_name,
                                                                   router_name, port_name)
         return namespace_id
@@ -849,9 +850,9 @@ def dvr_deployement_test_case_20(compute_ip_list,username, server1_name, server2
             compute_ip = compute_ip_list[2]
 
         ssh_obj.ssh_to(logger, compute_ip, username)
-        p = ssh_obj.execute_command_return_output(logger, "sudo systemctl stop neutron-l3-agent.service")
+        # p = ssh_obj.execute_command_return_output(logger, "sudo systemctl stop neutron-l3-agent.service")
         logger.info (p)
-        p = ssh_obj.execute_command_return_output(logger, "sudo systemctl status neutron-l3-agent.service")
+        p = ssh_obj.execute_command_return_output(logger, "sudo docker ps | grep l3")
         logger.info (p)
         ssh_obj.ssh_close()
 
@@ -862,9 +863,9 @@ def dvr_deployement_test_case_20(compute_ip_list,username, server1_name, server2
         logger.info (res)
         ssh_obj.ssh_close()
 
-        delete_object.delete_2_instances_and_router_with_2_networks(logger, conn_delete, server1_name, server2_name, network1_name,
-                                                      network2_name,
-                                                      router_name, port1_name, port2_name)
+        # delete_object.delete_2_instances_and_router_with_2_networks(logger, conn_delete, server1_name, server2_name, network1_name,
+        #                                               network2_name,
+        #                                               router_name, port1_name, port2_name)
 
         if res==0:
             logger.info("TEST SUCCESSFUL")
@@ -1493,15 +1494,15 @@ logger.info ("Compute ip's %s" %compute)
 #                              port_name=data["port_name"], zone=data["zone1"], cidr=data["cidr"], gateway_ip=data["gateway_ip"],
 #                              flavor_name=data["static_flavor"], image_name=data["static_image"], secgroup_name=data["static_secgroup"])
 
-# dvr_deployement_test_case_20(compute_ip_list=compute,username=stamp_user, server1_name=data["server1_name"], server2_name=data["server2_name"],
-#                              network1_name=data["network1_name"],
-#                                                       network2_name=data["network2_name"],
-#                                                       subnet1_name=data["subnet1_name"], subnet2_name=data["subnet2_name"],
-#                                                       router_name=data["router_name"], port1_name=data["port1_name"], port2_name=data["port2_name"],
-#                              zone=data["zone1"], cidr1=data["cidr1"],
-#                                                       gateway_ip1=data["gateway_ip1"], cidr2=data["cidr2"], gateway_ip2=data["gateway_ip2"],
-#                              flavor_name=data["static_flavor"], image_name=data["static_image"],
-#                                                       secgroup_name=data["static_secgroup"], assign_floating_ip=True)#######FAILED
+dvr_deployement_test_case_20(compute_ip_list=compute,username=stamp_user, server1_name=data["server1_name"], server2_name=data["server2_name"],
+                             network1_name=data["network1_name"],
+                                                      network2_name=data["network2_name"],
+                                                      subnet1_name=data["subnet1_name"], subnet2_name=data["subnet2_name"],
+                                                      router_name=data["router_name"], port1_name=data["port1_name"], port2_name=data["port2_name"],
+                             zone=data["zone3"], cidr1=data["cidr1"],
+                                                      gateway_ip1=data["gateway_ip1"], cidr2=data["cidr2"], gateway_ip2=data["gateway_ip2"],
+                             flavor_name=data["static_flavor"], image_name=data["static_image"],
+                                                      secgroup_name=data["static_secgroup"], assign_floating_ip=True)#######FAILED
 
 # dvr_deployement_test_case_19(compute_ip_list=compute, username=stamp_user, network_name=data["network_name"],
 #                           subnet_name=data["subnet_name"], router_name=data["router_name"], port_name=data["port_name"], server_name=data["server_name"],
@@ -1510,29 +1511,29 @@ logger.info ("Compute ip's %s" %compute)
 
 
 # dvr_deployement_test_case_18(compute, controller, stamp_user)
-# # #
+# # # #
 # dvr_deployement_test_case_17()
-
+#
 # dvr_deployement_test_case_16(compute_list=compute, username=stamp_user,network_name=data["network_name"],cidr=data["cidr"],
 #                                  gateway_ip=data["gateway_ip"],subnet_name=data["subnet_name"],
 #                                        router_name=data["router_name"],port_name=data["port_name"],
-#                                  server_name=data["server_name"],image_name=data["static_image"],
+#                                  server_name=data["server_name"],image_name=data["rhel_image"],
 #                                  flavor_name=data["static_flavor"],secgroup_name=data["static_secgroup"],zone=data["zone1"])
 #
 #
 # dvr_deployement_test_case_15(compute_list=compute, username=stamp_user,network_name=data["network_name"],cidr=data["cidr"],
 #                                  gateway_ip=data["gateway_ip"],subnet_name=data["subnet_name"],
 #                                        router_name=data["router_name"],port_name=data["port_name"],
-#                                  server_name=data["server_name"],image_name=data["static_image"],
+#                                  server_name=data["server_name"],image_name=data["rhel_image"],
 #                                  flavor_name=data["static_flavor"],secgroup_name=data["static_secgroup"],zone=data["zone1"])
 
 
 # dvr_deployement_test_case_14(controller, stamp_user)#DONE
 
-dvr_deployement_test_case_13(controller_ip_list=controller, username=stamp_user, network_name=data["network_name"],
-                          subnet_name=data["subnet_name"], router_name=data["router_name"], port_name=data["port_name"], server_name=data["server_name"],
-                                 image_name=data["static_image"], flavor_name=data["static_flavor"],
-                             secgroup_name=data["static_secgroup"], zone=data["zone1"], cidr=data["cidr"], gateway_ip=data["gateway_ip"])
+# dvr_deployement_test_case_13(controller_ip_list=controller, username=stamp_user, network_name=data["network_name"],
+#                           subnet_name=data["subnet_name"], router_name=data["router_name"], port_name=data["port_name"], server_name=data["server_name"],
+#                                  image_name=data["static_image"], flavor_name=data["static_flavor"],
+#                              secgroup_name=data["static_secgroup"], zone=data["zone1"], cidr=data["cidr"], gateway_ip=data["gateway_ip"])
 
 # dvr_deployement_test_case_12(controller_ip_list=controller, username=stamp_user, network_name=data["network_name"],
 #                              subnet_name=data["subnet_name"], router_name=data["router_name"], port_name=data["port_name"], server_name=data["server_name"],

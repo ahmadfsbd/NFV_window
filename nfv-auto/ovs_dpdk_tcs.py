@@ -102,8 +102,6 @@ def check_huge_page_size_from(ip_of_node, username):
 def create_instance_with_dpdk_flavor(assign_floating_ip, server_name=data["server_name"],
                                      flavor_name=data["ovsdpdk_flavor"]):
     # flavor = create_ovs_dpdk_flavor(flavor_name, ram_size, no_of_vcpus, disk_size)
-    creation_object.os_network_creation(logger, conn, data["static_network"], data["static_cidr"], data["static_subnet"], data["static_gateway"])
-    creation_object.os_router_creation(logger, conn, data["static_router"], data["static_port"], data["static_network"])
     if assign_floating_ip is True:
         server_munch = creation_object.os_server_creation_with_floating_ip(logger, conn_create, server_name=server_name,
                                                                            flavor_name=flavor_name,
@@ -158,17 +156,17 @@ def test_case_3():
         ssh_obj.ssh_to(logger, flt_ip, data["static_image"], key_file_name=data["key_file_path"])
         logger.info("Trying to ping the gateway through instance..")
         flag = ssh_obj.simple_ping_check(logger, str(gateway_floating_ip))
-        if flag is True:
+        # pdb.set_trace()
+        # logger.info(flag)
+        if flag:
             logger.info("\nTest Case 3 Passed, Ping successful.\n")
         else:
             logger.info("\nTest Case 3 Failed! Ping unsuccessful!\n")
         ssh_obj.ssh_close()
         # Deleting instance after test execution
         delete_object.os_delete_server(logger, conn_delete, server_name=data["server_name"])
-        delete_object.os_deleting_router_with_1_network(self, logger, conn, data["static_network"], data["static_router"], data["static_port"])
     except:
         delete_object.os_delete_server(logger, conn_delete, server_name=data["server_name"])
-        delete_object.os_deleting_router_with_1_network(self, logger, conn, data["static_network"], data["static_router"], data["static_port"])
         logger.info ("\nError encountered while executing Test Case: 3!")
         logger.info ("Error: " + str(sys.exc_info()[0]))
         logger.info ("Cause: " + str(sys.exc_info()[1]))
@@ -190,14 +188,12 @@ def test_case_4():
         logger.info("Instance Created.")
         logger.info("Need to add the test case pass fail criteria!!!")
         delete_object.os_delete_server(logger, conn_delete, server_name=data["server_name"])
-        delete_object.os_deleting_router_with_1_network(self, logger, conn, data["static_network"], data["static_router"], data["static_port"])
     except:
         logger.info ("\nError encountered while executing Test Case: 4 !")
         logger.info ("Error: " + str(sys.exc_info()[0]))
         logger.info ("Cause: " + str(sys.exc_info()[1]))
         logger.info ("Line No: %s \n" % (sys.exc_info()[2].tb_lineno))
         delete_object.os_delete_server(logger, conn_delete, server_name=data["server_name"])
-        delete_object.os_deleting_router_with_1_network(self, logger, conn, data["static_network"], data["static_router"], data["static_port"])
 
 
 def test_case_5():
@@ -221,14 +217,12 @@ def test_case_5():
         # run virsh dumpxml <instance_id> on compute where instance is provisioned
         # delete both ; instance and flavor
         delete_object.os_delete_server(logger, conn_delete, server_name=data["server_name"])
-        delete_object.os_deleting_router_with_1_network(self, logger, conn, data["static_network"], data["static_router"], data["static_port"])
     except:
         logger.info ("Error encountered while executing Test Case: 5 !")
         logger.info ("\nError: " + str(sys.exc_info()[0]))
         logger.info ("Cause: " + str(sys.exc_info()[1]))
         logger.info ("Line No: %s \n" % (sys.exc_info()[2].tb_lineno))
         delete_object.os_delete_server(logger, conn_delete, server_name=data["server_name"])
-        delete_object.os_deleting_router_with_1_network(self, logger, conn, data["static_network"], data["static_router"], data["static_port"])
         # delete_object.os_deleting_flavor(conn_delete, data["flavor_name"]
 
 # def test_case_6():
@@ -243,14 +237,12 @@ def test_case_5():
 #         # reboot instance
 #         # check ip of instance after vm is turned on
 #         delete_object.os_delete_server(conn_delete, server_name=data["server_name"])
-#         delete_object.os_deleting_router_with_1_network(self, logger, conn, data["static_network"], data["static_router"], data["static_port"])
 #     except:
 #         print "Error encountered while executing Test Case: 6 !"
 #         print ("\nError: " + str(sys.exc_info()[0]))
 #         print ("Cause: " + str(sys.exc_info()[1]))
 #         print ("Line No: %s \n" % (sys.exc_info()[2].tb_lineno))
 #         delete_object.os_delete_server(conn_delete, server_name=data["server_name"])
-#         delete_object.os_deleting_router_with_1_network(self, logger, conn, data["static_network"], data["static_router"], data["static_port"])
 
 
 # def test_case_8(max_iteration, server_name, flavor_name, disk_size):
@@ -426,8 +418,6 @@ def test_case_16():
     logger.info("Executing Test Case 16 (Verify OVS DPDK instance cannot communicate\n"
           " with non OVS DPDK instance created on same tenant network)")
     logger.info("===================================================================")
-    creation_object.os_network_creation(logger, conn, data["static_network"], data["static_cidr"], data["static_subnet"], data["static_gateway"])
-    creation_object.os_router_creation(logger, conn, data["static_router"], data["static_port"], data["static_network"])
     try:
         image_name = data["static_image"]
         dpdk_server_mnch = creation_object.os_server_creation(logger, conn_create, server_name="dpdk_server",
@@ -452,7 +442,6 @@ def test_case_16():
             logger.info ("\nTest Case 16 Failed, as the communication is successful.\n")
         delete_object.os_delete_server(logger, conn_delete, "dpdk_server")
         delete_object.os_delete_server(logger, conn_delete, "server2")
-        delete_object.os_deleting_router_with_1_network(self, logger, conn, data["static_network"], data["static_router"], data["static_port"])
     except:
         logger.info ("\nError encountered while executing Test Case: 16!")
         logger.info ("Error: " + str(sys.exc_info()[0]))
@@ -461,7 +450,7 @@ def test_case_16():
         ssh_obj.ssh_close()
         delete_object.os_delete_server(logger, conn_delete, "server1")
         delete_object.os_delete_server(logger, conn_delete, "server2")
-        delete_object.os_deleting_router_with_1_network(self, logger, conn, data["static_network"], data["static_router"], data["static_port"])
+
 
 def test_case_17(delete_after_create=True):
     logger.info("\n======================================================================")
@@ -474,9 +463,9 @@ def test_case_17(delete_after_create=True):
                                                      network2_name=data["network2_name"], subnet1_name=data["subnet1_name"],
                                                      subnet2_name=data["subnet2_name"], router_name=data["router_name"],
                                                      port1_name=data["port1_name"], port2_name=data["port2_name"],
-                                                     zone1=data["zone1"], zone2=data["zone2"], cidr1=data["cidr1"],
+                                                     zone1=data["zone2"], zone2=data["zone2"], cidr1=data["cidr1"],
                                                      gateway_ip1=data["gateway_ip1"], cidr2=data["cidr2"],
-                                                     gateway_ip2=data["gateway_ip2"], flavor_name=data["ovsdpdk_flavor"],
+                                                     gateway_ip2=data["gateway_ip2"], flavor_name=data["static_flavor"],
                                                      image_name=data["static_image"],secgroup_name=data["static_secgroup"],
                                                      assign_floating_ip=False)
         out = initialize_ping_check_from_namespace(ips_list,
@@ -534,6 +523,7 @@ def test_case_23():
 
 # pdb.set_trace()
 # test_case_3()
+# test_case_4()
 # test_case_5()
 # test_case_9()
 # test_case_10()
