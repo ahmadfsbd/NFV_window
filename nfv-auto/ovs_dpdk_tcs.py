@@ -405,6 +405,8 @@ def test_case_15():
         output = ssh_obj.ping_check_from_namespace(namespace_id, ip_of_instance1=server1_ip, username_of_instance=image_name,
                                     key_file_path_of_node=destination_path, ip_of_instance2=server2_ip, packet_size=None)
         """
+        ## testing things
+        ##how to merge repos
     except:
         logger.info ("\nError encountered while executing Test Case: 15!")
         logger.info ("Error: " + str(sys.exc_info()[0]))
