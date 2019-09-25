@@ -1,0 +1,10 @@
+1- Configure rc.py file for sdk access, configure setup.json for config details/names (centos image name , path, format)
+
+2- Run initialize_static.py (after source overcloudrc)
+	> adds compute nodes to zones (nova0,1,2)
+	> creates security group (fio-secgroup)
+	> creates ssh key (ssh-key.pem)
+	> creates fio network (fio-network, fio-subnet 192.168.20.0/24 GW 192.168.20.1)
+	> creates router with a port on fio-network and public network (fio-router)
+
+3- 
