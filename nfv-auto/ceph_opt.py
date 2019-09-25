@@ -160,8 +160,7 @@ def ceph_vm_setup(router_name,
 
                 if j==2:
                     nova2_list.append(ip_list[4])
-                # pdb.set_trace()
-                # ssh_obj.execute_command_show_output(logger, "sudo scp -rp -i dvr-key.pem nginx.repo centos@%s:./" %ip_list[i])
+
                 ssh_obj.ssh_to(logger, ip_list[4], username=data["static_image"], key_file_name=data["key_file_path"])
                 ssh_obj.execute_command_show_output(logger, "ls")
                 ssh_obj.execute_command_show_output(logger, "ifconfig")

@@ -44,6 +44,7 @@ if not logger.handlers:
 else:
     pass
 
+pdb.set_trace()
 
 obj=Os_Creation_Modules()
 conn=obj.os_connection_creation()
@@ -79,35 +80,35 @@ conn=obj.os_connection_creation()
 
 # ==================r8===================#
 
-# list = ["r8-14g-dell-compute-0.oss.labs",
-#     "r8-14g-dell-compute-1.oss.labs", "r8-14g-dell-compute-2.oss.labs"]
-# c = 0
-# for i in list:
-#     obj.os_aggregate_creation_and_add_host(logger, conn, "nova%s"%c, availablity_zone="nova%s"%c, host_name=i)
-#     c += 1
+list = ["r8-14g-dell-compute-0.oss.labs",
+    "r8-14g-dell-compute-1.oss.labs", "r8-14g-dell-compute-2.oss.labs"]
+c = 0
+for i in list:
+    obj.os_aggregate_creation_and_add_host(logger, conn, "nova%s"%c, availablity_zone="nova%s"%c, host_name=i)
+    c += 1
 
 
 
-# os.system("openstack aggregate list")
-# os.system("openstack flavor list")
-# logger.info("Adding Security Group Rules")
+os.system("openstack aggregate list")
+#os.system("openstack flavor list")
+#logger.info("Adding Security Group Rules")
 
-# obj.os_sec_group_n_rules_creation(logger, conn, data["static_secgroup"], "Secgroup for icmp,tcp,udp", ["tcp", "icmp", "udp"], "0.0.0.0/0")
+#obj.os_sec_group_n_rules_creation(logger, conn, data["static_secgroup"], "fio-secgroup", ["tcp", "icmp", "udp"], "0.0.0.0/0")
 
-# logger.info("Creating Keypair and setting permission")
-#
-# os.system("openstack keypair create ssh-key > /home/osp_admin/ssh-key.pem")
-# os.system("chmod 400 /home/osp_admin/ssh-key.pem")
-# os.system("openstack keypair list")
+logger.info("Creating Keypair and setting permission")
+
+os.system("openstack keypair create ssh-key > /home/osp_admin/ssh-key.pem")
+os.system("chmod 400 /home/osp_admin/ssh-key.pem")
+os.system("openstack keypair list")
 # # obj.os_flavor_creation(logger, conn, "legacy_flavor", 2048, 2, 20)
 # # obj.os_flavor_sriov_creation(logger, conn, "sriov_flavor", 1024, 2, 40)
-# # obj.os_image_creation(logger, conn, data["static_image"], data["static_image_path"],data["static_image_format"],"bare")
+#obj.os_image_creation(logger, conn, data["static_image"], data["static_image_path"],data["static_image_format"],"bare")
 #
 net_info = obj.os_network_creation(logger, conn, data["static_network"], data["static_cidr"], data["static_subnet"], data["static_gateway"])
 #,provider_dic={ 'network_type': 'vlan','physical_network' : 'physint', 'segmentation_id': 205 })
 logger.info(net_info)
 os.system("openstack network list")
-# os.system("openstack network show %s" %data["static_network"])
+os.system("openstack network show %s" %data["static_network"])
 # pdb.set_trace()
 # net_data=str(net_info)
 # seg_id= net_data.split(",")[11].strip()
@@ -115,13 +116,13 @@ os.system("openstack network list")
 # logger.info(seg_id)
 # logger.info(segmentation_id)
 # # obj.os_flavor_ovsdpdk_creation(logger, conn, data["ovsdpdk_flavor"], 1024, 2, 40)
-# # os.system("openstack keypair list")
+# os.system("openstack keypair list")
 obj.os_router_creation(logger, conn, data["static_router"], data["static_port"], data["static_network"])
 # obj.os_server_creation(logger, conn, data["server_name"], data["static_flavor"], data["static_image"], data["static_network"], data["static_secgroup"], data["zone1"], data["key_name"], 1, 3)
 # obj.os_keypair_creation_with_key_file(logger, conn, data["key_name"], data["key_file_path"])
 
-delete_object = Os_Deletion_Modules()
-conn_delete = delete_object.os_connection_creation()
+#delete_object = Os_Deletion_Modules()
+#conn_delete = delete_object.os_connection_creation()
 
 
 #================Creating Aggregate and Zones=====================#

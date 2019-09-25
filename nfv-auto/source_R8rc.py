@@ -20,7 +20,7 @@ class Source_Module():
     os.environ["OS_AUTH_URL"]="http://100.82.39.60:5000//v3"
     os.environ["NOVA_VERSION"]="1.1"
     os.environ["OS_IMAGE_API_VERSION"]="2"
-    os.environ["OS_PASSWORD"]="98Nzkx6UbaYsvNVAykvmffe6N"
+    os.environ["OS_PASSWORD"]="aNw6DAuMYwGMDy6mw7Jr36Aww"
     os.environ["OS_PROJECT_DOMAIN_NAME"]="Default"
     os.environ["OS_IDENTITY_API_VERSION"]="3"
     os.environ["OS_PROJECT_NAME"]="admin"
