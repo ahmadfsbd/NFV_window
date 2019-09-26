@@ -1,0 +1,20 @@
+Creating Aggregrate : nova0
+Aggregate already exists with the same name.
+Creating Aggregrate : nova1
+Aggregate already exists with the same name.
+Creating Aggregrate : nova2
+Aggregate already exists with the same name.
+Adding Security Group Rules
+Creating Security Group : d41edfb7-27d0-4b08-87a9-2c9af3a66a98
+Adding rule for: tcp, ingress
+Adding rule for: tcp, egress
+Adding rule for: icmp, ingress
+Adding rule for: icmp, egress
+Adding rule for: udp, ingress
+Adding rule for: udp, egress
+Creating Keypair and setting permission
+Creating Network: fio-network
+Network already exists with the same name.
+Munch({u'status': u'ACTIVE', u'subnets': [u'2f1046bc-15f3-4c77-bf6b-ff9ea8b4fb6c'], u'description': u'', u'provider:physical_network': u'physint', u'tags': [], u'ipv6_address_scope': None, u'updated_at': u'2019-09-25T11:05:03Z', u'revision_number': 4, u'port_security_enabled': True, u'mtu': 1500, u'id': u'c386b3c2-3eda-4b74-98a9-cbebcc63463a', u'provider:segmentation_id': 233, u'router:external': False, u'availability_zone_hints': [], u'availability_zones': [u'nova'], u'qos_policy_id': None, u'admin_state_up': True, u'name': u'fio-network', u'created_at': u'2019-09-25T11:05:02Z', u'provider:network_type': u'vlan', u'tenant_id': u'56faa3b1c01b4cb7815c8c918d3df0d2', u'ipv4_address_scope': None, u'shared': False, u'project_id': u'56faa3b1c01b4cb7815c8c918d3df0d2', u'l2_adjacency': True})
+Creating Router: fio_router
+Router already exists.

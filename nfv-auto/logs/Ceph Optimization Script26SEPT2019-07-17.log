@@ -1,0 +1,29 @@
+==========================================================================================================
+====         CEPH ENVIRONMENT SETUP:      CREATE VM'S FOR COMPUTE NODE 0.                            =====
+==========================================================================================================
+Creating Server: ceph_vm_0_nova_0
+Server Count: 1
+
+Unable to create server!
+Error: <class 'openstack.exceptions.BadRequestException'>
+Cause: BadRequestException: 400: Client Error for url: http://100.82.39.60:8774/v2.1/servers, The requested availability zone is not available
+Line No: 715 
+
+
+Unable to create 1 instances on same compute and same network
+Error: <type 'exceptions.AttributeError'>
+Cause: 'NoneType' object has no attribute 'id'
+Line No: 1136 
+
+output None
+Unable to execute test case 1
+
+Error: <type 'exceptions.TypeError'>
+Cause: 'NoneType' object has no attribute '__getitem__'
+Line No: 154 
+
+Deleting Server: ceph_vm..
+Server deletion failed!
+Deleting all unattached floating IPs.
+Deleting Network & Router..
+Deleting Interfaces..

@@ -1126,13 +1126,13 @@ class Os_Creation_Modules():
                         security group 
                         """
             # pdb.set_trace(logger, )
-            network = self.os_network_creation(logger, conn, network_name, cidr, subnet_name, gateway_ip)
-            router = self.os_router_creation(logger, conn, router_name, port_name, network_name)
+            #network = self.os_network_creation(logger, conn, network_name, cidr, subnet_name, gateway_ip)
+            #router = self.os_router_creation(logger, conn, router_name, port_name, network_name)
             # router2 = self.os_router_creation2(logger, conn, router_name, port_name, network_name)
             server = self.os_server_creation(logger, conn, server_name, flavor_name, image_name, network_name,
                                              secgroup_name, zone)
-            network_id = network.id
-            router_id = router.id
+            #network_id = network.id
+            #router_id = router.id
             server_id = server.id
             server_ip = conn.get_server(server_name).accessIPv4  # private_v4#.accessIPv4
             if assign_floating_ip:
@@ -1152,11 +1152,12 @@ class Os_Creation_Modules():
                     floating_ip = server1.addresses[network_name][1]["addr"]
                 logger.info("Instance >> Fixed IP: (%s) , Floating IP: (%s)" % (
                     str(server_ip), str(floating_ip)))
-                return [network_id, router_id, server_id, str(server_ip), str(floating_ip)]
+                #return [network_id, router_id, server_id, str(server_ip), str(floating_ip)]
+                return [router_id, server_id, str(server_ip), str(floating_ip)]
             else:
                 logger.info("Instance >> Fixed IP: %s" % str(server_ip))
                 time.sleep(10)
-                return [network_id, router_id, server_id, str(server_ip)]
+                return [server_id, str(server_ip)]
         except:
             logger.info("\nUnable to create 1 instances on same compute and same network")
             logger.info ("Error: " + str(sys.exc_info()[0]))

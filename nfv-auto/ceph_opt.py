@@ -99,6 +99,9 @@ def ceph_vm_setup(router_name,
     logger.info("==========================================================================================================")
     logger.info("====         CEPH ENVIRONMENT SETUP:      CREATE VM'S FOR COMPUTE NODE 0.                            =====")
     logger.info("==========================================================================================================")
+    
+    global vm_username
+    port_count = 0
     # logger.info("Pool deleting..")
     # os.system("openstack loadbalancer pool delete %s" % (pool_name))
     # logger.info("Listener deleting..")
@@ -118,14 +121,14 @@ def ceph_vm_setup(router_name,
     #                                                     router_name, port_name, zone, cidr,
     #                                                     gateway_ip, flavor_name, image_name,
     #                                                     secgroup_name, assign_floating_ip):
-    i = 1
-    j = 2
+    j = 0 # count for varying zone
     nova0_list=[]
     nova1_list=[]
     nova2_list=[]
     # volume_name = "%s_vol_1" %server_name
     try:
         while j < 3:
+            i = 0 # count for number of vms
             while i < server_count:
                 servr_name = "%s_%s_nova_%s" % (server_name, i, j)
                 if j==0:
@@ -147,21 +150,21 @@ def ceph_vm_setup(router_name,
                 ###########Creating and Attaching Volume to VM#############################
                 # os.system("openstack volume create --size 40 %s" % volume_name)
                 # creation_object.os_attach_volume(logger, conn_create, server_name, volume_name)
-                time.sleep(50)
+                #time.sleep(50)
 
                 ###### Installing FIO in VM ##########
                 count = 1
-                logger.info("VM IP %s" % ip_list[4])
+                logger.info("VM IP %s" % ip_list[2])
                 if j==0:
-                    nova0_list.append(ip_list[4])
+                    nova0_list.append(ip_list[2])
 
                 if j==1:
-                    nova1_list.append(ip_list[4])
+                    nova1_list.append(ip_list[2])
 
                 if j==2:
-                    nova2_list.append(ip_list[4])
+                    nova2_list.append(ip_list[2])
 
-                ssh_obj.ssh_to(logger, ip_list[4], username=data["static_image"], key_file_name=data["key_file_path"])
+                ssh_obj.ssh_to(logger, ip_list[2], username=vm_username, key_file_name=data["key_file_path"])
                 ssh_obj.execute_command_show_output(logger, "ls")
                 ssh_obj.execute_command_show_output(logger, "ifconfig")
                 ssh_obj.execute_command_show_output(logger, "cat /etc/sysconfig/network-scripts/ifcfg-eth0")
@@ -174,6 +177,8 @@ def ceph_vm_setup(router_name,
                 res = ssh_obj.execute_command_show_output(logger, "sudo fio -v")
                 # count = count + 1
                 ssh_obj.ssh_close()
+                
+                
                 # # pdb.set_trace()
                 # logger.info(count)
                 # vm_p_ip = ip_list[3]
@@ -195,6 +200,8 @@ def ceph_vm_setup(router_name,
                 logger.info("%s" % nova0_list)
                 logger.info("%s" % nova1_list)
                 logger.info("%s" % nova2_list)
+                port_count = port_count + 1
+                port_name = "fio-port" + str(port_count)
             j = j + 1
 
     except:
@@ -210,20 +217,22 @@ def ceph_vm_setup(router_name,
     return nova2_list
 
 server_name = "ceph_vm"
-server_count = 3
-network_name = "storage-net"
-subnet_name = "storage-subnet"
-router_name = "storage-router"
-port_name = "storage-port"
+vm_username = "centos"
+server_count = 10
+network_name = "fio-network"
+subnet_name = "fio-subnet"
+router_name = "fio-router"
+port_name = "fio-port"
 zone0 = "nova0"
 zone1 = "nova1"
 zone2 = "nova2"
-cidr = "192.168.70.0/24"
-gateway_ip = "192.168.70.1"
+cidr = "192.168.20.0/24"
+gateway_ip = "192.168.20.1"
 flavor_name = "m1.medium"
-image_name = "centos"
-secgroup_name = "c11a0ebb-22bb-4658-9804-c20d0053412a"
-assign_floating_ip = True
+image_name = "centos-image"
+secgroup_name = "default"
+secgroup_id = "5b471d69-e850-48de-aebd-6e7fd918b0e6"
+assign_floating_ip = False
 
 
 # def ceph_vm_setup(router_name,
@@ -242,7 +251,7 @@ ceph_vm_setup(router_name=router_name,
                     subnet_name=subnet_name,
                     port_name=port_name,
                     server_name=server_name,server_count=server_count,
-                    image_name=image_name,flavor_name=flavor_name,secgroup_name=secgroup_name,
+                    image_name=image_name,flavor_name=flavor_name,secgroup_name=secgroup_id,
                     zone=zone0,
                     cidr=cidr,gateway_ip=gateway_ip,
                     assign_floating_ip=assign_floating_ip,

@@ -1,0 +1,16 @@
+==========================================================================================================
+====         CEPH ENVIRONMENT SETUP:      CREATE VM'S FOR COMPUTE NODE 0.                            =====
+==========================================================================================================
+Creating Server: ceph_vm_0_nova_2
+Server Count: 1
+
+Server Created Successfully!
+Assigning floating ip to ceph_vm_0_nova_2
+Creating & Assigning Floating IP..
+Instance >> Fixed IP: (192.168.20.16) , Floating IP: (100.82.39.70)
+output [u'055b066b-1e72-4dbf-a389-007b3b8e98f3', '192.168.20.16', '100.82.39.70']
+VM IP 100.82.39.70
+VM CREATED SUCCESSFULLY
+[]
+[]
+['100.82.39.70']

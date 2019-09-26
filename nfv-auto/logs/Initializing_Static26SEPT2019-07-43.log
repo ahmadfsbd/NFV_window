@@ -1,0 +1,9 @@
+Creating Aggregrate : nova0
+Aggregate already exists with the same name.
+Creating Aggregrate : nova1
+Aggregate already exists with the same name.
+Creating Aggregrate : nova2
+Aggregate already exists with the same name.
+Adding Security Group Rules
+Creating Security Group : d41edfb7-27d0-4b08-87a9-2c9af3a66a98
+Adding rule for: tcp, ingress

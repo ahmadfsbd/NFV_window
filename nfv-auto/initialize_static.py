@@ -9,6 +9,11 @@ import pdb
 import sys
 import json
 from source_R8rc import Source_Module
+try:
+   import paramiko
+except:
+   os.system("pip install paramiko")
+   import paramiko
 
 feature_name = "Initializing_Static"
 
@@ -44,7 +49,7 @@ if not logger.handlers:
 else:
     pass
 
-pdb.set_trace()
+#pdb.set_trace()
 
 obj=Os_Creation_Modules()
 conn=obj.os_connection_creation()
@@ -88,18 +93,18 @@ for i in list:
     c += 1
 
 
-
 os.system("openstack aggregate list")
 #os.system("openstack flavor list")
 #logger.info("Adding Security Group Rules")
 
 #obj.os_sec_group_n_rules_creation(logger, conn, data["static_secgroup"], "fio-secgroup", ["tcp", "icmp", "udp"], "0.0.0.0/0")
+os.system("openstack security group list")
 
 logger.info("Creating Keypair and setting permission")
-
 os.system("openstack keypair create ssh-key > /home/osp_admin/ssh-key.pem")
 os.system("chmod 400 /home/osp_admin/ssh-key.pem")
 os.system("openstack keypair list")
+
 # # obj.os_flavor_creation(logger, conn, "legacy_flavor", 2048, 2, 20)
 # # obj.os_flavor_sriov_creation(logger, conn, "sriov_flavor", 1024, 2, 40)
 #obj.os_image_creation(logger, conn, data["static_image"], data["static_image_path"],data["static_image_format"],"bare")
@@ -109,6 +114,7 @@ net_info = obj.os_network_creation(logger, conn, data["static_network"], data["s
 logger.info(net_info)
 os.system("openstack network list")
 os.system("openstack network show %s" %data["static_network"])
+
 # pdb.set_trace()
 # net_data=str(net_info)
 # seg_id= net_data.split(",")[11].strip()
@@ -117,7 +123,9 @@ os.system("openstack network show %s" %data["static_network"])
 # logger.info(segmentation_id)
 # # obj.os_flavor_ovsdpdk_creation(logger, conn, data["ovsdpdk_flavor"], 1024, 2, 40)
 # os.system("openstack keypair list")
+
 obj.os_router_creation(logger, conn, data["static_router"], data["static_port"], data["static_network"])
+os.system("openstack router list")
 # obj.os_server_creation(logger, conn, data["server_name"], data["static_flavor"], data["static_image"], data["static_network"], data["static_secgroup"], data["zone1"], data["key_name"], 1, 3)
 # obj.os_keypair_creation_with_key_file(logger, conn, data["key_name"], data["key_file_path"])
 

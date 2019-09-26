@@ -1,0 +1,23 @@
+==========================================================================================================
+====         CEPH ENVIRONMENT SETUP:      CREATE VM'S FOR COMPUTE NODE 0.                            =====
+==========================================================================================================
+Creating Server: ceph_vm_0_nova_0
+Server Count: 1
+
+Server Created Successfully!
+Assigning floating ip to ceph_vm_0_nova_0
+Creating & Assigning Floating IP..
+Instance >> Fixed IP: (192.168.20.10) , Floating IP: (100.82.39.84)
+output [u'13b92da3-3db4-4427-9a9e-93c5a92383a3', '192.168.20.10', '100.82.39.84']
+VM IP 100.82.39.84
+Unable to execute test case 1
+
+Error: <class 'socket.error'>
+Cause: [Errno 110] Connection timed out
+Line No: 164 
+
+Deleting Server: ceph_vm..
+Server deletion failed!
+Deleting all unattached floating IPs.
+Deleting Network & Router..
+Deleting Interfaces..
