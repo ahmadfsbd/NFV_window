@@ -100,7 +100,7 @@ def ceph_vm_setup(router_name,
     logger.info("====         CEPH ENVIRONMENT SETUP:      CREATE VM'S FOR COMPUTE NODE 0.                            =====")
     logger.info("==========================================================================================================")
     
-    global vm_username
+    global vm_username, ceph_volumes, vol_size
     port_count = 0
     # logger.info("Pool deleting..")
     # os.system("openstack loadbalancer pool delete %s" % (pool_name))
@@ -130,6 +130,7 @@ def ceph_vm_setup(router_name,
         while j < 3:
             i = 0 # count for number of vms
             while i < server_count:
+                vol_count = 0
                 servr_name = "%s_%s_nova_%s" % (server_name, i, j)
                 if j==0:
                     zone = "nova0"
@@ -154,19 +155,19 @@ def ceph_vm_setup(router_name,
 
                 ###### Installing FIO in VM ##########
                 count = 1
-                logger.info("VM IP %s" % ip_list[2])
+                logger.info("VM IP %s" % ip_list[1])
                 if j==0:
-                    nova0_list.append(ip_list[2])
+                    nova0_list.append(ip_list[1])
 
                 if j==1:
-                    nova1_list.append(ip_list[2])
+                    nova1_list.append(ip_list[1])
 
                 if j==2:
-                    nova2_list.append(ip_list[2])
-
+                    nova2_list.append(ip_list[1])
+                    
+                # Use floating IP to ssh and configure packages/fio
                 ssh_obj.ssh_to(logger, ip_list[2], username=vm_username, key_file_name=data["key_file_path"])
                 ssh_obj.execute_command_show_output(logger, "ls")
-                ssh_obj.execute_command_show_output(logger, "ifconfig")
                 ssh_obj.execute_command_show_output(logger, "cat /etc/sysconfig/network-scripts/ifcfg-eth0")
                 ssh_obj.execute_command_show_output(logger, "sudo sed -i '/USERCTL=no/ a DNS1=8.8.8.8' /etc/sysconfig/network-scripts/ifcfg-eth0")
                 ssh_obj.execute_command_show_output(logger, "cat /etc/sysconfig/network-scripts/ifcfg-eth0")
@@ -175,10 +176,21 @@ def ceph_vm_setup(router_name,
                 ssh_obj.execute_command_show_output(logger, "ls")
                 ssh_obj.execute_command_show_output(logger, "sudo yum install fio -y")
                 res = ssh_obj.execute_command_show_output(logger, "sudo fio -v")
-                # count = count + 1
                 ssh_obj.ssh_close()
                 
-                
+                # Create and Attach volumes
+                while vol_count < ceph_volumes:
+                    # create volume
+                    vol_name = servr_name + """-""" + str(vol_count)
+                    cmd = """openstack volume create --size """ + str(vol_size) + """ """ + vol_name
+                    os.system(cmd)
+                    # attach volume
+                    cmd = """openstack server add volume """ + servr_name + """ """ + vol_name
+                    vol_count = vol_count + 1
+                    
+                # Detach floating IP from the vm    
+                cmd = """openstack server remove floating ip """ + servr_name +""" """ + str(ip_list[2])
+                os.system(cmd)
                 # # pdb.set_trace()
                 # logger.info(count)
                 # vm_p_ip = ip_list[3]
@@ -218,7 +230,7 @@ def ceph_vm_setup(router_name,
 
 server_name = "ceph_vm"
 vm_username = "centos"
-server_count = 10
+server_count = 1 # per compute node
 network_name = "fio-network"
 subnet_name = "fio-subnet"
 router_name = "fio-router"
@@ -232,8 +244,9 @@ flavor_name = "m1.medium"
 image_name = "centos-image"
 secgroup_name = "default"
 secgroup_id = "5b471d69-e850-48de-aebd-6e7fd918b0e6"
-assign_floating_ip = False
-
+assign_floating_ip = True
+ceph_volumes = 2 # per vm
+vol_size = 50 # in GB
 
 # def ceph_vm_setup(router_name,
 #                                                         network_name,subnet_name,
@@ -245,7 +258,7 @@ assign_floating_ip = False
 #                                                         cidr,gateway_ip,assign_floating_ip,
 #                                                         delete_all=False
 #                                                         ):
-
+#
 ceph_vm_setup(router_name=router_name,
                     network_name=network_name,
                     subnet_name=subnet_name,

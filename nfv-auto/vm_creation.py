@@ -1153,7 +1153,7 @@ class Os_Creation_Modules():
                 logger.info("Instance >> Fixed IP: (%s) , Floating IP: (%s)" % (
                     str(server_ip), str(floating_ip)))
                 #return [network_id, router_id, server_id, str(server_ip), str(floating_ip)]
-                return [router_id, server_id, str(server_ip), str(floating_ip)]
+                return [server_id, str(server_ip), str(floating_ip)]
             else:
                 logger.info("Instance >> Fixed IP: %s" % str(server_ip))
                 time.sleep(10)

@@ -1,0 +1,31 @@
+==========================================================================================================
+====         CEPH ENVIRONMENT SETUP:      CREATE VM'S FOR COMPUTE NODE 0.                            =====
+==========================================================================================================
+Creating Server: ceph_vm_0_nova_0
+Server Count: 1
+
+Server Created Successfully!
+Assigning floating ip to ceph_vm_0_nova_0
+Creating & Assigning Floating IP..
+
+Unable to create 1 instances on same compute and same network
+Error: <class 'openstack.exceptions.ConflictException'>
+Cause: ConflictException: 409: Client Error for url: http://100.82.39.60:9696/v2.0/floatingips.json, No more IP addresses available on network bd4206f6-8e8d-4ba2-9cd0-655c03fe2f9e.
+Line No: 1146 
+
+output None
+Unable to execute test case 1
+
+Error: <type 'exceptions.TypeError'>
+Cause: 'NoneType' object has no attribute '__getitem__'
+Line No: 158 
+
+Deleting Server: ceph_vm..
+Server deletion failed!
+Deleting all unattached floating IPs.
+Deleting Network & Router..
+Deleting Interfaces..
+Interface Deleted successfully
+Deleting Port..
+Port Deletion failed
+Deleting Subnetwork..
