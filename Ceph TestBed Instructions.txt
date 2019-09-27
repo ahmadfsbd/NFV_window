@@ -1,4 +1,4 @@
-1- Configure rc.py file for sdk access, configure setup.json for config details/names (centos image name , path, format)
+1- Configure rc.py file for sdk access, configure setup.json for config details/names (centos image name , path, format) add sec rules in default group
 
 2- Run initialize_static.py (after source overcloudrc)
 	> adds compute nodes to zones (nova0,1,2)
@@ -7,4 +7,13 @@
 	> creates fio network (fio-network, fio-subnet 192.168.20.0/24 GW 192.168.20.1)
 	> creates router with a port on fio-network and public network (fio-router)
 
-3- 
+3- In ceph_opt.py
+  > Edit all the static resources names as per the last script (image, sec-group, network etc.)
+  > Specify Number of ceph_volumes to be attached to each VM
+  > Run the script to make desired number of servers (fio is also installed within)
+  > At the end a list of ip addresses will be returned which will be used in python script
+  
+4- Also Configure script to deploy a JumpHost for fio_network
+  > fio automation files and key.pem should be moved to JumpHost(scp -i ssh-key.pem ./ssh-key.pem  centos@100.82.39.73:ssh-key.pm)
+
+5- Now ssh into Jump Host and Run tests (TestBed is Ready)
