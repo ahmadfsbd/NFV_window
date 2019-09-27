@@ -1,0 +1,20 @@
+==========================================================================================================
+====         CEPH ENVIRONMENT SETUP:      CREATE VM'S FOR COMPUTE NODE 0.                            =====
+==========================================================================================================
+Start-Time : 2019-09-27 07:28:23
+End Time : 2019-09-27 07:28:23
+Creating JumpHost
+Creating Server: JumpHost
+Server Count: 1
+
+Unable to create server!
+Error: <class 'openstack.exceptions.SDKException'>
+Cause: Multiple matches found for default
+Line No: 703 
+
+
+Unable to create 1 instances on same compute and same network
+Error: <type 'exceptions.AttributeError'>
+Cause: 'NoneType' object has no attribute 'id'
+Line No: 1136 
+

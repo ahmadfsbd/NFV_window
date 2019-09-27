@@ -21,7 +21,7 @@ monthdict = {"01": "JAN", "02": "FEB" ,"03": "MAR", "04": "APR", "05": "MAY", "0
              "08": "AUG", "09": "SEPT", "10": "OCT", "11": "NOV", "12": "DEC"}
 
 # Noting starting time to check the elapsed time
-start = time.time()
+start = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(time.time())))
 
 # making directory 'logs' if it does not exits
 if not os.path.isdir("logs"):
@@ -48,6 +48,9 @@ if not logger.handlers:
 else:
     pass
 #########################logger code end
+nova0_list=[]
+nova1_list=[]
+nova2_list=[]
 
 ssh_obj = ssh_functions()
 creation_object = Os_Creation_Modules()
@@ -100,7 +103,7 @@ def ceph_vm_setup(router_name,
     logger.info("====         CEPH ENVIRONMENT SETUP:      CREATE VM'S FOR COMPUTE NODE 0.                            =====")
     logger.info("==========================================================================================================")
     
-    global vm_username, ceph_volumes, vol_size
+    global vm_username, ceph_volumes, vol_size, nova0_list, nova1_list, nova2_list
     port_count = 0
     # logger.info("Pool deleting..")
     # os.system("openstack loadbalancer pool delete %s" % (pool_name))
@@ -122,9 +125,6 @@ def ceph_vm_setup(router_name,
     #                                                     gateway_ip, flavor_name, image_name,
     #                                                     secgroup_name, assign_floating_ip):
     j = 0 # count for varying zone
-    nova0_list=[]
-    nova1_list=[]
-    nova2_list=[]
     # volume_name = "%s_vol_1" %server_name
     try:
         while j < 3:
@@ -225,12 +225,11 @@ def ceph_vm_setup(router_name,
                                                                    server_name,
                                                                    network_name,
                                                                    router_name, port_name)
-
     return nova2_list
 
 server_name = "ceph_vm"
 vm_username = "centos"
-server_count = 1 # per compute node
+server_count = 10 # per compute node
 network_name = "fio-network"
 subnet_name = "fio-subnet"
 router_name = "fio-router"
@@ -247,7 +246,7 @@ secgroup_id = "5b471d69-e850-48de-aebd-6e7fd918b0e6"
 assign_floating_ip = True
 ceph_volumes = 2 # per vm
 vol_size = 50 # in GB
-
+create_jumphost = True
 # def ceph_vm_setup(router_name,
 #                                                         network_name,subnet_name,
 #                                                         port_name,
@@ -270,3 +269,36 @@ ceph_vm_setup(router_name=router_name,
                     assign_floating_ip=assign_floating_ip,
                     delete_all=False
                                                         )
+
+                                                       
+if create_jumphost:
+    logger.info("Creating JumpHost")
+    servr_name = "JumpHost"
+    portname = "J-Port"
+    zone = "nova0"
+    ip_list  = creation_object.create_1_instances_on_same_compute_same_network(logger, conn_create,
+                                                                                           servr_name, network_name,
+                                                                subnet_name,
+                                                                router_name, port_name, zone, cidr,
+                                                                gateway_ip, flavor_name, image_name,
+                                                                secgroup_id, assign_floating_ip)
+    # Use floating IP to ssh and configure packages/fio
+    ssh_obj.ssh_to(logger, ip_list[2], username=vm_username, key_file_name=data["key_file_path"])
+    ssh_obj.execute_command_show_output(logger, "ls")
+    ssh_obj.execute_command_show_output(logger, "cat /etc/sysconfig/network-scripts/ifcfg-eth0")
+    ssh_obj.execute_command_show_output(logger, "sudo sed -i '/USERCTL=no/ a DNS1=8.8.8.8' /etc/sysconfig/network-scripts/ifcfg-eth0")
+    ssh_obj.execute_command_show_output(logger, "cat /etc/sysconfig/network-scripts/ifcfg-eth0")
+    ssh_obj.execute_command_show_output(logger, "sudo systemctl restart network")
+    ssh_obj.execute_command_show_output(logger, "ping -c 5 google.com")
+    ssh_obj.execute_command_show_output(logger, "ls")
+    ssh_obj.execute_command_show_output(logger, "sudo yum install fio -y")
+    res = ssh_obj.execute_command_show_output(logger, "sudo fio -v")
+    ssh_obj.ssh_close()
+    
+end = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(time.time())))
+logger.info ("Start-Time : {}\nEnd Time : {}".format(start,end))
+logger.info("%s" % nova0_list)
+logger.info("%s" % nova1_list)
+logger.info("%s" % nova2_list)
+if create_jumphost:
+    logger.info("JumpHost IP %s" % ip_list[2])
