@@ -186,6 +186,7 @@ def ceph_vm_setup(router_name,
                     os.system(cmd)
                     # attach volume
                     cmd = """openstack server add volume """ + servr_name + """ """ + vol_name
+                    os.system(cmd)
                     vol_count = vol_count + 1
                     
                 # Detach floating IP from the vm    
@@ -229,7 +230,7 @@ def ceph_vm_setup(router_name,
 
 server_name = "ceph_vm"
 vm_username = "centos"
-server_count = 10 # per compute node
+server_count = 2 # per compute node
 network_name = "fio-network"
 subnet_name = "fio-subnet"
 router_name = "fio-router"
@@ -246,7 +247,7 @@ secgroup_id = "5b471d69-e850-48de-aebd-6e7fd918b0e6"
 assign_floating_ip = True
 ceph_volumes = 2 # per vm
 vol_size = 50 # in GB
-create_jumphost = True
+create_jumphost = False
 # def ceph_vm_setup(router_name,
 #                                                         network_name,subnet_name,
 #                                                         port_name,
